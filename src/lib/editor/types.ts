@@ -22,4 +22,28 @@ export interface FormData {
     required: boolean
   }>
   submitText: string
+}
+
+export interface Module {
+  id: string
+  type: 'hero' | 'form'
+  props: HeroProps | FormProps
+}
+
+export interface HeroProps {
+  heading: string
+  subheading: string
+}
+
+export interface FormProps {
+  title: string
+  fields: FormField[]
+  submitText: string
+}
+
+export interface FormField {
+  id: string
+  label: string
+  type: 'text' | 'email' | 'textarea'
+  required: boolean
 } 
