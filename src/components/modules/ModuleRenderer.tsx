@@ -13,6 +13,7 @@ interface Props {
   moveModuleUp: (id: string) => void
   moveModuleDown: (id: string) => void
   duplicateModule: (id: string) => void
+  onEdit: (id: string) => void
 }
 
 export function ModuleRenderer({
@@ -23,6 +24,7 @@ export function ModuleRenderer({
   moveModuleUp,
   moveModuleDown,
   duplicateModule,
+  onEdit,
 }: Props) {
   return (
     <div className="flex flex-col gap-0">
@@ -36,6 +38,7 @@ export function ModuleRenderer({
           onMoveUp={moveModuleUp}
           onMoveDown={moveModuleDown}
           onDuplicate={duplicateModule}
+          onEdit={onEdit}
           isFirst={index === 0}
           isLast={index === modules.length - 1}
         >

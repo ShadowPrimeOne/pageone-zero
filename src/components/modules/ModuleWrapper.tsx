@@ -12,6 +12,7 @@ interface Props {
   onMoveUp: (id: string) => void
   onMoveDown: (id: string) => void
   onDuplicate: (id: string) => void
+  onEdit: (id: string) => void
   isFirst: boolean
   isLast: boolean
   children: ReactNode
@@ -25,61 +26,80 @@ export function ModuleWrapper({
   onMoveUp,
   onMoveDown,
   onDuplicate,
+  onEdit,
   isFirst,
   isLast,
   children,
 }: Props) {
   return (
     <div
-      onClick={() => onSelect(module.id)}
       className={clsx(
-        'relative w-full transition-all',
-        selected ? 'ring-2 ring-blue-500 z-10' : ''
+        'relative w-full group',
+        selected && 'ring-2 ring-blue-500 ring-inset'
       )}
+      onClick={() => onSelect(module.id)}
     >
+      {/* Floating controls */}
       {selected && (
-        <div className="absolute top-3 right-3 z-20 flex flex-wrap gap-2 p-2 bg-white/80 backdrop-blur-md rounded-xl shadow-xl">
-          {!isFirst && (
-            <button
-              onClick={e => { e.stopPropagation(); onMoveUp(module.id) }}
-              className="p-2 text-lg text-gray-700 rounded hover:bg-blue-100 hover:text-blue-700"
-              title="Move up"
-            >
-              ↑
-            </button>
-          )}
-          {!isLast && (
-            <button
-              onClick={e => { e.stopPropagation(); onMoveDown(module.id) }}
-              className="p-2 text-lg text-gray-700 rounded hover:bg-blue-100 hover:text-blue-700"
-              title="Move down"
-            >
-              ↓
-            </button>
-          )}
+        <div className="absolute top-2 right-2 z-50 flex flex-wrap gap-1 bg-white/80 backdrop-blur-md rounded-md p-1 shadow-lg">
           <button
-            onClick={e => { e.stopPropagation(); onDuplicate(module.id) }}
-            className="p-2 text-lg rounded hover:bg-green-100"
-            title="Duplicate"
-          >
-            ✂️
-          </button>
-          <button
-            onClick={e => { e.stopPropagation(); console.log('Edit stub') }}
-            className="p-2 text-lg rounded hover:bg-yellow-100"
+            onClick={(e) => {
+              e.stopPropagation()
+              onEdit(module.id)
+            }}
+            className="p-1.5 bg-white rounded hover:bg-gray-100 text-gray-700"
             title="Edit"
           >
             ✏️
           </button>
           <button
-            onClick={e => { e.stopPropagation(); onDelete(module.id) }}
-            className="p-2 text-lg text-red-500 rounded hover:bg-red-100"
+            onClick={(e) => {
+              e.stopPropagation()
+              onDuplicate(module.id)
+            }}
+            className="p-1.5 bg-white rounded hover:bg-gray-100 text-gray-700"
+            title="Duplicate"
+          >
+            ✂️
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete(module.id)
+            }}
+            className="p-1.5 bg-white rounded hover:bg-red-100 text-red-600"
             title="Delete"
           >
-            ❌
+            🗑️
           </button>
+          {!isFirst && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onMoveUp(module.id)
+              }}
+              className="p-1.5 bg-white rounded hover:bg-gray-100 text-gray-700"
+              title="Move Up"
+            >
+              ⬆️
+            </button>
+          )}
+          {!isLast && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onMoveDown(module.id)
+              }}
+              className="p-1.5 bg-white rounded hover:bg-gray-100 text-gray-700"
+              title="Move Down"
+            >
+              ⬇️
+            </button>
+          )}
         </div>
       )}
+
+      {/* Content */}
       <div className="flex flex-col w-full">{children}</div>
     </div>
   )

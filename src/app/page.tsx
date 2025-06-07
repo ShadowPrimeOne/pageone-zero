@@ -2,6 +2,7 @@
 
 import { useEditorState } from '@/lib/editor/useEditorState'
 import { ModuleRenderer } from '@/components/modules/ModuleRenderer'
+import { EditorPanel } from '@/components/editor/EditorPanel'
 
 export default function Page() {
   const {
@@ -12,6 +13,10 @@ export default function Page() {
     moveModuleUp,
     moveModuleDown,
     duplicateModule,
+    editModule,
+    isEditorOpen,
+    setIsEditorOpen,
+    updateModule,
   } = useEditorState([
     {
       id: 'hero-1',
@@ -62,8 +67,16 @@ export default function Page() {
           moveModuleUp={moveModuleUp}
           moveModuleDown={moveModuleDown}
           duplicateModule={duplicateModule}
+          onEdit={editModule}
         />
       </div>
+      <EditorPanel
+        modules={modules}
+        selectedModuleId={selectedModuleId}
+        isEditorOpen={isEditorOpen}
+        setIsEditorOpen={setIsEditorOpen}
+        updateModule={updateModule}
+      />
     </main>
   )
 }
