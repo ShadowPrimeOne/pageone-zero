@@ -12,6 +12,7 @@ interface Props {
   deleteModule: (id: string) => void
   moveModuleUp: (id: string) => void
   moveModuleDown: (id: string) => void
+  duplicateModule: (id: string) => void
 }
 
 export function ModuleRenderer({
@@ -21,6 +22,7 @@ export function ModuleRenderer({
   deleteModule,
   moveModuleUp,
   moveModuleDown,
+  duplicateModule,
 }: Props) {
   return (
     <div className="flex flex-col gap-0">
@@ -33,6 +35,7 @@ export function ModuleRenderer({
           onDelete={deleteModule}
           onMoveUp={moveModuleUp}
           onMoveDown={moveModuleDown}
+          onDuplicate={duplicateModule}
           isFirst={index === 0}
           isLast={index === modules.length - 1}
         >

@@ -44,6 +44,20 @@ export function useEditorState(initialModules: Module[] = []) {
     }
   }
 
+  const duplicateModule = (id: string) => {
+    const index = modules.findIndex(m => m.id === id)
+    if (index !== -1) {
+      const original = modules[index]
+      const duplicated = {
+        ...original,
+        id: `${original.id}-copy-${Date.now()}`
+      }
+      const newModules = [...modules]
+      newModules.splice(index + 1, 0, duplicated)
+      setModules(newModules)
+    }
+  }
+
   const deleteModule = (id: string) => {
     setModules(mods => mods.filter(mod => mod.id !== id))
     if (selectedModuleId === id) {
@@ -64,6 +78,7 @@ export function useEditorState(initialModules: Module[] = []) {
     updateModule,
     moveModuleUp,
     moveModuleDown,
+    duplicateModule,
     deleteModule,
     setModules
   }
