@@ -34,8 +34,8 @@ export function ModuleWrapper({
   return (
     <div
       className={clsx(
-        'relative w-full group',
-        selected && 'ring-2 ring-blue-500 ring-inset'
+        'relative w-full group transition-all duration-300',
+        selected && 'ring-2 ring-blue-500 ring-inset shadow-xl scale-[1.01] z-10'
       )}
       onClick={() => onSelect(module.id)}
     >

@@ -21,7 +21,7 @@ export function EditorPanel({
   if (!selected || !isEditorOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center">
+    <div className="fixed inset-0 z-50 bg-white/70 backdrop-blur-sm flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-lg font-semibold mb-4 text-gray-900">Edit {selected.type}</h2>
 
