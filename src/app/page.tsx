@@ -1,22 +1,25 @@
 'use client'
 
+import { useState } from 'react'
 import { useEditorState } from '@/lib/editor/useEditorState'
 import { ModuleRenderer } from '@/components/modules/ModuleRenderer'
 import { EditorPanel } from '@/components/editor/EditorPanel'
+import { AddModuleModal } from '@/components/editor/AddModuleModal'
 
 export default function Page() {
   const {
     modules,
     selectedModuleId,
+    isEditorOpen,
     selectModule,
+    setIsEditorOpen,
+    updateModule,
     deleteModule,
     moveModuleUp,
     moveModuleDown,
     duplicateModule,
     editModule,
-    isEditorOpen,
-    setIsEditorOpen,
-    updateModule,
+    addModule,
   } = useEditorState([
     {
       id: 'hero-1',
@@ -56,27 +59,54 @@ export default function Page() {
     },
   ])
 
+  const [addModalOpen, setAddModalOpen] = useState(false)
+  const [pendingAdd, setPendingAdd] = useState<{ relativeTo: string, position: 'above' | 'below' } | null>(null)
+
+  const openAddModuleModal = (relativeTo: string, position: 'above' | 'below') => {
+    setPendingAdd({ relativeTo, position })
+    setAddModalOpen(true)
+  }
+
+  console.log("modules", modules)
+  console.log("selectedModuleId", selectedModuleId)
+  console.log("rendering Page")
+
   return (
-    <main className="min-h-screen w-full flex flex-col items-center bg-white">
-      <div className="w-full max-w-2xl">
-        <ModuleRenderer
+    <>
+      <div>Debug active</div>
+      <main className="min-h-screen bg-gray-50">
+        <div className="max-w-4xl mx-auto py-8 px-4">
+          <ModuleRenderer
+            modules={modules}
+            selectedModuleId={selectedModuleId}
+            onSelect={selectModule}
+            onDelete={deleteModule}
+            onMoveUp={moveModuleUp}
+            onMoveDown={moveModuleDown}
+            onDuplicate={duplicateModule}
+            onEdit={editModule}
+            onAddRequest={openAddModuleModal}
+          />
+        </div>
+
+        <EditorPanel
           modules={modules}
           selectedModuleId={selectedModuleId}
-          selectModule={selectModule}
-          deleteModule={deleteModule}
-          moveModuleUp={moveModuleUp}
-          moveModuleDown={moveModuleDown}
-          duplicateModule={duplicateModule}
-          onEdit={editModule}
+          isEditorOpen={isEditorOpen}
+          setIsEditorOpen={setIsEditorOpen}
+          updateModule={updateModule}
         />
-      </div>
-      <EditorPanel
-        modules={modules}
-        selectedModuleId={selectedModuleId}
-        isEditorOpen={isEditorOpen}
-        setIsEditorOpen={setIsEditorOpen}
-        updateModule={updateModule}
-      />
-    </main>
+
+        <AddModuleModal
+          isOpen={addModalOpen}
+          close={() => setAddModalOpen(false)}
+          onAdd={(type) => {
+            if (pendingAdd) {
+              addModule(type, pendingAdd.relativeTo, pendingAdd.position)
+            }
+          }}
+        />
+      </main>
+    </>
   )
 }

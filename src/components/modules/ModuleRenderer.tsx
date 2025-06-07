@@ -1,6 +1,6 @@
 'use client'
 
-import type { Module } from '@/lib/editor/types'
+import type { Module, HeroProps, FormProps } from '@/lib/editor/types'
 import { ModuleWrapper } from './ModuleWrapper'
 import { HeroModule } from './HeroModule'
 import { FormModule } from './FormModule'
@@ -8,44 +8,52 @@ import { FormModule } from './FormModule'
 interface Props {
   modules: Module[]
   selectedModuleId: string | null
-  selectModule: (id: string) => void
-  deleteModule: (id: string) => void
-  moveModuleUp: (id: string) => void
-  moveModuleDown: (id: string) => void
-  duplicateModule: (id: string) => void
+  onSelect: (id: string) => void
+  onDelete: (id: string) => void
+  onMoveUp: (id: string) => void
+  onMoveDown: (id: string) => void
+  onDuplicate: (id: string) => void
   onEdit: (id: string) => void
+  onAddRequest: (relativeId: string, position: 'above' | 'below') => void
 }
 
 export function ModuleRenderer({
   modules,
   selectedModuleId,
-  selectModule,
-  deleteModule,
-  moveModuleUp,
-  moveModuleDown,
-  duplicateModule,
+  onSelect,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  onDuplicate,
   onEdit,
+  onAddRequest,
 }: Props) {
+  console.log("rendering ModuleRenderer", { modules, selectedModuleId })
+
   return (
-    <div className="flex flex-col gap-0">
-      {modules.map((mod, index) => (
-        <ModuleWrapper
-          key={mod.id}
-          module={mod}
-          selected={mod.id === selectedModuleId}
-          onSelect={selectModule}
-          onDelete={deleteModule}
-          onMoveUp={moveModuleUp}
-          onMoveDown={moveModuleDown}
-          onDuplicate={duplicateModule}
-          onEdit={onEdit}
-          isFirst={index === 0}
-          isLast={index === modules.length - 1}
-        >
-          {mod.type === 'hero' && <HeroModule {...mod.props} />}
-          {mod.type === 'form' && <FormModule {...mod.props} />}
-        </ModuleWrapper>
-      ))}
+    <div className="flex flex-col gap-4">
+      {modules.map((module, index) => {
+        console.log("rendering module", { module, index })
+        return (
+          <ModuleWrapper
+            key={module.id}
+            module={module}
+            selected={module.id === selectedModuleId}
+            onSelect={onSelect}
+            onDelete={onDelete}
+            onMoveUp={onMoveUp}
+            onMoveDown={onMoveDown}
+            onDuplicate={onDuplicate}
+            onEdit={onEdit}
+            onAddRequest={onAddRequest}
+            isFirst={index === 0}
+            isLast={index === modules.length - 1}
+          >
+            {module.type === 'hero' && <HeroModule {...(module.props as HeroProps)} />}
+            {module.type === 'form' && <FormModule {...(module.props as FormProps)} />}
+          </ModuleWrapper>
+        )
+      })}
     </div>
   )
 } 
