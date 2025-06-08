@@ -1,13 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
 import type { Module, HeroProps, FormProps } from './types'
 
-export function useEditorState(initialModules: Module[] = []) {
-  const [modules, setModules] = useState<Module[]>(initialModules)
+interface EditorStateContextType {
+  modules: Module[]
+  selectedModuleId: string | null
+  isEditorOpen: boolean
+  setIsEditorOpen: (value: boolean) => void
+  isPublishModalOpen: boolean
+  setIsPublishModalOpen: (value: boolean) => void
+  selectModule: (id: string) => void
+  editModule: (id: string) => void
+  updateModule: (id: string, newProps: HeroProps | FormProps) => void
+  moveModuleUp: (id: string) => void
+  moveModuleDown: (id: string) => void
+  duplicateModule: (id: string) => void
+  deleteModule: (id: string) => void
+  setModules: (modules: Module[]) => void
+  addModule: (type: 'hero' | 'form', relativeTo: string, position: 'above' | 'below') => void
+  isDirty: boolean
+  markClean: () => void
+}
+
+const EditorStateContext = createContext<EditorStateContextType | null>(null)
+
+export const EditorStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [modules, setModules] = useState<Module[]>([])
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null)
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
+  const [isDirty, setIsDirty] = useState(false)
 
   const selectModule = (id: string) => {
     setSelectedModuleId(id)
@@ -22,7 +45,10 @@ export function useEditorState(initialModules: Module[] = []) {
     setModules(mods =>
       mods.map(mod => mod.id === id ? { ...mod, props: newProps } : mod)
     )
+    setIsDirty(true)
   }
+
+  const markClean = () => setIsDirty(false)
 
   const moveModuleUp = (id: string) => {
     const index = modules.findIndex(mod => mod.id === id)
@@ -88,7 +114,7 @@ export function useEditorState(initialModules: Module[] = []) {
     }, 100)
   }
 
-  return {
+  const value: EditorStateContextType = {
     modules,
     selectedModuleId,
     isEditorOpen,
@@ -103,6 +129,30 @@ export function useEditorState(initialModules: Module[] = []) {
     duplicateModule,
     deleteModule,
     setModules,
-    addModule
+    addModule,
+    isDirty,
+    markClean,
   }
+
+  return (
+    <EditorStateContext.Provider value={value}>
+      {children}
+    </EditorStateContext.Provider>
+  )
+}
+
+export function useEditorState(initialModules: Module[] = []) {
+  const context = useContext(EditorStateContext)
+  if (!context) {
+    throw new Error('useEditorState must be used within an EditorStateProvider')
+  }
+
+  // ✅ Fix: Safe initialization of modules
+  useEffect(() => {
+    if (initialModules.length > 0 && context.modules.length === 0) {
+      context.setModules(initialModules)
+    }
+  }, [initialModules, context.modules.length, context.setModules])
+
+  return context
 } 
