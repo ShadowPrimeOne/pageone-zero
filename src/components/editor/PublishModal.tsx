@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
+import { useRouter } from 'next/navigation'
 import type { Module } from '@/lib/editor/types'
 
 interface PublishModalProps {
@@ -12,6 +13,7 @@ interface PublishModalProps {
 }
 
 export default function PublishModal({ isOpen, onClose, onPublish, modules }: PublishModalProps) {
+  const router = useRouter()
   const [slug, setSlug] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -67,7 +69,12 @@ export default function PublishModal({ isOpen, onClose, onPublish, modules }: Pu
     try {
       // Validate modules before submission
       if (!modules || modules.length === 0) {
-        throw new Error('No modules to publish')
+        throw new Error('At least one module is required')
+      }
+
+      // Validate slug
+      if (!slug) {
+        throw new Error('Page URL is required')
       }
 
       console.log('📦 Validating modules before publish:', modules)
@@ -104,14 +111,26 @@ export default function PublishModal({ isOpen, onClose, onPublish, modules }: Pu
         })
       })
 
+      // Log the request body for debugging
+      console.log('📤 Publishing request:', {
+        slug,
+        key,
+        modules,
+        phone_number: phoneNumber || null
+      })
+
       if (!response.ok) {
         const errorData = await response.json()
+        console.error('❌ Publish error response:', errorData)
         throw new Error(errorData.error || 'Failed to publish page')
       }
 
       const pageUrl = `${window.location.origin}/page/${slug}#key=${key}`
       setQrValue(pageUrl)
       onPublish(slug, key)
+      
+      // Navigate to the new page
+      router.push(`/page/${slug}?key=${key}`)
     } catch (err) {
       console.error('Publish error:', err)
       setError(err instanceof Error ? err.message : 'Failed to publish page')

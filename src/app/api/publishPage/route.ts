@@ -3,10 +3,14 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   try {
-    const { slug, key, modules } = await req.json()
+    const body = await req.json()
+    console.log('📥 Received publish request:', body)
+
+    const { slug, key, content: modules } = body
 
     // Input validation
     if (!slug || typeof slug !== 'string') {
+      console.error('❌ Invalid slug:', slug)
       return NextResponse.json(
         { error: 'Valid slug is required' },
         { status: 400 }
@@ -14,6 +18,7 @@ export async function POST(req: Request) {
     }
 
     if (!key || typeof key !== 'string') {
+      console.error('❌ Invalid key:', key)
       return NextResponse.json(
         { error: 'Valid key is required' },
         { status: 400 }
@@ -21,6 +26,7 @@ export async function POST(req: Request) {
     }
 
     if (!Array.isArray(modules) || modules.length === 0) {
+      console.error('❌ Invalid modules:', modules)
       return NextResponse.json(
         { error: 'At least one module is required' },
         { status: 400 }

@@ -135,8 +135,9 @@ function PageContent() {
         {isDirty && (
           <button
             onClick={() => setIsPublishModalOpen(true)}
-            className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#004225] text-white shadow-lg hover:bg-[#005c33] hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center ring-1 ring-white/10"
-            title="Publish Page"
+            disabled={modules.length === 0}
+            className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#004225] text-white shadow-lg hover:bg-[#005c33] hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center ring-1 ring-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            title={modules.length === 0 ? "Add at least one module to publish" : "Publish Page"}
           >
             <svg
               viewBox="0 0 24 24"
