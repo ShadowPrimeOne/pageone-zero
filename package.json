@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check-imports": "ts-node --project tools/tsconfig.json tools/audit/missingImportsCheck.ts",
+    "file-map": "ts-node --project tools/tsconfig.json tools/audit/fileMap.ts",
+    "audit:imports": "tsx scripts/dev/auditImports.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
@@ -26,6 +29,8 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.7.1",
     "typescript": "^5"
   }
 }

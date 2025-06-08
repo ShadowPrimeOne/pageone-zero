@@ -4,6 +4,7 @@ import type { Module, HeroProps, FormProps } from '@/lib/editor/types'
 import { ModuleWrapper } from './ModuleWrapper'
 import { HeroModule } from './HeroModule'
 import { FormModule } from './FormModule'
+import { useEffect } from 'react'
 
 interface Props {
   modules: Module[]
@@ -28,12 +29,17 @@ export function ModuleRenderer({
   onEdit,
   onAddRequest,
 }: Props) {
-  console.log("rendering ModuleRenderer", { modules, selectedModuleId })
+  useEffect(() => {
+    console.log('🔄 ModuleRenderer mounted')
+    return () => console.log('🔄 ModuleRenderer unmounted')
+  }, [])
+
+  console.log('🎨 ModuleRenderer rendering with modules:', modules)
 
   return (
     <div className="flex flex-col gap-4">
       {modules.map((module, index) => {
-        console.log("rendering module", { module, index })
+        console.log('🎨 rendering module:', module.type)
         return (
           <ModuleWrapper
             key={module.id}
