@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, ReactNode } from 'react'
+import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react'
 import type { Module, HeroProps, FormProps } from './types'
 
 interface EditorStateContextType {
@@ -146,11 +146,16 @@ export function useEditorState(initialModules: Module[] = []) {
   if (!context) {
     throw new Error('useEditorState must be used within an EditorStateProvider')
   }
-  
-  // Initialize modules if provided
-  if (initialModules.length > 0 && context.modules.length === 0) {
-    context.setModules(initialModules)
-  }
-  
+
+  const initialized = useRef(false)
+
+  useEffect(() => {
+    if (!initialized.current && initialModules.length > 0) {
+      console.log('📦 Initializing editor state with modules:', initialModules)
+      context.setModules(initialModules)
+      initialized.current = true
+    }
+  }, [initialModules, context.setModules])
+
   return context
 } 

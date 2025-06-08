@@ -1,24 +1,61 @@
 'use client'
 
+import { useSearchParams } from 'next/navigation'
+import { useState } from 'react'
+import { Module } from '@/lib/editor/types'
 import { ModuleRenderer } from './ModuleRenderer'
-import type { Module } from '@/lib/editor/types'
-import { useEffect } from 'react'
+import { EditorPanel } from '@/components/editor/EditorPanel'
+import { EditorStateProvider, useEditorState } from '@/lib/editor/useEditorState'
 
-interface Props {
+type Props = {
   modules: Module[]
-  isEditMode?: boolean
+}
+
+function EditorView({ modules }: Props) {
+  const editorState = useEditorState(modules)
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null)
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto py-8 px-4">
+        <ModuleRenderer 
+          modules={editorState.modules}
+          selectedModuleId={selectedModuleId}
+          onSelect={setSelectedModuleId}
+          onDelete={() => {}}
+          onMoveUp={() => {}}
+          onMoveDown={() => {}}
+          onDuplicate={() => {}}
+          onEdit={() => setIsEditorOpen(true)}
+          onAddRequest={() => {}}
+        />
+        <EditorPanel 
+          modules={editorState.modules}
+          selectedModuleId={selectedModuleId}
+          isEditorOpen={isEditorOpen}
+          setIsEditorOpen={setIsEditorOpen}
+          updateModule={() => {}}
+        />
+      </div>
+    </div>
+  )
 }
 
 export default function PublicModuleRenderer({ modules }: Props) {
-  useEffect(() => {
-    console.log('🔄 PublicModuleRenderer mounted')
-    return () => console.log('🔄 PublicModuleRenderer unmounted')
-  }, [])
+  const searchParams = useSearchParams()
+  const isEditing = searchParams.get('edit') === 'true'
 
-  console.log('🎨 PublicModuleRenderer rendering with modules:', modules)
+  if (isEditing) {
+    return (
+      <EditorStateProvider>
+        <EditorView modules={modules} />
+      </EditorStateProvider>
+    )
+  }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto py-8 px-4">
         <ModuleRenderer
           modules={modules}
@@ -32,6 +69,6 @@ export default function PublicModuleRenderer({ modules }: Props) {
           onAddRequest={() => {}}
         />
       </div>
-    </main>
+    </div>
   )
 } 
