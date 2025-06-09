@@ -42,14 +42,28 @@ function PageContent() {
         const templates = await getModuleTemplates()
         setModuleTemplates(templates)
         
-        // Use all templates as initial modules
-        if (templates.length > 0) {
-          const initialModules = templates.map(template => ({
+        // Filter for Hero2, OurProcess, and ContactForm modules
+        const initialModules = templates
+          .filter(template => 
+            template.type === 'hero2' || 
+            template.type === 'OurProcess' || 
+            template.type === 'contact_form'
+          )
+          .map(template => ({
             ...template,
             id: `mod-${Date.now()}-${Math.random().toString(36).slice(2)}`
           }))
-          setModules(initialModules)
-        }
+        
+        // Ensure Hero2 is first, then OurProcess, then ContactForm
+        const sortedModules = initialModules.sort((a, b) => {
+          if (a.type === 'hero2') return -1
+          if (b.type === 'hero2') return 1
+          if (a.type === 'OurProcess') return -1
+          if (b.type === 'OurProcess') return 1
+          return 0
+        })
+
+        setModules(sortedModules)
       } catch (error) {
         console.error('Failed to load module templates:', error)
       } finally {
@@ -95,27 +109,17 @@ function PageContent() {
 
   return (
     <>
-      <main className="min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto py-8 px-4">
-          <ModuleRenderer
-            modules={modules}
-            selectedModuleId={selectedModuleId}
-            onSelect={selectModule}
-            onDelete={deleteModule}
-            onMoveUp={moveModuleUp}
-            onMoveDown={moveModuleDown}
-            onDuplicate={duplicateModule}
-            onEdit={editModule}
-            onAddRequest={openAddModuleModal}
-          />
-        </div>
-
-        <EditorPanel
+      <main className="min-h-screen">
+        <ModuleRenderer
           modules={modules}
           selectedModuleId={selectedModuleId}
-          isEditorOpen={isEditorOpen}
-          setIsEditorOpen={setIsEditorOpen}
-          updateModule={updateModule}
+          onSelect={selectModule}
+          onDelete={deleteModule}
+          onMoveUp={moveModuleUp}
+          onMoveDown={moveModuleDown}
+          onDuplicate={duplicateModule}
+          onEdit={editModule}
+          onAddRequest={openAddModuleModal}
         />
 
         <AddModuleModal

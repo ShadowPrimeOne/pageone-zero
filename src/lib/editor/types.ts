@@ -4,6 +4,16 @@ export interface HeroProps {
   background?: ModuleBackground
 }
 
+export interface Hero2Props extends HeroProps {
+  background?: ModuleBackground
+}
+
+export interface OurProcessProps {
+  heading: string
+  subheading: string
+  background?: ModuleBackground
+}
+
 export interface FormField {
   id: string
   label: string
@@ -19,19 +29,27 @@ export interface FormProps {
 }
 
 export interface ModuleBackground {
-  type: 'image' | 'color'
-  value: string  // URL for image, hex code for color
-  overlay?: {
-    color: string  // hex code
-    opacity: number  // 0-1
+  type: 'color' | 'gradient'
+  color: string
+  opacity: number
+  value?: string
+  gradient?: {
+    from: string
+    to: string
+    angle: number
   }
-  parallax?: boolean
+}
+
+export interface ContactFormProps {
+  heading: string
+  subheading: string
+  background?: ModuleBackground
 }
 
 export interface Module {
   id: string
-  type: 'hero' | 'form'
-  props: HeroProps | FormProps
+  type: 'hero' | 'hero2' | 'form' | 'OurProcess' | 'contact_form'
+  props: HeroProps | Hero2Props | FormProps | OurProcessProps | ContactFormProps
   background?: ModuleBackground
 }
 
@@ -71,7 +89,9 @@ export interface FormData {
 }
 
 export interface ModuleTemplate {
-  type: 'hero' | 'form'
-  props: HeroProps | FormProps
+  type: 'hero' | 'hero2' | 'form' | 'OurProcess' | 'contact_form'
+  props: HeroProps | Hero2Props | FormProps | OurProcessProps | ContactFormProps
   background?: ModuleBackground
-} 
+}
+
+export type ModuleType = 'hero' | 'hero2' | 'form' | 'OurProcess' | 'contact_form' 

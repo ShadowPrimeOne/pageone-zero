@@ -37,4 +37,22 @@ export const defaultModules: Module[] = [
       submitText: 'Send Message',
     },
   },
+  {
+    id: 'contact-form-1',
+    type: 'contact_form',
+    props: {
+      heading: "Get in Touch",
+      subheading: "Let's create something amazing together",
+      background: {
+        type: 'gradient',
+        color: '#000000',
+        opacity: 1,
+        gradient: {
+          from: '#1a1a1a',
+          to: '#000000',
+          angle: 135
+        }
+      }
+    }
+  }
 ] 

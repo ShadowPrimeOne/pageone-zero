@@ -11,6 +11,32 @@ interface PublishPageParams extends SavePageParams {
   phoneNumber?: string
 }
 
+// Add OurProcess module template to database
+export async function addOurProcessTemplate() {
+  const template = {
+    type: 'OurProcess',
+    props: {
+      heading: 'Our Process',
+      subheading: 'Simple steps to create your perfect page',
+      background: {
+        type: 'color',
+        color: '#ffffff',
+        opacity: 1
+      }
+    }
+  }
+
+  const { error } = await supabase
+    .from('module_templates')
+    .insert([template])
+    .select()
+
+  if (error) {
+    console.error('[AddOurProcessTemplate] Supabase error:', error)
+    throw new Error('Failed to add OurProcess template')
+  }
+}
+
 // Load module templates from database
 export async function getModuleTemplates() {
   const { data, error } = await supabase
@@ -101,4 +127,19 @@ export async function publishPage({ slug, modules, key, phoneNumber }: PublishPa
     slug,
     url: `https://page.one/page/${slug}#key=${key}`
   }
-} 
+}
+
+export const moduleTemplates: Module[] = [
+  // ... existing templates ...
+  {
+    id: 'our-process',
+    type: 'OurProcess',
+    heading: 'Our Process',
+    subheading: 'Simple steps to create your perfect page',
+    background: {
+      type: 'color',
+      color: '#ffffff',
+      opacity: 1
+    }
+  }
+] 

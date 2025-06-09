@@ -76,11 +76,18 @@ export function Hero2Module({ heading, subheading, background }: Props) {
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center sm:px-6 lg:px-8">
         {/* Animated SVG */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 sm:w-[32rem] sm:h-[32rem] opacity-50">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[1200px] max-h-[1200px] opacity-30">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
             <defs>
               <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
-                <feGaussianBlur stdDeviation="0.6" result="blur" />
+                <feGaussianBlur stdDeviation="0.6" result="blur">
+                  <animate
+                    attributeName="stdDeviation"
+                    values="0.6;1.2;0;1.2;0.6"
+                    dur="6s"
+                    repeatCount="indefinite"
+                  />
+                </feGaussianBlur>
                 <feMerge>
                   <feMergeNode in="blur"/>
                   <feMergeNode in="SourceGraphic"/>
@@ -90,7 +97,7 @@ export function Hero2Module({ heading, subheading, background }: Props) {
               <style>
                 {`
                   .rotate {
-                    animation: rotate 90s linear infinite;
+                    animation: rotate 120s linear infinite;
                     transform-origin: 50% 50%;
                   }
 
@@ -122,10 +129,10 @@ export function Hero2Module({ heading, subheading, background }: Props) {
         </div>
 
         <div className="relative z-20">
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl mb-16">
             {heading}
           </h1>
-          <p className="text-xl sm:text-2xl text-white/80">
+          <p className="text-xl sm:text-2xl text-white/80 mt-16">
             {subheading}
           </p>
         </div>

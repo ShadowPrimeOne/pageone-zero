@@ -20,6 +20,22 @@ INSERT INTO module_templates (type, props) VALUES
   "subheading": "Genesis Ready."
 }'::jsonb),
 
+-- Hero 2 template (full screen)
+('hero2', '{
+  "heading": "Welcome to Page.one",
+  "subheading": "Create something amazing",
+  "background": {
+    "type": "gradient",
+    "color": "#000000",
+    "opacity": 0.8,
+    "gradient": {
+      "from": "#1a1a1a",
+      "to": "#000000",
+      "angle": 135
+    }
+  }
+}'::jsonb),
+
 -- Form template
 ('form', '{
   "title": "Let''s talk",

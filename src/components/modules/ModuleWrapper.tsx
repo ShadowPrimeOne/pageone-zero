@@ -4,6 +4,8 @@ import type { ReactNode } from 'react'
 import clsx from 'clsx'
 import type { Module } from '@/lib/editor/types'
 import { useEffect, useRef } from 'react'
+import { EditorPanel } from '../editor/EditorPanel'
+import { useEditorState } from '@/lib/editor/useEditorState'
 
 interface Props {
   module: Module
@@ -35,16 +37,7 @@ export function ModuleWrapper({
   children,
 }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null)
-
-  // Debug logging
-  useEffect(() => {
-    console.log('ModuleWrapper rendered:', {
-      moduleId: module.id,
-      selected,
-      isFirst,
-      isLast
-    })
-  }, [module.id, selected, isFirst, isLast])
+  const { isEditorOpen, setIsEditorOpen, updateModule } = useEditorState()
 
   // Handle parallax effect
   useEffect(() => {
@@ -53,7 +46,7 @@ export function ModuleWrapper({
     const handleScroll = () => {
       if (!wrapperRef.current) return
       const scrollY = window.scrollY
-      const offset = scrollY * 0.5 // Adjust parallax speed here
+      const offset = scrollY * 0.5
       wrapperRef.current.style.backgroundPositionY = `${offset}px`
     }
 
@@ -75,105 +68,91 @@ export function ModuleWrapper({
   } : {}
 
   return (
-    <div className={clsx(
-      'relative transition-all',
-      selected ? 'pt-20' : 'py-8' // Add space at top when selected
-    )}>
-      {/* Module controls - now in a grid at the top */}
+    <div className="w-full">
+      {/* Editor panel and controls appear above the module */}
       {selected && (
-        <div className="absolute top-0 left-0 right-0 flex justify-center gap-2 z-50">
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              console.log('Add module above:', module.id)
-              onAddRequest(module.id, 'above')
-            }}
-            className="rounded-full bg-white shadow p-2 text-lg hover:bg-gray-100"
-            title="Add Above"
-          >➕</button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              console.log('Edit module:', module.id)
-              onEdit(module.id)
-            }}
-            className="rounded-full bg-white shadow p-2 text-lg hover:bg-gray-100"
-            title="Edit"
-          >
-            ✏️
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              console.log('Duplicate module:', module.id)
-              onDuplicate(module.id)
-            }}
-            className="rounded-full bg-white shadow p-2 text-lg hover:bg-gray-100"
-            title="Duplicate"
-          >
-            ✂️
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              console.log('Delete module:', module.id)
-              onDelete(module.id)
-            }}
-            className="rounded-full bg-white shadow p-2 text-lg hover:bg-red-100 text-red-600"
-            title="Delete"
-          >
-            🗑️
-          </button>
-          {!isFirst && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                console.log('Move module up:', module.id)
-                onMoveUp(module.id)
-              }}
-              className="rounded-full bg-white shadow p-2 text-lg hover:bg-gray-100"
-              title="Move Up"
-            >
-              ⬆️
-            </button>
-          )}
-          {!isLast && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                console.log('Move module down:', module.id)
-                onMoveDown(module.id)
-              }}
-              className="rounded-full bg-white shadow p-2 text-lg hover:bg-gray-100"
-              title="Move Down"
-            >
-              ⬇️
-            </button>
-          )}
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              console.log('Add module below:', module.id)
-              onAddRequest(module.id, 'below')
-            }}
-            className="rounded-full bg-white shadow p-2 text-lg hover:bg-gray-100"
-            title="Add Below"
-          >➕</button>
+        <div className="w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 mb-2">
+          <div className="max-w-7xl mx-auto px-4 py-2">
+            <div className="grid grid-cols-6 gap-2 items-center justify-items-center">
+              <div className="col-span-1">
+                {!isFirst && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onMoveUp(module.id)
+                    }}
+                    className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 text-lg hover:bg-gray-100"
+                    title="Move Up"
+                  >⬆️</button>
+                )}
+              </div>
+              <div className="col-span-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsEditorOpen(true)
+                    onEdit(module.id)
+                  }}
+                  className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 text-lg hover:bg-gray-100"
+                  title="Edit"
+                >✏️</button>
+              </div>
+              <div className="col-span-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDuplicate(module.id)
+                  }}
+                  className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 text-lg hover:bg-gray-100"
+                  title="Duplicate"
+                >✂️</button>
+              </div>
+              <div className="col-span-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDelete(module.id)
+                  }}
+                  className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 text-lg hover:bg-red-100 text-red-600"
+                  title="Delete"
+                >🗑️</button>
+              </div>
+              <div className="col-span-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onAddRequest(module.id, 'below')
+                  }}
+                  className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 text-lg hover:bg-gray-100"
+                  title="Add Module"
+                >➕</button>
+              </div>
+              <div className="col-span-1">
+                {!isLast && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onMoveDown(module.id)
+                    }}
+                    className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 text-lg hover:bg-gray-100"
+                    title="Move Down"
+                  >⬇️</button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Module content */}
+      {/* Module content - edge to edge */}
       <div
         id={module.id}
         ref={wrapperRef}
         className={clsx(
-          'relative w-full group transition-all',
-          selected ? 'ring-2 ring-blue-500 ring-inset scale-[1.01]' : ''
+          'relative w-full transition-all overflow-hidden',
+          selected ? 'ring-2 ring-blue-500' : ''
         )}
-        onClick={() => {
-          console.log('Module clicked:', module.id)
-          onSelect(module.id)
-        }}
+        onClick={() => onSelect(selected ? '' : module.id)}
         style={backgroundStyle}
       >
         {/* Background overlay */}
@@ -187,6 +166,21 @@ export function ModuleWrapper({
         {/* Content */}
         <div className="relative flex flex-col w-full">{children}</div>
       </div>
+
+      {/* Editor panel */}
+      {selected && isEditorOpen && (
+        <div className="w-full bg-white/95 backdrop-blur-sm border-t border-gray-200 mt-2">
+          <div className="max-w-7xl mx-auto px-4 py-2">
+            <EditorPanel
+              modules={[]}
+              selectedModuleId={module.id}
+              isEditorOpen={isEditorOpen}
+              setIsEditorOpen={setIsEditorOpen}
+              updateModule={updateModule}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 } 
