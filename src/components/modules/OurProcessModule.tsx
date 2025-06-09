@@ -15,7 +15,9 @@ export function OurProcessModule({ background }: Props) {
     const handleScroll = () => {
       if (svgRef.current) {
         const scrollY = window.scrollY
-        svgRef.current.style.transform = `translateY(${scrollY * 0.5}px)`
+        // Reduce the multiplier from 0.5 to 0.2 and ensure it doesn't go above 0
+        const translateY = Math.min(0, scrollY * 0.2)
+        svgRef.current.style.transform = `translateY(${translateY}px)`
       }
     }
 
@@ -35,50 +37,25 @@ export function OurProcessModule({ background }: Props) {
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            {/* Ambient light field */}
-            <radialGradient id="spotlight" cx="50%" cy="35%" r="60%">
-              <stop offset="0%" stopColor="rgba(255,255,255,0.04)" />
-              <stop offset="100%" stopColor="transparent" />
-            </radialGradient>
+            {/* Neon gradients for coloring */}
+            <linearGradient id="neon-line" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#BFFFFC" stopOpacity="0.18"/>
+              <stop offset="100%" stopColor="#FF00FE" stopOpacity="0.18"/>
+            </linearGradient>
 
-            {/* Neon color glows */}
-            <radialGradient id="glow-celeste" cx="90%" cy="90%" r="20%">
-              <stop offset="0%" stopColor="#BFFFFC" stopOpacity="0.06" />
-              <stop offset="100%" stopColor="transparent" />
-            </radialGradient>
-            <radialGradient id="glow-fuchsia" cx="10%" cy="85%" r="20%">
-              <stop offset="0%" stopColor="#FF00FE" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="transparent" />
-            </radialGradient>
-            <radialGradient id="glow-aqua" cx="15%" cy="10%" r="15%">
-              <stop offset="0%" stopColor="#41FEFF" stopOpacity="0.05" />
-              <stop offset="100%" stopColor="transparent" />
-            </radialGradient>
+            {/* Pattern: Moroccan tile (8-point star with diamonds) */}
+            <pattern id="mosaic" width="10" height="10" patternUnits="userSpaceOnUse">
+              {/* 8-point star */}
+              <path d="M5 0 L6.5 3.5 L10 5 L6.5 6.5 L5 10 L3.5 6.5 L0 5 L3.5 3.5 Z"
+                    fill="none" stroke="url(#neon-line)" strokeWidth="0.4"/>
+              {/* Center diamond overlay */}
+              <path d="M5 2 L6.5 5 L5 8 L3.5 5 Z"
+                    fill="none" stroke="url(#neon-line)" strokeWidth="0.3"/>
+            </pattern>
           </defs>
 
-          {/* Base white glow */}
-          <rect width="100" height="100" fill="url(#spotlight)" />
-          <rect width="100" height="100" fill="url(#glow-celeste)" />
-          <rect width="100" height="100" fill="url(#glow-fuchsia)" />
-          <rect width="100" height="100" fill="url(#glow-aqua)" />
-
-          {/* Top-left sacred cluster */}
-          <circle cx="10" cy="10" r="8" stroke="#FF00FE" strokeOpacity="0.05" strokeWidth="0.4" fill="none" />
-          <circle cx="17" cy="14" r="6" stroke="#41FEFF" strokeOpacity="0.04" strokeWidth="0.4" fill="none" />
-          <path d="M5,20 L15,8 L25,20 Z" stroke="#EE018F" strokeOpacity="0.04" strokeWidth="0.3" fill="none" />
-
-          {/* Bottom-left corner */}
-          <circle cx="15" cy="85" r="7" stroke="#3E1340" strokeOpacity="0.03" strokeWidth="0.5" fill="none" />
-          <path d="M10,90 L20,80 L25,90 Z" stroke="#BFFFFC" strokeOpacity="0.04" strokeWidth="0.3" fill="none" />
-
-          {/* Top-right triangle and hex */}
-          <path d="M80,5 L90,15 L70,15 Z" stroke="#FF00FE" strokeOpacity="0.05" strokeWidth="0.3" fill="none" />
-          <path d="M85,20 L90,25 L90,35 L85,40 L80,35 L80,25 Z"
-                stroke="#41FEFF" strokeOpacity="0.04" strokeWidth="0.4" fill="none" />
-
-          {/* Bottom-right pattern */}
-          <circle cx="88" cy="88" r="6" stroke="#FF00FE" strokeOpacity="0.03" strokeWidth="0.4" fill="none" />
-          <path d="M75,90 L90,78 L95,90 Z" stroke="#BFFFFC" strokeOpacity="0.04" strokeWidth="0.3" fill="none" />
+          {/* Background fill using pattern */}
+          <rect width="100" height="100" fill="url(#mosaic)" />
         </svg>
       </div>
 
