@@ -8,45 +8,7 @@ import { AddModuleModal } from '@/components/editor/AddModuleModal'
 import PublishModal from '@/components/editor/PublishModal'
 import { EditorStateProvider } from '@/lib/editor/useEditorState'
 import type { Module } from '@/lib/editor/types'
-
-const initialModules: Module[] = [
-  {
-    id: 'hero-1',
-    type: 'hero',
-    props: {
-      heading: 'Page.one',
-      subheading: 'Genesis Ready.',
-    },
-  },
-  {
-    id: 'form-1',
-    type: 'form',
-    props: {
-      title: "Let's talk",
-      fields: [
-        {
-          id: 'name',
-          label: 'Name',
-          type: 'text',
-          required: true,
-        },
-        {
-          id: 'email',
-          label: 'Email',
-          type: 'email',
-          required: true,
-        },
-        {
-          id: 'message',
-          label: 'Message',
-          type: 'textarea',
-          required: true,
-        },
-      ],
-      submitText: 'Send Message',
-    },
-  },
-]
+import { getModuleTemplates } from '@/lib/editor/db'
 
 function PageContent() {
   const {
@@ -64,11 +26,38 @@ function PageContent() {
     addModule,
     isDirty,
     markClean,
-  } = useEditorState(initialModules)
+    setModules
+  } = useEditorState()
 
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [pendingAdd, setPendingAdd] = useState<{ relativeTo: string, position: 'above' | 'below' } | null>(null)
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
+  const [moduleTemplates, setModuleTemplates] = useState<Module[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Load module templates and set initial modules
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        const templates = await getModuleTemplates()
+        setModuleTemplates(templates)
+        
+        // Use all templates as initial modules
+        if (templates.length > 0) {
+          const initialModules = templates.map(template => ({
+            ...template,
+            id: `mod-${Date.now()}-${Math.random().toString(36).slice(2)}`
+          }))
+          setModules(initialModules)
+        }
+      } catch (error) {
+        console.error('Failed to load module templates:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadTemplates()
+  }, [setModules])
 
   // Debug logging on mount and module changes
   useEffect(() => {
@@ -96,9 +85,16 @@ function PageContent() {
     markClean()
   }
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-500">Loading editor...</div>
+      </div>
+    )
+  }
+
   return (
     <>
-      <div>Debug active</div>
       <main className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto py-8 px-4">
           <ModuleRenderer
@@ -130,6 +126,7 @@ function PageContent() {
               addModule(type, pendingAdd.relativeTo, pendingAdd.position)
             }
           }}
+          templates={moduleTemplates}
         />
 
         {isDirty && (
@@ -163,7 +160,7 @@ function PageContent() {
   )
 }
 
-export default function Page() {
+export default function Home() {
   return (
     <EditorStateProvider>
       <PageContent />

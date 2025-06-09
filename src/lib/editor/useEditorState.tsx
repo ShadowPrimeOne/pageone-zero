@@ -25,12 +25,27 @@ interface EditorStateContextType {
 
 const EditorStateContext = createContext<EditorStateContextType | null>(null)
 
-export const EditorStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [modules, setModules] = useState<Module[]>([])
+interface EditorStateProviderProps {
+  children: ReactNode
+  initialModules?: Module[]
+}
+
+export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({ 
+  children, 
+  initialModules = []
+}) => {
+  const [modules, setModules] = useState<Module[]>(initialModules)
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null)
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
+
+  // Update modules when initialModules changes
+  useEffect(() => {
+    if (initialModules.length > 0) {
+      setModules(initialModules)
+    }
+  }, [initialModules])
 
   const selectModule = (id: string) => {
     setSelectedModuleId(id)
@@ -57,6 +72,7 @@ export const EditorStateProvider: React.FC<{ children: ReactNode }> = ({ childre
       const [moved] = newModules.splice(index, 1)
       newModules.splice(index - 1, 0, moved)
       setModules(newModules)
+      setIsDirty(true)
     }
   }
 
@@ -67,6 +83,7 @@ export const EditorStateProvider: React.FC<{ children: ReactNode }> = ({ childre
       const [moved] = newModules.splice(index, 1)
       newModules.splice(index + 1, 0, moved)
       setModules(newModules)
+      setIsDirty(true)
     }
   }
 
@@ -81,6 +98,7 @@ export const EditorStateProvider: React.FC<{ children: ReactNode }> = ({ childre
       const newModules = [...modules]
       newModules.splice(index + 1, 0, duplicated)
       setModules(newModules)
+      setIsDirty(true)
     }
   }
 
@@ -90,6 +108,7 @@ export const EditorStateProvider: React.FC<{ children: ReactNode }> = ({ childre
       setSelectedModuleId(null)
       setIsEditorOpen(false)
     }
+    setIsDirty(true)
   }
 
   const addModule = (type: 'hero' | 'form', relativeTo: string, position: 'above' | 'below') => {
@@ -107,6 +126,7 @@ export const EditorStateProvider: React.FC<{ children: ReactNode }> = ({ childre
     newModules.splice(position === 'above' ? index : index + 1, 0, newModule)
     setModules(newModules)
     setSelectedModuleId(id)
+    setIsDirty(true)
 
     // Wait a moment before scrolling into view
     setTimeout(() => {
@@ -141,18 +161,10 @@ export const EditorStateProvider: React.FC<{ children: ReactNode }> = ({ childre
   )
 }
 
-export function useEditorState(initialModules: Module[] = []) {
+export const useEditorState = () => {
   const context = useContext(EditorStateContext)
   if (!context) {
     throw new Error('useEditorState must be used within an EditorStateProvider')
   }
-
-  // ✅ Fix: Safe initialization of modules
-  useEffect(() => {
-    if (initialModules.length > 0 && context.modules.length === 0) {
-      context.setModules(initialModules)
-    }
-  }, [initialModules, context.modules.length, context.setModules])
-
   return context
 } 

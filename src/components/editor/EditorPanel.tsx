@@ -1,6 +1,7 @@
 'use client'
 
 import type { HeroProps, FormProps, Module } from '@/lib/editor/types'
+import { BackgroundSettings } from './BackgroundSettings'
 
 interface Props {
   modules: Module[]
@@ -20,10 +21,26 @@ export function EditorPanel({
   const selected = modules.find(m => m.id === selectedModuleId)
   if (!selected || !isEditorOpen) return null
 
+  const handleBackgroundChange = (background: Module['background']) => {
+    updateModule(selected.id, {
+      ...selected.props,
+      background
+    })
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-white/70 backdrop-blur-sm flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-lg font-semibold mb-4 text-gray-900">Edit {selected.type}</h2>
+
+        {/* Background Settings */}
+        <div className="mb-6">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Background</h3>
+          <BackgroundSettings
+            background={selected.background}
+            onChange={handleBackgroundChange}
+          />
+        </div>
 
         {selected.type === 'hero' && (
           <>
