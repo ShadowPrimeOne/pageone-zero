@@ -1,94 +1,37 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
 
-// Debug client with service role key (only for development)
-const supabaseAdmin = process.env.NODE_ENV === 'development' && 
-  process.env.SUPABASE_SERVICE_ROLE_KEY && 
-  process.env.NEXT_PUBLIC_SUPABASE_URL
-  ? createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    )
-  : null
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
-// Debug test for Supabase connection
-async function testSupabaseConnection() {
-  console.log('[checkSlug] Testing Supabase connection...')
-  const { data, error } = await supabase
-    .from('pages')
-    .select('slug')
-    .eq('slug', 'qwerty')
-    .limit(1)
-
-  console.log('[checkSlug] Manual test - Found:', data, 'Error:', error)
-  return { data, error }
-}
-
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const slug = searchParams.get('slug')
-
-  if (!slug) {
-    return NextResponse.json({ error: 'Missing slug' }, { status: 400 })
-  }
-
+export async function GET(request: Request) {
   try {
-    // Run connection test first
-    await testSupabaseConnection()
+    const { searchParams } = new URL(request.url)
+    const slug = searchParams.get('slug')
 
-    console.log('[checkSlug] Checking slug:', slug)
-
-    // Test with anon key
-    console.log('[checkSlug] Testing with anon key...')
-    const { data: anonData, error: anonError } = await supabase
-      .from('pages')
-      .select('*')
-      .eq('slug', slug)
-
-    const anonResult = anonData || []
-    console.log('[checkSlug] Anon key result:', {
-      data: JSON.stringify(anonResult, null, 2),
-      error: anonError
-    })
-
-    // Only use admin client in development
-    if (supabaseAdmin) {
-      console.log('[checkSlug] Testing with service role key...')
-      const { data: adminData, error: adminError } = await supabaseAdmin
-        .from('pages')
-        .select('*')
-        .eq('slug', slug)
-
-      const adminResult = adminData || []
-      console.log('[checkSlug] Service role result:', {
-        data: JSON.stringify(adminResult, null, 2),
-        error: adminError
-      })
-
-      // Use admin data for availability check in development
-      const isAvailable = adminResult.length === 0
-      console.log('[checkSlug] Availability determination:', {
-        anonDataLength: anonResult.length,
-        adminDataLength: adminResult.length,
-        isAvailable
-      })
-
-      return NextResponse.json({ available: isAvailable })
+    if (!slug) {
+      return NextResponse.json(
+        { error: 'Slug is required' },
+        { status: 400 }
+      )
     }
 
-    // In production, use anon key result
-    const isAvailable = anonResult.length === 0
-    console.log('[checkSlug] Availability determination:', {
-      anonDataLength: anonResult.length,
-      isAvailable
-    })
+    // Check if slug exists
+    const { data: existingPage } = await supabase
+      .from('pages')
+      .select('id')
+      .eq('slug', slug)
+      .single()
 
-    return NextResponse.json({ available: isAvailable })
-  } catch (err) {
-    console.error('[checkSlug] Unexpected error:', err)
+    return NextResponse.json({ 
+      available: !existingPage
+    })
+  } catch (error) {
+    console.error('[CheckSlug] Error:', error)
     return NextResponse.json(
-      { error: 'Failed to check slug availability' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

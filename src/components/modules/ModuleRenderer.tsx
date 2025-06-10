@@ -1,11 +1,13 @@
 'use client'
 
-import type { Module, HeroProps, Hero2Props, FormProps, OurProcessProps, ContactFormProps } from '@/lib/editor/types'
+import type { Module, HeroProps, Hero2Props, ClassicOverlayHeroProps, TopImageCenterTextHeroProps, SplitLayoutHeroProps, FormProps, OurProcessProps, ContactFormProps } from '@/lib/editor/types'
 import { ModuleWrapper } from './ModuleWrapper'
 import { HeroModule } from './HeroModule'
 import { Hero2Module } from './Hero2Module'
+import { ClassicOverlayHero } from './ClassicOverlayHero'
+import { TopImageCenterTextHero } from './TopImageCenterTextHero'
+import { SplitLayoutHero } from './SplitLayoutHero'
 import { FormModule } from './FormModule'
-import { useEffect } from 'react'
 import OurProcessModule from './OurProcessModule'
 import { ContactFormModule } from './ContactFormModule'
 
@@ -19,6 +21,7 @@ interface Props {
   onDuplicate: (id: string) => void
   onEdit: (id: string) => void
   onAddRequest: (relativeId: string, position: 'above' | 'below') => void
+  onUpdate?: (moduleId: string, updates: Partial<HeroProps | Hero2Props | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps | FormProps | OurProcessProps | ContactFormProps>) => void
 }
 
 export function ModuleRenderer({
@@ -31,21 +34,13 @@ export function ModuleRenderer({
   onDuplicate,
   onEdit,
   onAddRequest,
+  onUpdate,
 }: Props) {
-  useEffect(() => {
-    console.log('🔄 ModuleRenderer mounted')
-    return () => console.log('🔄 ModuleRenderer unmounted')
-  }, [])
-
-  console.log('🎨 ModuleRenderer rendering with modules:', modules)
-
   return (
-    <div className="flex flex-col">
+    <>
       {modules.map((module, index) => {
-        console.log('🎨 rendering module:', module.type)
         const isFirst = index === 0
         const isLast = index === modules.length - 1
-
         return (
           <ModuleWrapper
             key={module.id}
@@ -63,12 +58,15 @@ export function ModuleRenderer({
           >
             {module.type === 'hero' && <HeroModule {...(module.props as HeroProps)} />}
             {module.type === 'hero2' && <Hero2Module {...(module.props as Hero2Props)} />}
+            {module.type === 'classic_overlay_hero' && <ClassicOverlayHero {...(module.props as ClassicOverlayHeroProps)} onUpdate={(updates) => onUpdate?.(module.id, updates)} />}
+            {module.type === 'top_image_center_text_hero' && <TopImageCenterTextHero {...(module.props as TopImageCenterTextHeroProps)} onUpdate={(updates) => onUpdate?.(module.id, updates)} />}
+            {module.type === 'split_layout_hero' && <SplitLayoutHero {...(module.props as SplitLayoutHeroProps)} onUpdate={(updates) => onUpdate?.(module.id, updates)} />}
             {module.type === 'form' && <FormModule {...(module.props as FormProps)} />}
             {module.type === 'OurProcess' && <OurProcessModule props={module.props as OurProcessProps} />}
             {module.type === 'contact_form' && <ContactFormModule {...(module.props as ContactFormProps)} />}
           </ModuleWrapper>
         )
       })}
-    </div>
+    </>
   )
 } 

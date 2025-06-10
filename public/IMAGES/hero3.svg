@@ -1,0 +1,27 @@
+<!-- 
+  Title 3. Split Layout (Left Text, Right Image)
+  Layout: Flex row — left 60% text, right 40% image
+  Image: Static or avatar-based
+  Text: Compact heading, supporting line
+  CTA: Small button below
+  Use Case: Personal brands, consultants, lawyers
+-->
+<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Left Column (Text, 60%) -->
+  <rect x="0" y="0" width="60" height="180" fill="#f5f5f5" />
+
+  <!-- Heading -->
+  <text x="10" y="50" font-size="7" fill="#222" font-family="Arial">Expert Name</text>
+
+  <!-- Subheading -->
+  <text x="10" y="65" font-size="5" fill="#666" font-family="Arial">Your trusted advisor</text>
+
+  <!-- CTA Button -->
+  <rect x="10" y="85" rx="2" ry="2" width="40" height="12" fill="#000" />
+  <text x="30" y="93" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">Contact Me</text>
+
+  <!-- Right Column (Image, 40%) -->
+  <rect x="60" y="0" width="40" height="180" fill="#ddd" />
+  <circle cx="80" cy="70" r="20" fill="#bbb" />
+  <text x="80" y="75" font-size="5" fill="#666" text-anchor="middle" font-family="Arial">Image</text>
+</svg> 

@@ -2,57 +2,42 @@ import type { Module } from './types'
 
 export const defaultModules: Module[] = [
   {
-    id: 'hero-1',
-    type: 'hero',
-    props: {
-      heading: 'Page.one',
-      subheading: 'Genesis Ready.',
-    },
-  },
-  {
-    id: 'form-1',
-    type: 'form',
-    props: {
-      title: "Let's talk",
-      fields: [
-        {
-          id: 'name',
-          label: 'Name',
-          type: 'text',
-          required: true,
-        },
-        {
-          id: 'email',
-          label: 'Email',
-          type: 'email',
-          required: true,
-        },
-        {
-          id: 'message',
-          label: 'Message',
-          type: 'textarea',
-          required: true,
-        },
-      ],
-      submitText: 'Send Message',
-    },
-  },
-  {
-    id: 'contact-form-1',
-    type: 'contact_form',
-    props: {
-      heading: "Get in Touch",
-      subheading: "Let's create something amazing together",
-      background: {
-        type: 'gradient',
+    id: '1',
+    type: 'classic_overlay_hero',
+    heading: 'Welcome to Your New Page',
+    subheading: 'Start building your page by adding modules below',
+    ctaText: 'Get Started',
+    background: {
+      type: 'image',
+      image: '/images/hero-bg.jpg',
+      parallax: true,
+      overlay: {
         color: '#000000',
-        opacity: 1,
-        gradient: {
-          from: '#1a1a1a',
-          to: '#000000',
-          angle: 135
-        }
+        opacity: 0.5
       }
+    }
+  },
+  {
+    id: 'hero-1',
+    type: 'top_image_center_text_hero',
+    heading: 'Page.one',
+    subheading: 'Genesis Ready.',
+    ctaText: 'Learn More',
+    background: {
+      type: 'color',
+      color: '#ffffff'
+    }
+  },
+  {
+    id: 'hero-2',
+    type: 'split_layout_hero',
+    heading: "Let's talk",
+    subheading: 'Get in touch with us',
+    ctaText: 'Contact Us',
+    background: {
+      type: 'image',
+      image: '/images/split-hero.jpg',
+      parallax: false
     }
   }
 ] 

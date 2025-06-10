@@ -36,6 +36,22 @@ INSERT INTO module_templates (type, props) VALUES
   }
 }'::jsonb),
 
+-- Classic Overlay Hero template
+('classic_overlay_hero', '{
+  "heading": "Experience Excellence",
+  "subheading": "Your journey to success starts here",
+  "background": {
+    "type": "gradient",
+    "color": "#000000",
+    "opacity": 0.9,
+    "gradient": {
+      "from": "#1a1a1a",
+      "to": "#000000",
+      "angle": 135
+    }
+  }
+}'::jsonb),
+
 -- Form template
 ('form', '{
   "title": "Let''s talk",

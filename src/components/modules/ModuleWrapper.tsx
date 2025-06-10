@@ -106,20 +106,11 @@ export function ModuleWrapper({
   } : {}
 
   const handleModuleClick = (e: React.MouseEvent) => {
-    // Prevent any interaction with unselected modules
-    if (!selected) {
+    e.stopPropagation()
+    if (selected) {
+      onSelect('') // Deselect by passing empty string
+    } else {
       onSelect(module.id)
-      return
-    }
-
-    // Handle clicks within selected module
-    const target = e.target as HTMLElement
-    const isEditableElement = target.isContentEditable || 
-                             target.tagName === 'INPUT' || 
-                             target.tagName === 'TEXTAREA'
-
-    if (!isEditableElement) {
-      onSelect('')
     }
   }
 

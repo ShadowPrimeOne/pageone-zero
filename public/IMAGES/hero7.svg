@@ -1,0 +1,31 @@
+<!-- 
+  Big Button Hero
+  Text: Short, bold heading only
+  CTA: Dominant full-width button mid-screen
+  Image: Background or small floating asset
+  Use Case: Urgent actions, sales alerts, campaign launches
+-->
+<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Background with subtle gradient -->
+  <rect x="0" y="0" width="100" height="180" fill="#f5f5f5" />
+  <rect x="0" y="0" width="100" height="180" fill="url(#bgGradient)" />
+
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f8f8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Floating Asset -->
+  <circle cx="50" cy="40" r="15" fill="#ff4444" opacity="0.1" />
+  <text x="50" y="45" font-size="8" fill="#ff4444" text-anchor="middle" font-family="Arial">⚡</text>
+
+  <!-- Bold Heading -->
+  <text x="50" y="90" font-size="10" fill="#000" text-anchor="middle" font-family="Arial" font-weight="bold">Flash Sale!</text>
+
+  <!-- Dominant CTA Button -->
+  <rect x="10" y="110" rx="6" ry="6" width="80" height="20" fill="#ff4444" />
+  <text x="50" y="124" font-size="6" fill="#fff" text-anchor="middle" font-family="Arial" font-weight="bold">SHOP NOW - 50% OFF</text>
+</svg> 

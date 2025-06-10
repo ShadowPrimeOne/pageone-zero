@@ -5,8 +5,10 @@ import { ModuleRenderer } from '@/components/modules/ModuleRenderer'
 import { EditorPanel } from '@/components/editor/EditorPanel'
 import { AddModuleModal } from '@/components/editor/AddModuleModal'
 import PublishModal from '@/components/editor/PublishModal'
+import SuccessModal from '@/components/modals/SuccessModal'
 import { useState } from 'react'
 import { defaultModules } from '@/lib/editor/defaultModules'
+import type { Module } from '@/lib/editor/types'
 
 function TestPageContent() {
   const {
@@ -29,6 +31,9 @@ function TestPageContent() {
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [pendingAdd, setPendingAdd] = useState<{ relativeTo: string, position: 'above' | 'below' } | null>(null)
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+  const [publishedSlug, setPublishedSlug] = useState<string>('')
+  const [publishedKey, setPublishedKey] = useState<string>('')
 
   const openAddModuleModal = (relativeTo: string, position: 'above' | 'below') => {
     setPendingAdd({ relativeTo, position })
@@ -38,6 +43,9 @@ function TestPageContent() {
   const handlePublishSuccess = (slug: string, key?: string) => {
     console.log('✅ Publish successful:', { slug, key, moduleCount: modules.length })
     setIsPublishModalOpen(false)
+    setPublishedSlug(slug)
+    setPublishedKey(key || '')
+    setIsSuccessModalOpen(true)
     markClean()
   }
 
@@ -73,6 +81,7 @@ function TestPageContent() {
             addModule(type, pendingAdd.relativeTo, pendingAdd.position)
           }
         }}
+        templates={[]}
       />
 
       {isDirty && (
@@ -101,13 +110,20 @@ function TestPageContent() {
         onPublish={handlePublishSuccess}
         modules={modules}
       />
+
+      <SuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        slug={publishedSlug}
+        key={publishedKey}
+      />
     </main>
   )
 }
 
 export default function TestPage() {
   return (
-    <EditorStateProvider isTestRoute={true} initialModules={defaultModules}>
+    <EditorStateProvider initialModules={defaultModules}>
       <TestPageContent />
     </EditorStateProvider>
   )

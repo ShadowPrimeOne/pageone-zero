@@ -1,8 +1,71 @@
+export interface ModuleBackground {
+  type: 'image' | 'color'
+  color: string
+  opacity: number
+  overlay?: {
+    color: string
+    opacity: number
+  }
+}
+
 export interface HeroProps {
   heading: string
   subheading: string
   background?: ModuleBackground
 }
+
+export interface ClassicOverlayHeroProps extends HeroProps {
+  background?: ModuleBackground
+}
+
+export interface TopImageCenterTextHeroProps extends HeroProps {
+  background?: ModuleBackground
+}
+
+export interface SplitLayoutHeroProps extends HeroProps {
+  background?: ModuleBackground
+}
+
+export interface FormField {
+  id: string
+  label: string
+  type: 'text' | 'email' | 'textarea'
+  required: boolean
+  placeholder?: string
+}
+
+export interface FormProps {
+  title: string
+  submitText: string
+  fields: FormField[]
+  background?: ModuleBackground
+}
+
+export interface Module {
+  id: string
+  type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero'
+  heading: string
+  subheading: string
+  ctaText: string
+  background?: {
+    type: 'image' | 'color'
+    image?: string
+    color?: string
+    parallax?: boolean
+    overlay?: {
+      color: string
+      opacity: number
+    }
+  }
+}
+
+export interface ModuleTemplate {
+  type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero'
+  props: ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps
+  background?: ModuleBackground
+}
+
+export type ModuleType = 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero'
 
 export interface Hero2Props extends HeroProps {
   background?: ModuleBackground
@@ -14,42 +77,9 @@ export interface OurProcessProps {
   background?: ModuleBackground
 }
 
-export interface FormField {
-  id: string
-  label: string
-  type: 'text' | 'email' | 'textarea'
-  required: boolean
-}
-
-export interface FormProps {
-  title: string
-  fields: FormField[]
-  submitText: string
-  background?: ModuleBackground
-}
-
-export interface ModuleBackground {
-  type: 'color' | 'gradient'
-  color: string
-  opacity: number
-  value?: string
-  gradient?: {
-    from: string
-    to: string
-    angle: number
-  }
-}
-
 export interface ContactFormProps {
   heading: string
   subheading: string
-  background?: ModuleBackground
-}
-
-export interface Module {
-  id: string
-  type: 'hero' | 'hero2' | 'form' | 'OurProcess' | 'contact_form'
-  props: HeroProps | Hero2Props | FormProps | OurProcessProps | ContactFormProps
   background?: ModuleBackground
 }
 
@@ -86,12 +116,4 @@ export interface FormData {
     required: boolean
   }>
   submitText: string
-}
-
-export interface ModuleTemplate {
-  type: 'hero' | 'hero2' | 'form' | 'OurProcess' | 'contact_form'
-  props: HeroProps | Hero2Props | FormProps | OurProcessProps | ContactFormProps
-  background?: ModuleBackground
-}
-
-export type ModuleType = 'hero' | 'hero2' | 'form' | 'OurProcess' | 'contact_form' 
+} 

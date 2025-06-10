@@ -1,0 +1,22 @@
+<!-- 
+  2. Top Image + Center Text
+  Image: Top half (50%) image or graphic
+  Text: Heading + subheading stacked below
+  CTA: Button immediately under text
+  Use Case: Clear product intros, coaching, services
+-->
+<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Top Image Placeholder (Top 50%) -->
+  <rect x="0" y="0" width="100" height="90" fill="#ccc" />
+  <text x="50" y="50" font-size="6" fill="#666" text-anchor="middle" font-family="Arial">Image</text>
+
+  <!-- Heading -->
+  <text x="50" y="110" font-size="8" fill="#222" text-anchor="middle" font-family="Arial">Clear Headline</text>
+
+  <!-- Subheading -->
+  <text x="50" y="122" font-size="5" fill="#555" text-anchor="middle" font-family="Arial">Descriptive tagline</text>
+
+  <!-- CTA Button -->
+  <rect x="30" y="135" rx="3" ry="3" width="40" height="12" fill="#000" />
+  <text x="50" y="143" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">Learn More</text>
+</svg> 

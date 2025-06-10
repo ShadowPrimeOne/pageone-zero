@@ -1,0 +1,34 @@
+<!-- 
+  Profile Hero
+  Image: Center circular avatar or logo
+  Text: Name + tagline beneath
+  CTA: "Book now", "View services", etc.
+  Use Case: Personal landing pages, therapists, freelancers
+-->
+<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Background with subtle gradient -->
+  <rect x="0" y="0" width="100" height="180" fill="#fdfdfd" />
+  <rect x="0" y="0" width="100" height="180" fill="url(#bgGradient)" />
+
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8f8f8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Centered Profile Image -->
+  <circle cx="50" cy="40" r="15" fill="#eee" stroke="#ddd" stroke-width="1" />
+  <text x="50" y="44" font-size="5" fill="#888" text-anchor="middle" font-family="Arial">IMG</text>
+
+  <!-- Name -->
+  <text x="50" y="70" font-size="7" fill="#111" text-anchor="middle" font-family="Arial">Jane Doe</text>
+
+  <!-- Tagline -->
+  <text x="50" y="82" font-size="5" fill="#444" text-anchor="middle" font-family="Arial">Professional Advisor</text>
+
+  <!-- CTA Button -->
+  <rect x="30" y="100" rx="3" ry="3" width="40" height="12" fill="#000" />
+  <text x="50" y="108" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">Contact</text>
+</svg> 

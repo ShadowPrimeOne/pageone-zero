@@ -53,10 +53,10 @@ export function ClassicOverlayHero({ heading, subheading, onUpdate }: Props) {
           <div className="text-left">
             <h1 
               className="text-4xl font-bold tracking-tight sm:text-6xl mb-6 outline-none
-                bg-clip-text text-transparent bg-gradient-to-r from-white via-[#00FFD1] to-white
-                animate-gradient-x hover:animate-gradient-x-fast
+                text-white
                 drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)]
-                transition-all duration-500"
+                transition-all duration-500
+                hover:text-[#00FFD1]"
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleTextUpdate('heading', e.currentTarget.textContent || '')}

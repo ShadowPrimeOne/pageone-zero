@@ -12,11 +12,29 @@ CREATE TABLE module_templates (
 );
 ```
 
+### Pages Table
+```sql
+CREATE TABLE pages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug TEXT NOT NULL,
+  key TEXT NOT NULL,
+  encrypted_backup JSONB,
+  modules JSONB NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  phone_number TEXT,
+  "key-2" UUID,
+  "key-3" UUID
+);
+```
+
 ### Key Points:
 - Each module is stored as a template in the database
 - `props` is stored as JSONB for flexible schema
 - UUID is used for unique identification
 - Timestamps track creation time
+- Pages table is specifically for saved pages with slugs
+- Modules in pages table are stored as JSONB array
+- Environment variables are configured in .env.local
 
 ## 2. Module Types and Interfaces
 

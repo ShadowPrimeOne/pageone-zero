@@ -1,7 +1,7 @@
 'use client'
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
-import type { Module, HeroProps, FormProps, ClassicOverlayHeroProps, TopImageCenterTextHeroProps, SplitLayoutHeroProps } from './types'
+import React, { createContext, useContext, useState, ReactNode } from 'react'
+import type { Module, HeroProps, FormProps } from './types'
 
 interface EditorStateContextType {
   modules: Module[]
@@ -12,7 +12,7 @@ interface EditorStateContextType {
   setIsPublishModalOpen: (value: boolean) => void
   selectModule: (id: string) => void
   editModule: (id: string) => void
-  updateModule: (id: string, newProps: HeroProps | FormProps | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps) => void
+  updateModule: (id: string, newProps: HeroProps | FormProps) => void
   moveModuleUp: (id: string) => void
   moveModuleDown: (id: string) => void
   duplicateModule: (id: string) => void
@@ -23,7 +23,15 @@ interface EditorStateContextType {
   markClean: () => void
 }
 
-const EditorStateContext = createContext<EditorStateContextType | null>(null)
+const EditorStateContext = createContext<EditorStateContextType | undefined>(undefined)
+
+export const useEditorState = () => {
+  const context = useContext(EditorStateContext)
+  if (!context) {
+    throw new Error('useEditorState must be used within an EditorStateProvider')
+  }
+  return context
+}
 
 interface EditorStateProviderProps {
   children: ReactNode
@@ -40,15 +48,9 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
 
-  // Update modules when initialModules changes
-  useEffect(() => {
-    if (initialModules.length > 0) {
-      setModules(initialModules)
-    }
-  }, [initialModules])
-
   const selectModule = (id: string) => {
     setSelectedModuleId(id)
+    // Don't open editor on selection
   }
 
   const editModule = (id: string) => {
@@ -56,54 +58,63 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     setIsEditorOpen(true)
   }
 
-  const updateModule = (id: string, newProps: HeroProps | FormProps | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps) => {
-    setModules(mods =>
-      mods.map(mod => mod.id === id ? { ...mod, props: newProps } : mod)
+  const updateModule = (id: string, newProps: HeroProps | FormProps) => {
+    setModules(prevModules => 
+      prevModules.map(module => 
+        module.id === id ? { ...module, ...newProps } : module
+      )
     )
     setIsDirty(true)
   }
 
-  const markClean = () => setIsDirty(false)
-
   const moveModuleUp = (id: string) => {
-    const index = modules.findIndex(mod => mod.id === id)
-    if (index > 0) {
-      const newModules = [...modules]
-      const [moved] = newModules.splice(index, 1)
-      newModules.splice(index - 1, 0, moved)
-      setModules(newModules)
-      setIsDirty(true)
-    }
+    setModules(prevModules => {
+      const index = prevModules.findIndex(m => m.id === id)
+      if (index <= 0) return prevModules
+
+      const newModules = [...prevModules]
+      const temp = newModules[index]
+      newModules[index] = newModules[index - 1]
+      newModules[index - 1] = temp
+      return newModules
+    })
+    setIsDirty(true)
   }
 
   const moveModuleDown = (id: string) => {
-    const index = modules.findIndex(mod => mod.id === id)
-    if (index < modules.length - 1) {
-      const newModules = [...modules]
-      const [moved] = newModules.splice(index, 1)
-      newModules.splice(index + 1, 0, moved)
-      setModules(newModules)
-      setIsDirty(true)
-    }
+    setModules(prevModules => {
+      const index = prevModules.findIndex(m => m.id === id)
+      if (index === -1 || index === prevModules.length - 1) return prevModules
+
+      const newModules = [...prevModules]
+      const temp = newModules[index]
+      newModules[index] = newModules[index + 1]
+      newModules[index + 1] = temp
+      return newModules
+    })
+    setIsDirty(true)
   }
 
   const duplicateModule = (id: string) => {
-    const index = modules.findIndex(m => m.id === id)
-    if (index !== -1) {
-      const original = modules[index]
-      const duplicated = {
-        ...original,
-        id: `${original.id}-copy-${Date.now()}`
+    setModules(prevModules => {
+      const moduleToDuplicate = prevModules.find(m => m.id === id)
+      if (!moduleToDuplicate) return prevModules
+
+      const newModule = {
+        ...moduleToDuplicate,
+        id: crypto.randomUUID()
       }
-      const newModules = [...modules]
-      newModules.splice(index + 1, 0, duplicated)
-      setModules(newModules)
-      setIsDirty(true)
-    }
+
+      const index = prevModules.findIndex(m => m.id === id)
+      const newModules = [...prevModules]
+      newModules.splice(index + 1, 0, newModule)
+      return newModules
+    })
+    setIsDirty(true)
   }
 
   const deleteModule = (id: string) => {
-    setModules(mods => mods.filter(mod => mod.id !== id))
+    setModules(prevModules => prevModules.filter(m => m.id !== id))
     if (selectedModuleId === id) {
       setSelectedModuleId(null)
       setIsEditorOpen(false)
@@ -112,90 +123,34 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
   }
 
   const addModule = (type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero', relativeTo: string, position: 'above' | 'below') => {
-    const index = modules.findIndex(mod => mod.id === relativeTo)
-    const id = `mod-${Date.now()}-${Math.random().toString(36).slice(2)}`
-    
-    let props: ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps
-    
-    switch (type) {
-      case 'classic_overlay_hero':
-        props = {
-          heading: 'Classic Overlay Hero',
-          subheading: 'High-impact visual services (e.g., automotive, fitness, travel)',
-          background: {
-            type: 'image',
-            color: '#000000',
-            opacity: 0.6,
-            overlay: {
-              color: '#000000',
-              opacity: 0.4
-            }
-          }
-        }
-        break
-      case 'top_image_center_text_hero':
-        props = {
-          heading: 'Top Image + Center Text',
-          subheading: 'Clear product intros, coaching, services',
-          background: {
-            type: 'color',
-            color: '#ffffff',
-            opacity: 1
-          }
-        }
-        break
-      case 'split_layout_hero':
-        props = {
-          heading: 'Split Layout Hero',
-          subheading: 'Personal brands, consultants, lawyers',
-          background: {
-            type: 'color',
-            color: '#ffffff',
-            opacity: 1
-          }
-        }
-        break
-    }
-
     const newModule: Module = {
-      id,
+      id: crypto.randomUUID(),
       type,
-      props
+      heading: 'New Module',
+      subheading: 'Add your content here',
+      ctaText: 'Learn More',
+      background: {
+        type: 'color',
+        color: '#ffffff'
+      }
     }
 
-    const newModules = [...modules]
-    newModules.splice(position === 'above' ? index : index + 1, 0, newModule)
-    setModules(newModules)
-    setSelectedModuleId(id)
-    setIsDirty(true)
+    setModules(prevModules => {
+      const relativeIndex = prevModules.findIndex(m => m.id === relativeTo)
+      if (relativeIndex === -1) return prevModules
 
-    // Wait for the DOM to update before scrolling
-    requestAnimationFrame(() => {
-      const element = document.getElementById(id)
-      if (element) {
-        const menuHeight = 60 // Approximate height of the menu
-        const elementPosition = element.getBoundingClientRect().top
-        const offsetPosition = elementPosition + window.pageYOffset - menuHeight
-
-        // First scroll to position
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        })
-
-        // Then lock scroll after animation completes
-        setTimeout(() => {
-          const finalScrollY = offsetPosition // Use the same position we scrolled to
-          document.body.style.overflow = 'hidden'
-          document.body.style.position = 'fixed'
-          document.body.style.top = `-${finalScrollY}px`
-          document.body.style.width = '100%'
-        }, 300)
-      }
+      const newModules = [...prevModules]
+      newModules.splice(position === 'above' ? relativeIndex : relativeIndex + 1, 0, newModule)
+      return newModules
     })
+    setIsDirty(true)
   }
 
-  const value: EditorStateContextType = {
+  const markClean = () => {
+    setIsDirty(false)
+  }
+
+  const value = {
     modules,
     selectedModuleId,
     isEditorOpen,
@@ -212,7 +167,7 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     setModules,
     addModule,
     isDirty,
-    markClean,
+    markClean
   }
 
   return (
@@ -220,12 +175,4 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
       {children}
     </EditorStateContext.Provider>
   )
-}
-
-export const useEditorState = () => {
-  const context = useContext(EditorStateContext)
-  if (!context) {
-    throw new Error('useEditorState must be used within an EditorStateProvider')
-  }
-  return context
 } 

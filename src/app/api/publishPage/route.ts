@@ -1,28 +1,27 @@
-import { supabase } from '@/lib/supabase'
 import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
-export async function POST(req: Request) {
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
+export async function POST(request: Request) {
   try {
-    const { slug, key, modules } = await req.json()
+    const { slug, key, modules } = await request.json()
 
-    // Input validation
-    if (!slug || typeof slug !== 'string') {
+    // Validate required fields
+    if (!slug || !key || !modules) {
       return NextResponse.json(
-        { error: 'Valid slug is required' },
+        { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    if (!key || typeof key !== 'string') {
-      return NextResponse.json(
-        { error: 'Valid key is required' },
-        { status: 400 }
-      )
-    }
-
+    // Validate modules
     if (!Array.isArray(modules) || modules.length === 0) {
       return NextResponse.json(
-        { error: 'At least one module is required' },
+        { error: 'Invalid modules data' },
         { status: 400 }
       )
     }
@@ -41,7 +40,7 @@ export async function POST(req: Request) {
       )
     }
 
-    // Insert page
+    // Insert new page
     const { error: insertError } = await supabase
       .from('pages')
       .insert({ 
@@ -62,11 +61,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ 
       success: true,
       slug,
-      url: `https://page.one/page/${slug}#key=${key}`
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/page/${slug}#key=${key}`
     })
-
-  } catch (err) {
-    console.error('[PublishPage] Unexpected error:', err)
+  } catch (error) {
+    console.error('[PublishPage] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

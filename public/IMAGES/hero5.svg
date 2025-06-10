@@ -1,0 +1,20 @@
+<!-- 
+  Top Text, Middle Image, Bottom CTA Hero
+  Text: Top 20% with heading and subheading
+  Image: Middle 50% for app preview or product showcase
+  CTA: Bottom 30% with prominent button
+  Use Case: App installs, SaaS, event promos
+-->
+<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Top Text (20%) -->
+  <text x="50" y="20" font-size="8" fill="#000" text-anchor="middle" font-family="Arial">Discover the App</text>
+  <text x="50" y="30" font-size="5" fill="#555" text-anchor="middle" font-family="Arial">Your life, streamlined</text>
+
+  <!-- Middle Image (50%) -->
+  <rect x="20" y="50" width="60" height="60" fill="#ccc" />
+  <text x="50" y="82" font-size="5" fill="#666" text-anchor="middle" font-family="Arial">App Preview</text>
+
+  <!-- Bottom CTA (30%) -->
+  <rect x="25" y="140" rx="4" ry="4" width="50" height="14" fill="#000" />
+  <text x="50" y="150" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">Download Now</text>
+</svg> 

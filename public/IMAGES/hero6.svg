@@ -1,0 +1,39 @@
+<!-- 
+  Background Image + Bottom Sheet Hero
+  Image: Fullscreen background image
+  Text + CTA: Slide-up glassmorphic card from bottom
+  Use Case: Real estate, high-conversion mobile offers
+-->
+<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Background Image -->
+  <rect x="0" y="0" width="100" height="180" fill="#333" />
+  <rect x="0" y="0" width="100" height="180" fill="url(#gradient)" />
+
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Glassmorphic Bottom Sheet -->
+  <rect x="0" y="120" width="100" height="60" fill="rgba(255,255,255,0.9)" />
+  <rect x="0" y="120" width="100" height="60" fill="url(#glass)" />
+
+  <!-- Glass Effect Definition -->
+  <defs>
+    <linearGradient id="glass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.2);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Bottom Sheet Content -->
+  <text x="50" y="140" font-size="8" fill="#000" text-anchor="middle" font-family="Arial">Luxury Living</text>
+  <text x="50" y="150" font-size="5" fill="#555" text-anchor="middle" font-family="Arial">Your dream home awaits</text>
+  
+  <!-- CTA Button -->
+  <rect x="25" y="160" rx="4" ry="4" width="50" height="12" fill="#000" />
+  <text x="50" y="168" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">View Properties</text>
+</svg> 

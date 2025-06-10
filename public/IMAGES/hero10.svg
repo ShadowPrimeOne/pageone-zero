@@ -1,0 +1,31 @@
+<!-- 
+  Logo + Tagline Only Hero
+  Top: Logo centered
+  Middle: One-line value prop
+  CTA: Bottom small call-to-action
+  Use Case: Brand awareness, soft launch, stealth startups
+-->
+<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Background with subtle gradient -->
+  <rect x="0" y="0" width="100" height="180" fill="#ffffff" />
+  <rect x="0" y="0" width="100" height="180" fill="url(#bgGradient)" />
+
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fafafa;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Centered Logo -->
+  <rect x="35" y="30" width="30" height="30" fill="#eee" stroke="#ddd" stroke-width="1" rx="5" ry="5" />
+  <text x="50" y="48" font-size="5" fill="#666" text-anchor="middle" font-family="Arial">LOGO</text>
+
+  <!-- Tagline -->
+  <text x="50" y="80" font-size="6" fill="#333" text-anchor="middle" font-family="Arial">Coming Soon</text>
+
+  <!-- Small CTA Button at Bottom -->
+  <rect x="30" y="140" rx="3" ry="3" width="40" height="12" fill="#000" />
+  <text x="50" y="148" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">Notify Me</text>
+</svg> 
