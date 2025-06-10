@@ -44,36 +44,34 @@ export function ModuleWrapper({
   // Handle scroll to top when module is selected
   useEffect(() => {
     if (selected && wrapperRef.current) {
-      const menuHeight = 60 // Approximate height of the menu
-      const elementPosition = wrapperRef.current.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - menuHeight
-
-      // Store the current scroll position before locking
+      // Store current scroll position before any changes
       scrollPositionRef.current = window.scrollY
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      })
-
-      // Add a small delay before locking scroll to ensure scroll-to completes
-      const timeoutId = setTimeout(() => {
-        // Store the current scroll position
-        const scrollY = window.scrollY
-        // Add overflow hidden to body
+      
+      // Get the menu element
+      const menuElement = document.querySelector('.sticky.top-0')
+      if (menuElement) {
+        // Get the menu's position
+        const menuRect = menuElement.getBoundingClientRect()
+        const menuTop = menuRect.top + window.scrollY
+        
+        // Scroll to the menu's position
+        window.scrollTo(0, menuTop)
+        
+        // Then lock the scroll
         document.body.style.overflow = 'hidden'
         document.body.style.position = 'fixed'
-        document.body.style.top = `-${scrollY}px`
         document.body.style.width = '100%'
-      }, 300) // Wait for scroll animation to complete
-
-      return () => {
-        clearTimeout(timeoutId)
-        // Restore scroll position and remove styles
-        document.body.style.overflow = ''
-        document.body.style.position = ''
-        document.body.style.top = ''
-        document.body.style.width = ''
+        document.body.style.top = `-${menuTop}px`
+      }
+    } else {
+      // Restore scroll position and unlock
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.width = ''
+      document.body.style.top = ''
+      
+      // If we have a stored position, scroll to it
+      if (scrollPositionRef.current !== 0) {
         window.scrollTo(0, scrollPositionRef.current)
       }
     }
@@ -95,8 +93,8 @@ export function ModuleWrapper({
   }, [module.background?.parallax])
 
   const backgroundStyle = module.background ? {
-    backgroundImage: module.background.type === 'image' ? `url(${module.background.value})` : undefined,
-    backgroundColor: module.background.type === 'color' ? module.background.value : undefined,
+    backgroundImage: module.background.type === 'image' ? `url(${module.background.image})` : undefined,
+    backgroundColor: module.background.type === 'color' ? module.background.color : undefined,
     backgroundSize: module.background.type === 'image' ? 'cover' : undefined,
     backgroundPosition: module.background.type === 'image' ? 'center' : undefined,
     backgroundAttachment: module.background.parallax ? 'fixed' : 'scroll',
@@ -106,6 +104,24 @@ export function ModuleWrapper({
     backgroundColor: module.background.overlay.color,
     opacity: module.background.overlay.opacity,
   } : {}
+
+  const handleModuleClick = (e: React.MouseEvent) => {
+    // Prevent any interaction with unselected modules
+    if (!selected) {
+      onSelect(module.id)
+      return
+    }
+
+    // Handle clicks within selected module
+    const target = e.target as HTMLElement
+    const isEditableElement = target.isContentEditable || 
+                             target.tagName === 'INPUT' || 
+                             target.tagName === 'TEXTAREA'
+
+    if (!isEditableElement) {
+      onSelect('')
+    }
+  }
 
   return (
     <div className="w-full">
@@ -258,31 +274,11 @@ export function ModuleWrapper({
         ref={wrapperRef}
         className={clsx(
           'relative w-full transition-all overflow-hidden',
-          selected ? 'ring-2 ring-blue-500' : ''
+          selected ? 'ring-2 ring-blue-500 ring-offset-2' : ''
         )}
-        onClick={() => !selected && onSelect(module.id)}
+        onClick={handleModuleClick}
         style={backgroundStyle}
       >
-        {/* Deselect button */}
-        {selected && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onSelect('')
-            }}
-            className="absolute top-4 right-4 z-50 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-200 hover:scale-110"
-            title="Deselect module"
-          >
-            <Image
-              src="/IMAGES/maximize-svgrepo-com.svg"
-              alt="Deselect"
-              width={20}
-              height={20}
-              className="opacity-70 hover:opacity-100 transition-opacity"
-            />
-          </button>
-        )}
-
         {/* Background overlay */}
         {module.background?.type === 'image' && module.background.overlay && (
           <div
@@ -292,7 +288,14 @@ export function ModuleWrapper({
         )}
 
         {/* Content */}
-        <div className="relative flex flex-col w-full">{children}</div>
+        <div 
+          className={clsx(
+            "relative flex flex-col w-full",
+            !selected && "pointer-events-none"
+          )}
+        >
+          {children}
+        </div>
       </div>
 
       {/* Editor panel - moved outside the module content */}
