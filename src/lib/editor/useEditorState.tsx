@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
-import type { Module, HeroProps, FormProps } from './types'
+import type { Module, HeroProps, FormProps, ClassicOverlayHeroProps, TopImageCenterTextHeroProps, SplitLayoutHeroProps } from './types'
 
 interface EditorStateContextType {
   modules: Module[]
@@ -12,13 +12,13 @@ interface EditorStateContextType {
   setIsPublishModalOpen: (value: boolean) => void
   selectModule: (id: string) => void
   editModule: (id: string) => void
-  updateModule: (id: string, newProps: HeroProps | FormProps) => void
+  updateModule: (id: string, newProps: HeroProps | FormProps | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps) => void
   moveModuleUp: (id: string) => void
   moveModuleDown: (id: string) => void
   duplicateModule: (id: string) => void
   deleteModule: (id: string) => void
   setModules: (modules: Module[]) => void
-  addModule: (type: 'hero' | 'form', relativeTo: string, position: 'above' | 'below') => void
+  addModule: (type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero', relativeTo: string, position: 'above' | 'below') => void
   isDirty: boolean
   markClean: () => void
 }
@@ -56,7 +56,7 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     setIsEditorOpen(true)
   }
 
-  const updateModule = (id: string, newProps: HeroProps | FormProps) => {
+  const updateModule = (id: string, newProps: HeroProps | FormProps | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps) => {
     setModules(mods =>
       mods.map(mod => mod.id === id ? { ...mod, props: newProps } : mod)
     )
@@ -111,15 +111,56 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     setIsDirty(true)
   }
 
-  const addModule = (type: 'hero' | 'form', relativeTo: string, position: 'above' | 'below') => {
+  const addModule = (type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero', relativeTo: string, position: 'above' | 'below') => {
     const index = modules.findIndex(mod => mod.id === relativeTo)
     const id = `mod-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    
+    let props: ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps
+    
+    switch (type) {
+      case 'classic_overlay_hero':
+        props = {
+          heading: 'Classic Overlay Hero',
+          subheading: 'High-impact visual services (e.g., automotive, fitness, travel)',
+          background: {
+            type: 'image',
+            color: '#000000',
+            opacity: 0.6,
+            overlay: {
+              color: '#000000',
+              opacity: 0.4
+            }
+          }
+        }
+        break
+      case 'top_image_center_text_hero':
+        props = {
+          heading: 'Top Image + Center Text',
+          subheading: 'Clear product intros, coaching, services',
+          background: {
+            type: 'color',
+            color: '#ffffff',
+            opacity: 1
+          }
+        }
+        break
+      case 'split_layout_hero':
+        props = {
+          heading: 'Split Layout Hero',
+          subheading: 'Personal brands, consultants, lawyers',
+          background: {
+            type: 'color',
+            color: '#ffffff',
+            opacity: 1
+          }
+        }
+        break
+    }
+
     const newModule: Module = {
       id,
       type,
-      props: type === 'hero'
-        ? { heading: 'New Hero', subheading: 'Subheading here' }
-        : { title: 'New Form', submitText: 'Submit', fields: [] }
+      props
     }
 
     const newModules = [...modules]
@@ -128,10 +169,30 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     setSelectedModuleId(id)
     setIsDirty(true)
 
-    // Wait a moment before scrolling into view
-    setTimeout(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 100)
+    // Wait for the DOM to update before scrolling
+    requestAnimationFrame(() => {
+      const element = document.getElementById(id)
+      if (element) {
+        const menuHeight = 60 // Approximate height of the menu
+        const elementPosition = element.getBoundingClientRect().top
+        const offsetPosition = elementPosition + window.pageYOffset - menuHeight
+
+        // First scroll to position
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        })
+
+        // Then lock scroll after animation completes
+        setTimeout(() => {
+          const finalScrollY = offsetPosition // Use the same position we scrolled to
+          document.body.style.overflow = 'hidden'
+          document.body.style.position = 'fixed'
+          document.body.style.top = `-${finalScrollY}px`
+          document.body.style.width = '100%'
+        }, 300)
+      }
+    })
   }
 
   const value: EditorStateContextType = {
