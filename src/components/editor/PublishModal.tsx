@@ -1,24 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { QRCodeSVG } from 'qrcode.react'
-import type { Module } from '@/lib/editor/types'
+import { useEditorState } from '@/lib/editor/useEditorState'
+import { showModal } from '@/lib/modal'
+import { generateQRCode } from '@/lib/qr'
 
 interface PublishModalProps {
   isOpen: boolean
   onClose: () => void
-  onPublish: (slug: string, key?: string) => void
-  modules: Module[]
 }
 
-export default function PublishModal({ isOpen, onClose, onPublish, modules }: PublishModalProps) {
+export function PublishModal({ isOpen, onClose }: PublishModalProps) {
+  const { modules } = useEditorState()
   const [slug, setSlug] = useState('')
   const [passphrase, setPassphrase] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
-  const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [qrValue, setQrValue] = useState<string | null>(null)
+  const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null)
 
   // Debug logging
   useEffect(() => {
@@ -44,9 +42,6 @@ export default function PublishModal({ isOpen, onClose, onPublish, modules }: Pu
         
         setIsSlugAvailable(json.available)
         setError(null)
-
-        // Debug log for testing
-        console.log('🔍 Slug check result:', { slug, available: json.available })
       } catch (err) {
         console.error('Error checking slug:', err)
         setError(err instanceof Error ? err.message : 'Failed to check slug availability')
@@ -61,60 +56,59 @@ export default function PublishModal({ isOpen, onClose, onPublish, modules }: Pu
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError(null)
     setIsSubmitting(true)
+    setError(null)
 
     try {
-      // Validate modules before submission
-      if (!modules || modules.length === 0) {
-        throw new Error('No modules to publish')
-      }
-
-      console.log('📦 Validating modules before publish:', modules)
-
       // Generate key from passphrase or use dev key
-      const key = passphrase 
-        ? await generateKeyFromPassphrase(passphrase)
-        : process.env.NEXT_PUBLIC_DEV_KEY || 'dev-key-1234'
+      const key = passphrase?.trim() || process.env.NEXT_PUBLIC_DEV_KEY
 
       if (!key) {
         throw new Error('Failed to generate key')
       }
 
-      // Final slug availability check
-      const slugCheck = await fetch(`/api/checkSlug?slug=${encodeURIComponent(slug)}`)
-      const slugData = await slugCheck.json()
-      
-      if (!slugCheck.ok) {
-        throw new Error(slugData.error || 'Failed to verify slug availability')
-      }
-
-      if (!slugData.available) {
-        throw new Error('This slug is no longer available. Please try another one.')
-      }
-
       const response = await fetch('/api/publishPage', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           slug,
           key,
-          content: modules,
-          phone_number: phoneNumber || null
-        })
+          modules: modules,
+        }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to publish page')
+        throw new Error(data.error || 'Failed to publish page')
       }
 
-      const pageUrl = `${window.location.origin}/page/${slug}#key=${key}`
-      setQrValue(pageUrl)
-      onPublish(slug, key)
+      // Close publish modal
+      onClose()
+
+      // Show success modal
+      showModal({
+        title: "🎉 Your Page is Live!",
+        message: "You can now visit or share your page.",
+        actions: [
+          { label: "🔗 View Page", href: `/page/${slug}` },
+          { label: "✏️ Edit Page", href: `/page/${slug}?edit=true` },
+          { label: "📲 QR Code", action: () => generateQRCode(slug) },
+          { label: "⬅ Back to Editor", href: "/test" }
+        ]
+      })
+
     } catch (err) {
-      console.error('Publish error:', err)
       setError(err instanceof Error ? err.message : 'Failed to publish page')
+      
+      // Show error modal
+      showModal({
+        title: "❌ Publishing Failed",
+        message: "Your page couldn't be saved. Please check your connection or try again.",
+        button: "Back to Editor"
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -154,6 +148,7 @@ export default function PublishModal({ isOpen, onClose, onPublish, modules }: Pu
                 className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:ring-[#004225] focus:border-[#004225] text-gray-900"
                 placeholder="your-page"
                 required
+                disabled={isSubmitting}
               />
             </div>
             {isSlugAvailable === true && (
@@ -175,20 +170,7 @@ export default function PublishModal({ isOpen, onClose, onPublish, modules }: Pu
               onChange={(e) => setPassphrase(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#004225] focus:border-[#004225] text-gray-900"
               placeholder="Leave empty for development key"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-              Phone Number (optional)
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#004225] focus:border-[#004225] text-gray-900"
-              placeholder="+1234567890"
+              disabled={isSubmitting}
             />
           </div>
 
@@ -201,6 +183,7 @@ export default function PublishModal({ isOpen, onClose, onPublish, modules }: Pu
               type="button"
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#004225]"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
@@ -209,28 +192,11 @@ export default function PublishModal({ isOpen, onClose, onPublish, modules }: Pu
               disabled={isSubmitting || !slug || isSlugAvailable === false}
               className="px-4 py-2 text-sm font-medium text-white bg-[#004225] border border-transparent rounded-md hover:bg-[#005c33] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#004225] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Publishing...' : 'Publish'}
+              {isSubmitting ? 'Publishing...' : 'Next'}
             </button>
           </div>
         </form>
-
-        {qrValue && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600 mb-2">Scan to view your page:</p>
-            <div className="flex justify-center">
-              <QRCodeSVG value={qrValue} size={200} />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
-}
-
-async function generateKeyFromPassphrase(passphrase: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(passphrase)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 } 

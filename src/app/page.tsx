@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useEditorState } from '@/lib/editor/useEditorState'
 import { ModuleRenderer } from '@/components/modules/ModuleRenderer'
-import { EditorPanel } from '@/components/editor/EditorPanel'
 import { AddModuleModal } from '@/components/editor/AddModuleModal'
-import PublishModal from '@/components/editor/PublishModal'
+import { PublishModal } from '@/components/editor/PublishModal'
 import { EditorStateProvider } from '@/lib/editor/useEditorState'
 import type { Module } from '@/lib/editor/types'
 import { getModuleTemplates } from '@/lib/editor/db'
@@ -14,10 +13,7 @@ function PageContent() {
   const {
     modules,
     selectedModuleId,
-    isEditorOpen,
     selectModule,
-    setIsEditorOpen,
-    updateModule,
     deleteModule,
     moveModuleUp,
     moveModuleDown,
@@ -25,7 +21,6 @@ function PageContent() {
     editModule,
     addModule,
     isDirty,
-    markClean,
     setModules
   } = useEditorState()
 
@@ -46,6 +41,9 @@ function PageContent() {
         const initialModules = templates
           .filter(template => 
             template.type === 'hero2' || 
+            template.type === 'classic_overlay_hero' ||
+            template.type === 'top_image_center_text_hero' ||
+            template.type === 'split_layout_hero' ||
             template.type === 'OurProcess' || 
             template.type === 'contact_form'
           )
@@ -54,10 +52,16 @@ function PageContent() {
             id: `mod-${Date.now()}-${Math.random().toString(36).slice(2)}`
           }))
         
-        // Ensure Hero2 is first, then OurProcess, then ContactForm
+        // Ensure Hero2 is first, then Classic Overlay Hero, then Top Image Center Text Hero, then Split Layout Hero, then OurProcess, then ContactForm
         const sortedModules = initialModules.sort((a, b) => {
           if (a.type === 'hero2') return -1
           if (b.type === 'hero2') return 1
+          if (a.type === 'classic_overlay_hero') return -1
+          if (b.type === 'classic_overlay_hero') return 1
+          if (a.type === 'top_image_center_text_hero') return -1
+          if (b.type === 'top_image_center_text_hero') return 1
+          if (a.type === 'split_layout_hero') return -1
+          if (b.type === 'split_layout_hero') return 1
           if (a.type === 'OurProcess') return -1
           if (b.type === 'OurProcess') return 1
           return 0
@@ -91,12 +95,6 @@ function PageContent() {
   const openAddModuleModal = (relativeTo: string, position: 'above' | 'below') => {
     setPendingAdd({ relativeTo, position })
     setAddModalOpen(true)
-  }
-
-  const handlePublishSuccess = (slug: string, key?: string) => {
-    console.log('✅ Publish successful:', { slug, key, moduleCount: modules.length })
-    setIsPublishModalOpen(false)
-    markClean()
   }
 
   if (isLoading) {
@@ -156,8 +154,6 @@ function PageContent() {
         <PublishModal
           isOpen={isPublishModalOpen}
           onClose={() => setIsPublishModalOpen(false)}
-          onPublish={handlePublishSuccess}
-          modules={modules}
         />
       </main>
     </>
