@@ -9,7 +9,7 @@ import { EditorStateProvider } from '@/lib/editor/useEditorState'
 import type { Module } from '@/lib/editor/types'
 import { getModuleTemplates } from '@/lib/editor/db'
 
-function PageContent() {
+export function PageContent() {
   const {
     modules,
     selectedModuleId,
