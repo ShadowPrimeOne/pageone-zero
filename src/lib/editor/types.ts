@@ -1,3 +1,14 @@
+export interface Background {
+  type: 'color' | 'image'
+  color: string
+  opacity: number
+  image?: string
+  overlay?: {
+    color: string
+    opacity: number
+  }
+}
+
 export interface ModuleBackground {
   type: 'image' | 'color'
   color: string

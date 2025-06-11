@@ -38,37 +38,15 @@ export function PageContent() {
         const templates = await getModuleTemplates()
         setModuleTemplates(templates)
         
-        // Filter for Hero2, OurProcess, and ContactForm modules
+        // Filter for only classic overlay hero module
         const initialModules = templates
-          .filter(template => 
-            template.type === 'hero2' || 
-            template.type === 'classic_overlay_hero' ||
-            template.type === 'top_image_center_text_hero' ||
-            template.type === 'split_layout_hero' ||
-            template.type === 'OurProcess' || 
-            template.type === 'contact_form'
-          )
+          .filter(template => template.type === 'classic_overlay_hero')
           .map(template => ({
             ...template,
             id: `mod-${Date.now()}-${Math.random().toString(36).slice(2)}`
           }))
         
-        // Ensure Hero2 is first, then Classic Overlay Hero, then Top Image Center Text Hero, then Split Layout Hero, then OurProcess, then ContactForm
-        const sortedModules = initialModules.sort((a, b) => {
-          if (a.type === 'hero2') return -1
-          if (b.type === 'hero2') return 1
-          if (a.type === 'classic_overlay_hero') return -1
-          if (b.type === 'classic_overlay_hero') return 1
-          if (a.type === 'top_image_center_text_hero') return -1
-          if (b.type === 'top_image_center_text_hero') return 1
-          if (a.type === 'split_layout_hero') return -1
-          if (b.type === 'split_layout_hero') return 1
-          if (a.type === 'OurProcess') return -1
-          if (b.type === 'OurProcess') return 1
-          return 0
-        })
-
-        setModules(sortedModules)
+        setModules(initialModules)
       } catch (error) {
         console.error('Failed to load module templates:', error)
       } finally {

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, ReactNode, useState } from 'react'
 import React from 'react'
-import type { Module, HeroProps, Hero2Props } from '@/lib/editor/types'
+import type { Module, HeroProps, Hero2Props, Background } from '@/lib/editor/types'
 import Image from 'next/image'
 import { EditModuleModal } from '../editor/EditModuleModal'
 import clsx from 'clsx'
@@ -115,27 +115,31 @@ export function ModuleWrapper({
     }
   }
 
-  const handleUpdate = (updates: Partial<HeroProps | Hero2Props>) => {
+  const handleUpdate = (updates: Partial<Module['props']>) => {
     console.log('ModuleWrapper: handleUpdate called with:', { moduleId: module.id, updates })
-    if (onUpdate) {
-      // Ensure we're only passing valid props based on module type
-      const validUpdates = module.type === 'hero2' 
-        ? {
-            heading: updates.heading,
-            subheading: updates.subheading,
-            background: updates.background
-          } as Partial<Hero2Props>
-        : {
-            heading: updates.heading,
-            subheading: updates.subheading,
-            background: updates.background
-          } as Partial<HeroProps>
-      
-      console.log('ModuleWrapper: Passing updates to parent:', validUpdates)
-      onUpdate(module.id, validUpdates)
-    } else {
-      console.warn('ModuleWrapper: onUpdate handler is not defined')
+    
+    // Ensure we're passing a complete background object
+    if (updates.background) {
+      const currentBackground = (module.props.background || {}) as Background
+      const newBackground: Background = {
+        ...currentBackground,
+        ...updates.background,
+        // Ensure type is set
+        type: updates.background.type || currentBackground.type || 'color',
+        // Ensure color is set
+        color: updates.background.color || currentBackground.color || '#000000',
+        // Ensure opacity is set
+        opacity: updates.background.opacity ?? currentBackground.opacity ?? 1,
+        // Preserve image if it exists
+        image: updates.background.image || currentBackground.image,
+        // Preserve overlay if it exists
+        overlay: updates.background.overlay || currentBackground.overlay
+      }
+      updates.background = newBackground
     }
+
+    console.log('ModuleWrapper: Passing updates to parent:', updates)
+    onUpdate?.(module.id, updates)
   }
 
   return (

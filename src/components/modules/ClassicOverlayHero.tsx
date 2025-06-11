@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { HeroProps } from '@/lib/editor/types'
+import Image from 'next/image'
 
 interface Props extends HeroProps {
   onUpdate?: (updates: Partial<HeroProps>) => void
@@ -34,10 +35,18 @@ export function ClassicOverlayHero({ heading, subheading, background, onUpdate }
       {/* Background Image */}
       <div className="absolute inset-0">
         {background?.type === 'image' && background.image ? (
-          <img
+          <Image
             src={background.image}
             alt="Hero Background"
-            className="w-full h-full object-cover"
+            fill
+            priority
+            quality={90}
+            className="object-cover"
+            sizes="100vw"
+            style={{
+              objectPosition: 'center',
+              objectFit: 'cover'
+            }}
           />
         ) : (
           <div 
