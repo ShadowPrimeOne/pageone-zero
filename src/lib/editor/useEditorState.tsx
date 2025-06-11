@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import type { Module, HeroProps, FormProps } from './types'
+import type { Module, HeroProps, FormProps, Hero2Props, ClassicOverlayHeroProps, TopImageCenterTextHeroProps, SplitLayoutHeroProps, OurProcessProps, ContactFormProps } from './types'
 
 interface EditorStateContextType {
   modules: Module[]
@@ -12,7 +12,7 @@ interface EditorStateContextType {
   setIsPublishModalOpen: (value: boolean) => void
   selectModule: (id: string) => void
   editModule: (id: string) => void
-  updateModule: (id: string, newProps: HeroProps | FormProps) => void
+  updateModule: (id: string, updates: Partial<HeroProps | FormProps | Hero2Props | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps | OurProcessProps | ContactFormProps>) => void
   moveModuleUp: (id: string) => void
   moveModuleDown: (id: string) => void
   duplicateModule: (id: string) => void
@@ -58,12 +58,28 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     setIsEditorOpen(true)
   }
 
-  const updateModule = (id: string, newProps: HeroProps | FormProps) => {
-    setModules(prevModules => 
-      prevModules.map(module => 
-        module.id === id ? { ...module, ...newProps } : module
-      )
-    )
+  const updateModule = (id: string, updates: Partial<HeroProps | FormProps | Hero2Props | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps | OurProcessProps | ContactFormProps>) => {
+    console.log('useEditorState: Updating module:', id, updates)
+    setModules(prevModules => {
+      const updatedModules = prevModules.map(module => {
+        if (module.id === id) {
+          console.log('useEditorState: Found module to update:', module)
+          // Create a new module object to ensure state update
+          const updatedModule = {
+            ...module,
+            props: {
+              ...module.props,
+              ...updates
+            }
+          }
+          console.log('useEditorState: Updated module:', updatedModule)
+          return updatedModule
+        }
+        return module
+      })
+      console.log('useEditorState: New modules state:', updatedModules)
+      return updatedModules
+    })
     setIsDirty(true)
   }
 
@@ -126,12 +142,14 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     const newModule: Module = {
       id: crypto.randomUUID(),
       type,
-      heading: 'New Module',
-      subheading: 'Add your content here',
-      ctaText: 'Learn More',
-      background: {
-        type: 'color',
-        color: '#ffffff'
+      props: {
+        heading: 'New Module',
+        subheading: 'Add your content here',
+        background: {
+          type: 'color',
+          color: '#ffffff',
+          opacity: 1
+        }
       }
     }
 

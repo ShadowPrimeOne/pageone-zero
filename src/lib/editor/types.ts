@@ -2,6 +2,8 @@ export interface ModuleBackground {
   type: 'image' | 'color'
   color: string
   opacity: number
+  image?: string
+  parallax?: boolean
   overlay?: {
     color: string
     opacity: number
@@ -43,20 +45,9 @@ export interface FormProps {
 
 export interface Module {
   id: string
-  type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero'
-  heading: string
-  subheading: string
-  ctaText: string
-  background?: {
-    type: 'image' | 'color'
-    image?: string
-    color?: string
-    parallax?: boolean
-    overlay?: {
-      color: string
-      opacity: number
-    }
-  }
+  type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero' | 'hero' | 'hero2' | 'form' | 'OurProcess' | 'contact_form'
+  props: HeroProps | Hero2Props | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps | FormProps | OurProcessProps | ContactFormProps
+  background?: ModuleBackground
 }
 
 export interface ModuleTemplate {

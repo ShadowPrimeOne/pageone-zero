@@ -57,7 +57,6 @@ export function ClassicOverlayHero({ heading, subheading, onUpdate }: Props) {
                 drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)]
                 transition-all duration-500
                 hover:text-[#00FFD1]"
-              contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleTextUpdate('heading', e.currentTarget.textContent || '')}
             >
@@ -69,7 +68,6 @@ export function ClassicOverlayHero({ heading, subheading, onUpdate }: Props) {
                 border border-white/10
                 shadow-[0_4px_20px_rgba(0,0,0,0.1)]
                 transition-all duration-300 hover:bg-white/10"
-              contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleTextUpdate('subheading', e.currentTarget.textContent || '')}
             >
@@ -93,7 +91,6 @@ export function ClassicOverlayHero({ heading, subheading, onUpdate }: Props) {
                 after:opacity-0 after:blur-xl after:transition-opacity after:duration-500
                 hover:after:opacity-30
                 backdrop-blur-sm"
-              contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleTextUpdate('cta', e.currentTarget.textContent || '')}
             >

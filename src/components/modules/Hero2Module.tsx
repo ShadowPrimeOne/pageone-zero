@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import type { HeroProps, ModuleBackground } from '@/lib/editor/types'
+import type { Hero2Props, ModuleBackground } from '@/lib/editor/types'
 
-interface Props extends HeroProps {
+interface Props extends Hero2Props {
   background?: ModuleBackground
-  onUpdate?: (updates: Partial<HeroProps>) => void
+  onUpdate?: (updates: Partial<Hero2Props>) => void
 }
 
 export function Hero2Module({ heading, subheading, background, onUpdate }: Props) {
@@ -14,6 +14,12 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
   const [localSubheading, setLocalSubheading] = useState(subheading)
   const [cta1, setCta1] = useState('CTA 1')
   const [cta2, setCta2] = useState('CTA 2')
+
+  // Sync local state with props
+  useEffect(() => {
+    setLocalHeading(heading)
+    setLocalSubheading(subheading)
+  }, [heading, subheading])
 
   // Parallax effect for the background
   useEffect(() => {
@@ -49,14 +55,16 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
   }
 
   // Set background styles
-  const backgroundStyle = background?.type === 'gradient' 
-    ? {
-        background: `linear-gradient(${background.gradient?.angle || 135}deg, ${background.gradient?.from || '#1a1a1a'}, ${background.gradient?.to || '#000000'})`,
-        opacity: background.opacity
-      }
-    : background?.type === 'color'
+  const backgroundStyle = background?.type === 'color'
     ? {
         backgroundColor: background.color,
+        opacity: background.opacity
+      }
+    : background?.type === 'image'
+    ? {
+        backgroundImage: `url(${background.image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         opacity: background.opacity
       }
     : {}
@@ -104,7 +112,6 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
         <div className="relative z-20 pt-32">
           <h1 
             className="text-4xl font-bold tracking-tight text-white sm:text-6xl mb-4 outline-none"
-            contentEditable
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('heading', e.currentTarget.textContent || '')}
           >
@@ -112,7 +119,6 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
           </h1>
           <p 
             className="text-xl sm:text-2xl text-white/80 outline-none"
-            contentEditable
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('subheading', e.currentTarget.textContent || '')}
           >
@@ -180,7 +186,6 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
           <div className="flex gap-0">
             <button 
               className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white text-lg font-medium transition-all duration-200 border-r border-white/20 outline-none"
-              contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleTextUpdate('cta1', e.currentTarget.textContent || '')}
             >
@@ -188,7 +193,6 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
             </button>
             <button 
               className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white text-lg font-medium transition-all duration-200 outline-none"
-              contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleTextUpdate('cta2', e.currentTarget.textContent || '')}
             >

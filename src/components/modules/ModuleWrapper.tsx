@@ -1,12 +1,11 @@
 'use client'
 
-import type { ReactNode } from 'react'
-import clsx from 'clsx'
-import type { Module } from '@/lib/editor/types'
-import { useEffect, useRef } from 'react'
-import { EditorPanel } from '../editor/EditorPanel'
-import { useEditorState } from '@/lib/editor/useEditorState'
+import { useEffect, useRef, ReactNode, useState } from 'react'
+import React from 'react'
+import type { Module, HeroProps, Hero2Props } from '@/lib/editor/types'
 import Image from 'next/image'
+import { EditModuleModal } from '../editor/EditModuleModal'
+import clsx from 'clsx'
 
 interface Props {
   module: Module
@@ -21,6 +20,7 @@ interface Props {
   isFirst: boolean
   isLast: boolean
   children: ReactNode
+  onUpdate?: (id: string, updates: Partial<HeroProps | Hero2Props>) => void
 }
 
 export function ModuleWrapper({
@@ -36,9 +36,10 @@ export function ModuleWrapper({
   isFirst,
   isLast,
   children,
+  onUpdate,
 }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const { isEditorOpen, setIsEditorOpen, updateModule } = useEditorState()
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
   const scrollPositionRef = useRef<number>(0)
 
   // Handle scroll to top when module is selected
@@ -114,8 +115,31 @@ export function ModuleWrapper({
     }
   }
 
+  const handleUpdate = (updates: Partial<HeroProps | Hero2Props>) => {
+    console.log('ModuleWrapper: handleUpdate called with:', { moduleId: module.id, updates })
+    if (onUpdate) {
+      // Ensure we're only passing valid props based on module type
+      const validUpdates = module.type === 'hero2' 
+        ? {
+            heading: updates.heading,
+            subheading: updates.subheading,
+            background: updates.background
+          } as Partial<Hero2Props>
+        : {
+            heading: updates.heading,
+            subheading: updates.subheading,
+            background: updates.background
+          } as Partial<HeroProps>
+      
+      console.log('ModuleWrapper: Passing updates to parent:', validUpdates)
+      onUpdate(module.id, validUpdates)
+    } else {
+      console.warn('ModuleWrapper: onUpdate handler is not defined')
+    }
+  }
+
   return (
-    <div className="w-full">
+    <div className="relative">
       {/* Editor panel and controls appear above the module */}
       {selected && (
         <div className="w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
@@ -259,6 +283,16 @@ export function ModuleWrapper({
         </div>
       )}
 
+      {/* Editor panel - moved outside the module content */}
+      {selected && isEditorOpen && (
+        <EditModuleModal
+          isOpen={isEditorOpen}
+          close={() => setIsEditorOpen(false)}
+          module={module}
+          onUpdate={handleUpdate}
+        />
+      )}
+
       {/* Module content - edge to edge */}
       <div
         id={module.id}
@@ -282,25 +316,12 @@ export function ModuleWrapper({
         <div 
           className={clsx(
             "relative flex flex-col w-full",
-            !selected && "pointer-events-none"
+            selected && "pointer-events-none"
           )}
         >
           {children}
         </div>
       </div>
-
-      {/* Editor panel - moved outside the module content */}
-      {selected && isEditorOpen && (
-        <div className="fixed inset-0 z-[9999]">
-          <EditorPanel
-            modules={[module]}
-            selectedModuleId={module.id}
-            isEditorOpen={isEditorOpen}
-            setIsEditorOpen={setIsEditorOpen}
-            updateModule={updateModule}
-          />
-        </div>
-      )}
     </div>
   )
 } 

@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import type { Module, HeroProps, ModuleBackground } from '@/lib/editor/types'
+import type { Module, HeroProps, Hero2Props, ModuleBackground } from '@/lib/editor/types'
 
 interface Props {
   isOpen: boolean
   close: () => void
   module: Module
-  onUpdate: (updates: Partial<HeroProps>) => void
+  onUpdate: (updates: Partial<HeroProps | Hero2Props>) => void
 }
 
 export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
@@ -35,10 +35,36 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     } else if (field === 'subheading') {
       setSubheading(value)
     }
-    onUpdate({
-      ...module.props,
-      [field]: value
-    })
+  }
+
+  const handleSave = () => {
+    console.log('EditModuleModal: handleSave called with:', { heading, subheading })
+    const updates = module.type === 'hero2'
+      ? {
+          heading,
+          subheading,
+          background: module.props.background ? {
+            ...module.props.background,
+            opacity: module.props.background.opacity ?? 1
+          } : undefined
+        } as Partial<Hero2Props>
+      : {
+          heading,
+          subheading,
+          background: module.props.background ? {
+            ...module.props.background,
+            opacity: module.props.background.opacity ?? 1
+          } : undefined
+        } as Partial<HeroProps>
+    
+    console.log('EditModuleModal: Saving updates:', updates)
+    if (onUpdate) {
+      onUpdate(updates)
+      console.log('EditModuleModal: Updates sent to parent')
+    } else {
+      console.warn('EditModuleModal: onUpdate handler is not defined')
+    }
+    close()
   }
 
   const handleBackgroundTypeChange = (type: 'color' | 'image') => {
@@ -327,7 +353,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                 Cancel
               </button>
               <button
-                onClick={close}
+                onClick={handleSave}
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Save Changes

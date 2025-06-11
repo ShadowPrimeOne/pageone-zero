@@ -36,6 +36,8 @@ export function ModuleRenderer({
   onAddRequest,
   onUpdate,
 }: Props) {
+  console.log('ModuleRenderer render:', { modules, selectedModuleId, hasUpdateHandler: !!onUpdate })
+  
   return (
     <>
       {modules.map((module, index) => {
@@ -55,12 +57,40 @@ export function ModuleRenderer({
             onAddRequest={onAddRequest}
             isFirst={isFirst}
             isLast={isLast}
+            onUpdate={(moduleId, updates) => {
+              console.log('ModuleRenderer: Received update from ModuleWrapper:', { moduleId, updates })
+              onUpdate?.(moduleId, updates)
+            }}
           >
             {module.type === 'hero' && <HeroModule {...(module.props as HeroProps)} />}
             {module.type === 'hero2' && <Hero2Module {...(module.props as Hero2Props)} />}
-            {module.type === 'classic_overlay_hero' && <ClassicOverlayHero {...(module.props as ClassicOverlayHeroProps)} onUpdate={(updates) => onUpdate?.(module.id, updates)} />}
-            {module.type === 'top_image_center_text_hero' && <TopImageCenterTextHero {...(module.props as TopImageCenterTextHeroProps)} onUpdate={(updates) => onUpdate?.(module.id, updates)} />}
-            {module.type === 'split_layout_hero' && <SplitLayoutHero {...(module.props as SplitLayoutHeroProps)} onUpdate={(updates) => onUpdate?.(module.id, updates)} />}
+            {module.type === 'classic_overlay_hero' && (
+              <ClassicOverlayHero 
+                {...(module.props as ClassicOverlayHeroProps)} 
+                onUpdate={(updates) => {
+                  console.log('ClassicOverlayHero update:', module.id, updates)
+                  onUpdate?.(module.id, updates)
+                }} 
+              />
+            )}
+            {module.type === 'top_image_center_text_hero' && (
+              <TopImageCenterTextHero 
+                {...(module.props as TopImageCenterTextHeroProps)} 
+                onUpdate={(updates) => {
+                  console.log('TopImageCenterTextHero update:', module.id, updates)
+                  onUpdate?.(module.id, updates)
+                }} 
+              />
+            )}
+            {module.type === 'split_layout_hero' && (
+              <SplitLayoutHero 
+                {...(module.props as SplitLayoutHeroProps)} 
+                onUpdate={(updates) => {
+                  console.log('SplitLayoutHero update:', module.id, updates)
+                  onUpdate?.(module.id, updates)
+                }} 
+              />
+            )}
             {module.type === 'form' && <FormModule {...(module.props as FormProps)} />}
             {module.type === 'OurProcess' && <OurProcessModule props={module.props as OurProcessProps} />}
             {module.type === 'contact_form' && <ContactFormModule {...(module.props as ContactFormProps)} />}

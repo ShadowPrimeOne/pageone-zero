@@ -21,7 +21,8 @@ export function PageContent() {
     editModule,
     addModule,
     isDirty,
-    setModules
+    setModules,
+    updateModule
   } = useEditorState()
 
   const [addModalOpen, setAddModalOpen] = useState(false)
@@ -118,6 +119,7 @@ export function PageContent() {
           onDuplicate={duplicateModule}
           onEdit={editModule}
           onAddRequest={openAddModuleModal}
+          onUpdate={updateModule}
         />
 
         <AddModuleModal
