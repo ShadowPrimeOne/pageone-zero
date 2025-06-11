@@ -5,6 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS module_templates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   type TEXT NOT NULL,
+  category module_category NOT NULL DEFAULT 'hero',
   props JSONB NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -13,15 +14,15 @@ CREATE TABLE IF NOT EXISTS module_templates (
 TRUNCATE TABLE module_templates;
 
 -- Insert default templates
-INSERT INTO module_templates (type, props) VALUES
+INSERT INTO module_templates (type, category, props) VALUES
 -- Hero template
-('hero', '{
+('hero', 'hero', '{
   "heading": "Page.one",
   "subheading": "Genesis Ready."
 }'::jsonb),
 
 -- Hero 2 template (full screen)
-('hero2', '{
+('hero2', 'hero', '{
   "heading": "Welcome to Page.one",
   "subheading": "Create something amazing",
   "background": {
@@ -37,7 +38,7 @@ INSERT INTO module_templates (type, props) VALUES
 }'::jsonb),
 
 -- Classic Overlay Hero template
-('classic_overlay_hero', '{
+('classic_overlay_hero', 'hero', '{
   "heading": "Experience Excellence",
   "subheading": "Your journey to success starts here",
   "background": {
@@ -53,7 +54,7 @@ INSERT INTO module_templates (type, props) VALUES
 }'::jsonb),
 
 -- Form template
-('form', '{
+('form', 'form', '{
   "title": "Let''s talk",
   "submitText": "Send Message",
   "fields": [

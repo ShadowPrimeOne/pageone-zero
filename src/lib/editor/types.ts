@@ -13,6 +13,7 @@ export interface ModuleBackground {
 export interface HeroProps {
   heading: string
   subheading: string
+  ctaText?: string
   background?: ModuleBackground
 }
 
@@ -43,9 +44,12 @@ export interface FormProps {
   background?: ModuleBackground
 }
 
+export type ModuleCategory = 'hero' | 'content' | 'form' | 'process' | 'contact';
+
 export interface Module {
   id: string
   type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero' | 'hero' | 'hero2' | 'form' | 'OurProcess' | 'contact_form'
+  category: ModuleCategory
   props: HeroProps | Hero2Props | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps | FormProps | OurProcessProps | ContactFormProps
   background?: ModuleBackground
 }
