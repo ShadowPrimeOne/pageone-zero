@@ -5,6 +5,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const moduleType = formData.get('moduleType') as string
     
     if (!file) {
       return NextResponse.json(
@@ -21,14 +22,14 @@ export async function POST(request: Request) {
       )
     }
 
-    // Generate unique filename
+    // Generate unique filename with module type prefix
     const timestamp = Date.now()
-    const filename = `${timestamp}-${file.name}`
+    const filename = `${moduleType}/${timestamp}-${file.name}`
 
-    // Upload to Supabase Storage
+    // Upload to Supabase Storage in the correct bucket
     const { data, error } = await supabase.storage
-      .from('page_assets')
-      .upload(filename, file, {
+      .from('public-images')
+      .upload(`modules/hero/${filename}`, file, {
         cacheControl: '3600',
         upsert: false
       })
@@ -43,8 +44,8 @@ export async function POST(request: Request) {
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage
-      .from('page_assets')
-      .getPublicUrl(filename)
+      .from('public-images')
+      .getPublicUrl(`modules/hero/${filename}`)
 
     return NextResponse.json({
       success: true,

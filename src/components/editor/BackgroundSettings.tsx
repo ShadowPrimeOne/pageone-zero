@@ -6,9 +6,10 @@ import type { ModuleBackground } from '@/lib/editor/types'
 interface Props {
   background?: ModuleBackground
   onChange: (background: ModuleBackground) => void
+  moduleType: string
 }
 
-export function BackgroundSettings({ background, onChange }: Props) {
+export function BackgroundSettings({ background, onChange, moduleType }: Props) {
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -20,6 +21,7 @@ export function BackgroundSettings({ background, onChange }: Props) {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('moduleType', moduleType)
 
       const response = await fetch('/api/upload', {
         method: 'POST',
@@ -33,7 +35,9 @@ export function BackgroundSettings({ background, onChange }: Props) {
       const { url } = await response.json()
       onChange({
         type: 'image',
-        value: url,
+        image: url,
+        color: background?.color || '#000000',
+        opacity: background?.opacity || 1,
         overlay: background?.overlay,
         parallax: background?.parallax
       })
@@ -48,7 +52,8 @@ export function BackgroundSettings({ background, onChange }: Props) {
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange({
       type: 'color',
-      value: e.target.value,
+      color: e.target.value,
+      opacity: background?.opacity || 1,
       overlay: background?.overlay,
       parallax: background?.parallax
     })
@@ -97,7 +102,7 @@ export function BackgroundSettings({ background, onChange }: Props) {
           </button>
           <input
             type="color"
-            value={background?.type === 'color' ? background.value : '#ffffff'}
+            value={background?.type === 'color' ? background.color : '#ffffff'}
             onChange={handleColorChange}
             className="w-12 h-10 p-1 border-2 border-gray-300 rounded-md"
           />
@@ -111,48 +116,59 @@ export function BackgroundSettings({ background, onChange }: Props) {
         />
       </div>
 
+      {background?.type === 'image' && background.image && (
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+          <img
+            src={background.image}
+            alt="Background preview"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
       {background?.type === 'image' && (
-        <>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Overlay Color
-            </label>
-            <input
-              type="color"
-              value={background.overlay?.color || '#000000'}
-              onChange={handleOverlayChange}
-              className="w-full h-10 p-1 border-2 border-gray-300 rounded-md"
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Overlay Color
+          </label>
+          <input
+            type="color"
+            value={background.overlay?.color || '#000000'}
+            onChange={handleOverlayChange}
+            className="w-full h-10 p-1 border-2 border-gray-300 rounded-md"
+          />
+        </div>
+      )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Overlay Opacity
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={background.overlay?.opacity || 0.5}
-              onChange={handleOpacityChange}
-              className="w-full"
-            />
-          </div>
+      {background?.type === 'image' && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Overlay Opacity
+          </label>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={background.overlay?.opacity || 0.5}
+            onChange={handleOpacityChange}
+            className="w-full"
+          />
+        </div>
+      )}
 
-          <div className="flex items-center gap-2">
+      {background?.type === 'image' && (
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
             <input
               type="checkbox"
-              id="parallax"
               checked={background.parallax || false}
               onChange={handleParallaxChange}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <label htmlFor="parallax" className="text-sm font-medium text-gray-700">
-              Enable Parallax
-            </label>
-          </div>
-        </>
+            Enable Parallax Effect
+          </label>
+        </div>
       )}
     </div>
   )
