@@ -1,10 +1,77 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import sharp from 'sharp'
+import { Module } from '@/lib/editor/types'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
+
+async function processTemporaryImages(modules: Module[], slug: string) {
+  const processedModules = [...modules]
+  
+  for (let i = 0; i < processedModules.length; i++) {
+    const moduleData = processedModules[i]
+    if (moduleData.props?.background?.type === 'image' && moduleData.props.background._tempFile) {
+      try {
+        // Convert File to ArrayBuffer
+        const arrayBuffer = await moduleData.props.background._tempFile.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        // Optimize the image
+        const optimizedImage = await sharp(buffer)
+          .resize(1920, 1080, {
+            fit: 'inside',
+            withoutEnlargement: true
+          })
+          .webp({ quality: 90 })
+          .toBuffer()
+
+        // Generate a unique filename
+        const timestamp = Date.now()
+        const filename = `${timestamp}-${moduleData.props.background._tempFile.name}`
+        const fullPath = `user/${slug}/${filename}`
+
+        // Upload the optimized image
+        const { error: uploadError } = await supabase.storage
+          .from('public-images')
+          .upload(fullPath, optimizedImage, {
+            contentType: 'image/webp',
+            upsert: true
+          })
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError)
+          throw new Error('Failed to upload image')
+        }
+
+        // Get the public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('public-images')
+          .getPublicUrl(fullPath)
+
+        // Update the module with the new image URL
+        processedModules[i] = {
+          ...moduleData,
+          props: {
+            ...moduleData.props,
+            background: {
+              ...moduleData.props.background,
+              image: publicUrl,
+              _tempFile: undefined // Remove the temporary file
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error processing image:', error)
+        throw new Error('Failed to process image')
+      }
+    }
+  }
+
+  return processedModules
+}
 
 export async function POST(request: Request) {
   try {
@@ -40,13 +107,16 @@ export async function POST(request: Request) {
       )
     }
 
-    // Insert new page
+    // Process any temporary images
+    const processedModules = await processTemporaryImages(modules, slug)
+
+    // Insert new page with processed modules
     const { error: insertError } = await supabase
       .from('pages')
       .insert({ 
         slug, 
         key, 
-        modules,
+        modules: processedModules,
         created_at: new Date().toISOString()
       })
 

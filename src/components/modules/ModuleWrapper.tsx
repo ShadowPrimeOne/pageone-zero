@@ -41,6 +41,7 @@ export function ModuleWrapper({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const scrollPositionRef = useRef<number>(0)
+  const [tempUrl, setTempUrl] = useState<string | null>(null)
 
   // Handle scroll to top when module is selected
   useEffect(() => {
@@ -78,6 +79,15 @@ export function ModuleWrapper({
     }
   }, [selected])
 
+  // Clean up temporary URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (tempUrl) {
+        URL.revokeObjectURL(tempUrl)
+      }
+    }
+  }, [tempUrl])
+
   // Handle parallax effect
   useEffect(() => {
     if (!module.background?.parallax || !wrapperRef.current) return
@@ -94,7 +104,11 @@ export function ModuleWrapper({
   }, [module.background?.parallax])
 
   const backgroundStyle = module.background ? {
-    backgroundImage: module.background.type === 'image' ? `url(${module.background.image})` : undefined,
+    backgroundImage: module.background.type === 'image' ? `url(${module.background.image || (module.background._tempFile ? (() => {
+      const url = URL.createObjectURL(module.background._tempFile!)
+      setTempUrl(url)
+      return url
+    })() : undefined)})` : undefined,
     backgroundColor: module.background.type === 'color' ? module.background.color : undefined,
     backgroundSize: module.background.type === 'image' ? 'cover' : undefined,
     backgroundPosition: module.background.type === 'image' ? 'center' : undefined,
@@ -116,30 +130,30 @@ export function ModuleWrapper({
   }
 
   const handleUpdate = (updates: Partial<Module['props']>) => {
-    console.log('ModuleWrapper: handleUpdate called with:', { moduleId: module.id, updates })
-    
-    // Ensure we're passing a complete background object
     if (updates.background) {
+      console.log('ModuleWrapper: Background update:', updates.background)
       const currentBackground = (module.props.background || {}) as Background
       const newBackground: Background = {
         ...currentBackground,
         ...updates.background,
-        // Ensure type is set
         type: updates.background.type || currentBackground.type || 'color',
-        // Ensure color is set
-        color: updates.background.color || currentBackground.color || '#000000',
-        // Ensure opacity is set
+        color: updates.background.type === 'color' ? (updates.background.color || currentBackground.color || '#000000') : '#000000',
         opacity: updates.background.opacity ?? currentBackground.opacity ?? 1,
-        // Preserve image if it exists
-        image: updates.background.image || currentBackground.image,
-        // Preserve overlay if it exists
-        overlay: updates.background.overlay || currentBackground.overlay
+        image: updates.background.type === 'image' ? updates.background.image : currentBackground.image,
+        _tempFile: updates.background._tempFile || currentBackground._tempFile,
+        overlay: {
+          color: updates.background.overlay?.color || currentBackground.overlay?.color || '#000000',
+          opacity: updates.background.overlay?.opacity ?? currentBackground.overlay?.opacity ?? 0.5
+        }
       }
       updates.background = newBackground
     }
 
-    console.log('ModuleWrapper: Passing updates to parent:', updates)
-    onUpdate?.(module.id, updates)
+    const updatedProps = {
+      ...module.props,
+      ...updates
+    }
+    onUpdate?.(module.id, updatedProps)
   }
 
   return (

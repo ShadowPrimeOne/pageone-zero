@@ -3,22 +3,15 @@ export interface Background {
   color: string
   opacity: number
   image?: string
+  _tempFile?: File
   overlay?: {
     color: string
     opacity: number
   }
 }
 
-export interface ModuleBackground {
-  type: 'image' | 'color'
-  color: string
-  opacity: number
-  image?: string
+export interface ModuleBackground extends Background {
   parallax?: boolean
-  overlay?: {
-    color: string
-    opacity: number
-  }
 }
 
 export interface HeroProps {

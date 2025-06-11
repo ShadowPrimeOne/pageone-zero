@@ -1,7 +1,7 @@
 'use client'
 
-import React, { createContext, useContext, useState, ReactNode } from 'react'
-import type { Module, HeroProps, FormProps, Hero2Props, ClassicOverlayHeroProps, TopImageCenterTextHeroProps, SplitLayoutHeroProps, OurProcessProps, ContactFormProps } from './types'
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react'
+import type { Module } from './types'
 
 interface EditorStateContextType {
   modules: Module[]
@@ -12,7 +12,7 @@ interface EditorStateContextType {
   setIsPublishModalOpen: (value: boolean) => void
   selectModule: (id: string) => void
   editModule: (id: string) => void
-  updateModule: (id: string, updates: Partial<HeroProps | FormProps | Hero2Props | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps | OurProcessProps | ContactFormProps>) => void
+  updateModule: (id: string, updates: Partial<Module>) => void
   moveModuleUp: (id: string) => void
   moveModuleDown: (id: string) => void
   duplicateModule: (id: string) => void
@@ -48,40 +48,76 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
 
-  const selectModule = (id: string) => {
-    setSelectedModuleId(id)
-    // Don't open editor on selection
-  }
+  // Sync modules with initialModules
+  useEffect(() => {
+    if (initialModules.length > 0) {
+      setModules(initialModules)
+    }
+  }, [initialModules])
 
-  const editModule = (id: string) => {
+  const selectModule = useCallback((id: string) => {
+    setSelectedModuleId(id)
+  }, [])
+
+  const editModule = useCallback((id: string) => {
     setSelectedModuleId(id)
     setIsEditorOpen(true)
-  }
+  }, [])
 
-  const updateModule = (id: string, updates: Partial<HeroProps | FormProps | Hero2Props | ClassicOverlayHeroProps | TopImageCenterTextHeroProps | SplitLayoutHeroProps | OurProcessProps | ContactFormProps>) => {
-    console.log('useEditorState: Updating module:', id, updates)
+  const updateModule = useCallback((moduleId: string, updates: Partial<Module>) => {
+    console.log('useEditorState: updateModule called with:', { moduleId, updates })
+    console.log('useEditorState: Current modules state:', modules)
+    
     setModules(prevModules => {
-      const updatedModules = prevModules.map(module => {
-        if (module.id === id) {
-          console.log('useEditorState: Found module to update:', module)
-          // Create a new module object to ensure state update
-          const updatedModule = {
-            ...module,
-            props: {
-              ...module.props,
-              ...updates
-            }
-          }
-          console.log('useEditorState: Updated module:', updatedModule)
-          return updatedModule
+      console.log('useEditorState: Previous modules:', prevModules)
+      
+      const moduleIndex = prevModules.findIndex(m => m.id === moduleId)
+      if (moduleIndex === -1) {
+        console.log('useEditorState: Module not found:', moduleId)
+        return prevModules
+      }
+
+      const moduleToUpdate = prevModules[moduleIndex]
+      console.log('useEditorState: Found module to update:', moduleToUpdate)
+
+      // Create a new module with merged updates
+      const updatedModule = {
+        ...moduleToUpdate,
+        props: {
+          ...moduleToUpdate.props,
+          ...(updates.props || {})
         }
-        return module
-      })
-      console.log('useEditorState: New modules state:', updatedModules)
-      return updatedModules
+      }
+
+      // Handle background updates separately to ensure proper merging
+      if (updates.props?.background) {
+        updatedModule.props.background = {
+          ...moduleToUpdate.props.background,
+          ...updates.props.background,
+          type: updates.props.background.type || moduleToUpdate.props.background?.type || 'color',
+          color: updates.props.background.type === 'color' ? (updates.props.background.color || moduleToUpdate.props.background?.color || '#000000') : '#000000',
+          opacity: updates.props.background.opacity ?? moduleToUpdate.props.background?.opacity ?? 1,
+          image: updates.props.background.type === 'image' ? updates.props.background.image : moduleToUpdate.props.background?.image,
+          _tempFile: updates.props.background._tempFile || moduleToUpdate.props.background?._tempFile,
+          overlay: {
+            color: updates.props.background.overlay?.color || moduleToUpdate.props.background?.overlay?.color || '#000000',
+            opacity: updates.props.background.overlay?.opacity ?? moduleToUpdate.props.background?.overlay?.opacity ?? 0.5
+          }
+        }
+      }
+
+      console.log('useEditorState: Applying updates:', updatedModule)
+      
+      // Create new array with updated module
+      const newModules = [...prevModules]
+      newModules[moduleIndex] = updatedModule
+      
+      console.log('useEditorState: New modules state:', newModules)
+      return newModules
     })
+
     setIsDirty(true)
-  }
+  }, [modules]) // Add modules to dependency array
 
   const moveModuleUp = (id: string) => {
     setModules(prevModules => {
@@ -142,6 +178,7 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     const newModule: Module = {
       id: crypto.randomUUID(),
       type,
+      category: 'hero',
       props: {
         heading: 'New Module',
         subheading: 'Add your content here',

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { HeroProps } from '@/lib/editor/types'
 import Image from 'next/image'
 
@@ -12,6 +12,12 @@ export function ClassicOverlayHero({ heading, subheading, background, onUpdate }
   const [localHeading, setLocalHeading] = useState(heading)
   const [localSubheading, setLocalSubheading] = useState(subheading)
   const [cta, setCta] = useState('Get Started')
+
+  // Sync local state with props
+  useEffect(() => {
+    setLocalHeading(heading)
+    setLocalSubheading(subheading)
+  }, [heading, subheading])
 
   // Handle text updates
   const handleTextUpdate = (type: 'heading' | 'subheading' | 'cta', value: string) => {

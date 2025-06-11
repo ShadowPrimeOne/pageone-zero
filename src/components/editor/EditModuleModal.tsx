@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Module, HeroProps, Background } from '@/lib/editor/types'
 import { BackgroundSettings } from './BackgroundSettings'
@@ -18,23 +18,76 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   const [heading, setHeading] = useState((module.props as HeroProps).heading || '')
   const [subheading, setSubheading] = useState((module.props as HeroProps).subheading || '')
 
+  // Update local state when module prop changes
+  useEffect(() => {
+    setModuleData(module)
+    setHeading((module.props as HeroProps).heading || '')
+    setSubheading((module.props as HeroProps).subheading || '')
+  }, [module])
+
   if (!isOpen) return null
 
-  const handleUpdate = (updates: Partial<Module>) => {
-    const updatedModule = { ...moduleData, ...updates }
+  const handleContentChange = (updates: Partial<HeroProps>) => {
+    console.log('EditModuleModal: handleContentChange called with:', updates)
+    console.log('EditModuleModal: Current moduleData:', moduleData)
+    
+    const updatedModule = {
+      ...moduleData,
+      props: {
+        ...moduleData.props,
+        ...updates
+      }
+    }
+    
+    console.log('EditModuleModal: Created content update:', updatedModule)
     setModuleData(updatedModule)
     onUpdate(updatedModule)
   }
 
   const handleBackgroundChange = (updates: Partial<Background>) => {
-    handleUpdate({
-      background: {
-        type: updates.type || moduleData.background?.type || 'color',
-        color: updates.color || moduleData.background?.color || '#000000',
-        opacity: updates.opacity ?? moduleData.background?.opacity ?? 1,
-        ...updates
+    console.log('EditModuleModal: Background update:', updates)
+    
+    // Create updated module with background changes
+    const updatedModule = {
+      ...moduleData,
+      props: {
+        ...moduleData.props,
+        background: {
+          ...moduleData.props.background,
+          ...updates,
+          type: updates.type || moduleData.props.background?.type || 'color',
+          color: updates.type === 'color' ? (updates.color || moduleData.props.background?.color || '#000000') : '#000000',
+          opacity: updates.opacity ?? moduleData.props.background?.opacity ?? 1,
+          image: updates.type === 'image' ? updates.image : moduleData.props.background?.image,
+          overlay: {
+            color: updates.overlay?.color || moduleData.props.background?.overlay?.color || '#000000',
+            opacity: updates.overlay?.opacity ?? moduleData.props.background?.overlay?.opacity ?? 0.5
+          }
+        }
       }
-    })
+    }
+    
+    setModuleData(updatedModule)
+    onUpdate(updatedModule)
+  }
+
+  const handleSave = () => {
+    console.log('EditModuleModal: handleSave called')
+    console.log('EditModuleModal: Current moduleData:', moduleData)
+    
+    // Ensure all changes are saved before closing
+    const finalModule = {
+      ...moduleData,
+      props: {
+        ...moduleData.props,
+        heading,
+        subheading
+      }
+    }
+    
+    console.log('EditModuleModal: Saving final module:', finalModule)
+    onUpdate(finalModule)
+    close()
   }
 
   return (
@@ -92,11 +145,8 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                   value={heading}
                   onChange={(e) => {
                     setHeading(e.target.value)
-                    handleUpdate({
-                      props: {
-                        ...moduleData.props,
-                        heading: e.target.value
-                      }
+                    handleContentChange({
+                      heading: e.target.value
                     })
                   }}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -112,11 +162,8 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                   value={subheading}
                   onChange={(e) => {
                     setSubheading(e.target.value)
-                    handleUpdate({
-                      props: {
-                        ...moduleData.props,
-                        subheading: e.target.value
-                      }
+                    handleContentChange({
+                      subheading: e.target.value
                     })
                   }}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -129,9 +176,8 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
           {activeTab === 'background' && (
             <div className="space-y-4">
               <BackgroundSettings
-                background={moduleData.background}
+                background={moduleData.props.background}
                 onChange={handleBackgroundChange}
-                moduleType={moduleData.type}
               />
             </div>
           )}
@@ -147,7 +193,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
               Cancel
             </button>
             <button
-              onClick={close}
+              onClick={handleSave}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Save Changes
