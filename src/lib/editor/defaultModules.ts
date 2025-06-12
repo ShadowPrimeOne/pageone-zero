@@ -22,4 +22,11 @@ export const defaultModules: Module[] = [
       }
     }
   }
-] 
+]
+
+export const DEFAULT_MODULE_IDS = {
+  top_image_center_text_hero: '28173bac-8cf5-42b9-89d6-316082b08db7',
+  classic_overlay_hero: 'default-id-classic-overlay-hero'
+} as const
+
+export type ModuleType = keyof typeof DEFAULT_MODULE_IDS 

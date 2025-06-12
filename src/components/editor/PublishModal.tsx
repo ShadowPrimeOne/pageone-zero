@@ -12,7 +12,7 @@ interface PublishModalProps {
 }
 
 export function PublishModal({ isOpen, onClose }: PublishModalProps) {
-  const { modules } = useEditorState()
+  const { modules, isDirty } = useEditorState()
   const [slug, setSlug] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -23,8 +23,9 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
   useEffect(() => {
     if (isOpen) {
       console.log('🔍 PublishModal opened with modules:', modules)
+      console.log('🔍 PublishModal isDirty:', isDirty)
     }
-  }, [isOpen, modules])
+  }, [isOpen, modules, isDirty])
 
   useEffect(() => {
     const checkSlug = async () => {
@@ -137,7 +138,7 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
           { label: "🔗 View Page", href: `/page/${slug}` },
           { label: "✏️ Edit Page", href: `/page/${slug}?edit=true` },
           { label: "📲 QR Code", action: () => generateQRCode(slug) },
-          { label: "⬅ Back to Editor", href: "/test" }
+          { label: "⬅ Back to Editor", href: "/" }
         ]
       })
 
@@ -162,7 +163,12 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Publish Page</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-gray-900">Publish Page</h2>
+            {isDirty && (
+              <span className="text-green-600 text-sm">✓ Changes saved</span>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-500"

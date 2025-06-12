@@ -1,5 +1,8 @@
 'use client'
 
+import React from 'react'
+import { useEditorState } from '@/lib/editor/useEditorState'
+import ImageUploader from '@/components/editor/ImageUploader'
 import type { HeroProps, FormProps, Module } from '@/lib/editor/types'
 import { BackgroundSettings } from './BackgroundSettings'
 
@@ -18,12 +21,15 @@ export function EditorPanel({
   setIsEditorOpen,
   updateModule,
 }: Props) {
-  const selected = modules.find(m => m.id === selectedModuleId)
-  if (!selected || !isEditorOpen) return null
+  const { selectedModule } = useEditorState()
+
+  if (!selectedModule) return null
+
+  const { type, props } = selectedModule
 
   const handleBackgroundChange = (background: Module['background']) => {
-    updateModule(selected.id, {
-      ...selected.props,
+    updateModule(selectedModule.id, {
+      ...selectedModule.props,
       background
     })
   }
@@ -31,18 +37,9 @@ export function EditorPanel({
   return (
     <div className="fixed inset-0 z-[100] bg-white/70 backdrop-blur-sm flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">Edit {selected.type}</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900">Edit {type}</h2>
 
-        {/* Background Settings */}
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Background</h3>
-          <BackgroundSettings
-            background={selected.background}
-            onChange={handleBackgroundChange}
-          />
-        </div>
-
-        {selected.type === 'hero' && (
+        {type === 'top_image_center_text_hero' && (
           <>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -50,12 +47,14 @@ export function EditorPanel({
               </label>
               <input
                 className="w-full p-2 border-2 border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-colors text-gray-900 bg-white"
-                value={(selected.props as HeroProps).heading}
-                onChange={e =>
-                  updateModule(selected.id, {
-                    ...selected.props,
-                    heading: e.target.value,
-                  } as HeroProps)
+                value={props.heading || ''}
+                onChange={(e) =>
+                  updateModule(selectedModule.id, {
+                    props: {
+                      ...props,
+                      heading: e.target.value,
+                    },
+                  })
                 }
                 placeholder="Enter heading"
               />
@@ -66,20 +65,83 @@ export function EditorPanel({
               </label>
               <input
                 className="w-full p-2 border-2 border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-colors text-gray-900 bg-white"
-                value={(selected.props as HeroProps).subheading}
-                onChange={e =>
-                  updateModule(selected.id, {
-                    ...selected.props,
-                    subheading: e.target.value,
-                  } as HeroProps)
+                value={props.subheading || ''}
+                onChange={(e) =>
+                  updateModule(selectedModule.id, {
+                    props: {
+                      ...props,
+                      subheading: e.target.value,
+                    },
+                  })
                 }
                 placeholder="Enter subheading"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Top Background Image
+              </label>
+              <ImageUploader
+                existingUrl={props.topBackground?.url}
+                onUpload={(url) =>
+                  updateModule(selectedModule.id, {
+                    props: {
+                      ...props,
+                      topBackground: { ...props.topBackground, url },
+                    },
+                  })
+                }
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Bottom Background Color
+              </label>
+              <input
+                type="color"
+                value={props.bottomBackground?.color || '#000000'}
+                onChange={(e) =>
+                  updateModule(selectedModule.id, {
+                    props: {
+                      ...props,
+                      bottomBackground: {
+                        ...props.bottomBackground,
+                        color: e.target.value,
+                      },
+                    },
+                  })
+                }
+                className="w-16 h-8"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Bottom Opacity
+              </label>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={props.bottomBackground?.opacity || 1}
+                onChange={(e) =>
+                  updateModule(selectedModule.id, {
+                    props: {
+                      ...props,
+                      bottomBackground: {
+                        ...props.bottomBackground,
+                        opacity: parseFloat(e.target.value),
+                      },
+                    },
+                  })
+                }
+                className="w-full"
               />
             </div>
           </>
         )}
 
-        {selected.type === 'form' && (
+        {type === 'form' && (
           <>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -87,10 +149,10 @@ export function EditorPanel({
               </label>
               <input
                 className="w-full p-2 border-2 border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-colors text-gray-900 bg-white"
-                value={(selected.props as FormProps).title}
-                onChange={e =>
-                  updateModule(selected.id, {
-                    ...selected.props,
+                value={(props as FormProps).title}
+                onChange={(e) =>
+                  updateModule(selectedModule.id, {
+                    ...props,
                     title: e.target.value,
                   } as FormProps)
                 }
@@ -103,10 +165,10 @@ export function EditorPanel({
               </label>
               <input
                 className="w-full p-2 border-2 border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-colors text-gray-900 bg-white"
-                value={(selected.props as FormProps).submitText}
-                onChange={e =>
-                  updateModule(selected.id, {
-                    ...selected.props,
+                value={(props as FormProps).submitText}
+                onChange={(e) =>
+                  updateModule(selectedModule.id, {
+                    ...props,
                     submitText: e.target.value,
                   } as FormProps)
                 }

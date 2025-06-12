@@ -4,11 +4,12 @@ import React, { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'
 import type { Module } from '@/lib/editor/types'
+import type { ModuleType } from '@/lib/editor/defaultModules'
 
 interface Props {
   isOpen: boolean
   close: () => void
-  onAdd: (type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero') => void
+  onAdd: (type: ModuleType) => void
   templates: Module[]
 }
 
@@ -51,36 +52,16 @@ const heroTemplates = [
       <rect x="30" y="135" rx="3" ry="3" width="40" height="12" fill="#000" />
       <text x="50" y="143" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">Learn More</text>
     </svg>`
-  },
-  {
-    type: 'split_layout_hero' as const,
-    title: 'Split Layout Hero',
-    description: 'Personal brands, consultants, lawyers',
-    svg: `<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-      <!-- Left Column (Text, 60%) -->
-      <rect x="0" y="0" width="60" height="180" fill="#f5f5f5" />
-      <!-- Heading -->
-      <text x="10" y="50" font-size="7" fill="#222" font-family="Arial">Expert Name</text>
-      <!-- Subheading -->
-      <text x="10" y="65" font-size="5" fill="#666" font-family="Arial">Your trusted advisor</text>
-      <!-- CTA Button -->
-      <rect x="10" y="85" rx="2" ry="2" width="40" height="12" fill="#000" />
-      <text x="30" y="93" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">Contact Me</text>
-      <!-- Right Column (Image, 40%) -->
-      <rect x="60" y="0" width="40" height="180" fill="#ddd" />
-      <circle cx="80" cy="70" r="20" fill="#bbb" />
-      <text x="80" y="75" font-size="5" fill="#666" text-anchor="middle" font-family="Arial">Image</text>
-    </svg>`
   }
 ]
 
 export function AddModuleModal({ isOpen, close, onAdd }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<Category>('Hero')
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
+  const [selectedTemplate, setSelectedTemplate] = useState<ModuleType | null>(null)
 
   if (!isOpen) return null
 
-  const handleTemplateClick = (type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero') => {
+  const handleTemplateClick = (type: ModuleType) => {
     if (selectedTemplate === type) {
       onAdd(type)
       close()

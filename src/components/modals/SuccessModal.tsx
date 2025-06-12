@@ -1,6 +1,7 @@
 'use client'
 
 import { QRCodeSVG } from 'qrcode.react'
+import Link from 'next/link'
 
 interface SuccessModalProps {
   isOpen: boolean
@@ -48,12 +49,12 @@ export default function SuccessModal({ isOpen, onClose, slug, key }: SuccessModa
             ✏️ Edit Page
           </a>
 
-          <a
-            href="/test"
+          <Link
+            href="/"
             className="block w-full px-4 py-2 text-sm font-medium text-center text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#004225]"
           >
-            ⬅ Back to Editor
-          </a>
+            Back to Editor
+          </Link>
         </div>
 
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">

@@ -142,4 +142,45 @@ export const moduleTemplates: Module[] = [
       opacity: 1
     }
   }
-] 
+]
+
+export async function fetchModuleTemplateById(id: string) {
+  // If it's a default module ID, return the default template
+  if (id === 'default-id-classic-overlay-hero') {
+    return {
+      id: 'default-id-classic-overlay-hero',
+      type: 'classic_overlay_hero',
+      category: 'hero',
+      props: {
+        heading: 'Welcome to Your New Page',
+        subheading: 'Start building your page by adding modules below',
+        ctaText: 'Get Started',
+        background: {
+          type: 'image',
+          image: '/images/hero-bg.jpg',
+          color: '#000000',
+          opacity: 1,
+          parallax: true,
+          overlay: {
+            color: '#000000',
+            opacity: 0.5
+          }
+        }
+      }
+    } as Module
+  }
+
+  // Otherwise, try to fetch from database
+  const { data, error } = await supabase
+    .from('module_templates')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error('Error fetching module template:', error)
+    return null
+  }
+
+  return data
+} 

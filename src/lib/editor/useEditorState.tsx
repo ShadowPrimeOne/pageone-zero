@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react'
 import type { Module } from './types'
+import { DEFAULT_MODULE_IDS, ModuleType } from './defaultModules'
+import { fetchModuleTemplateById } from './db'
 
 interface EditorStateContextType {
   modules: Module[]
@@ -18,9 +20,10 @@ interface EditorStateContextType {
   duplicateModule: (id: string) => void
   deleteModule: (id: string) => void
   setModules: (modules: Module[]) => void
-  addModule: (type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero', relativeTo: string, position: 'above' | 'below') => void
+  addModule: (type: ModuleType, relativeTo: string, position: 'above' | 'below') => void
   isDirty: boolean
   markClean: () => void
+  setSelectedModuleId: (id: string | null) => void
 }
 
 const EditorStateContext = createContext<EditorStateContextType | undefined>(undefined)
@@ -116,6 +119,7 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
       return newModules
     })
 
+    // Set dirty state to true when module is updated
     setIsDirty(true)
   }, [modules]) // Add modules to dependency array
 
@@ -174,23 +178,33 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     setIsDirty(true)
   }
 
-  const addModule = (type: 'classic_overlay_hero' | 'top_image_center_text_hero' | 'split_layout_hero', relativeTo: string, position: 'above' | 'below') => {
-    const newModule: Module = {
+  const addModule = async (type: ModuleType, relativeTo: string, position: 'above' | 'below') => {
+    const templateId = DEFAULT_MODULE_IDS[type]
+    if (!templateId) {
+      console.error(`❌ No default template ID for ${type}`)
+      return
+    }
+
+    const template = await fetchModuleTemplateById(templateId)
+    if (!template) {
+      console.error(`❌ Could not load template for ID ${templateId}`)
+      return
+    }
+
+    const newModule = {
       id: crypto.randomUUID(),
-      type,
-      category: 'hero',
-      props: {
-        heading: 'New Module',
-        subheading: 'Add your content here',
-        background: {
-          type: 'color',
-          color: '#ffffff',
-          opacity: 1
-        }
-      }
+      type: template.type,
+      category: template.category,
+      props: template.props,
     }
 
     setModules(prevModules => {
+      // If this is the first module, just add it
+      if (prevModules.length === 0) {
+        return [newModule]
+      }
+
+      // Otherwise, add it relative to the specified module
       const relativeIndex = prevModules.findIndex(m => m.id === relativeTo)
       if (relativeIndex === -1) return prevModules
 
@@ -198,6 +212,8 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
       newModules.splice(position === 'above' ? relativeIndex : relativeIndex + 1, 0, newModule)
       return newModules
     })
+    setSelectedModuleId(newModule.id)
+    setIsEditorOpen(true)
     setIsDirty(true)
   }
 
@@ -222,7 +238,8 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
     setModules,
     addModule,
     isDirty,
-    markClean
+    markClean,
+    setSelectedModuleId
   }
 
   return (
