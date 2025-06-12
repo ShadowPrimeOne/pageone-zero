@@ -10,9 +10,11 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const slug = params.slug
+  console.log('🔍 Generating metadata for slug:', slug)
   const page = await getPageBySlug(slug)
   
   if (!page) {
+    console.warn('⚠️ Page not found for metadata:', slug)
     return {
       title: 'Page Not Found',
       description: 'The requested page could not be found.',
@@ -27,14 +29,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function Page({ params, searchParams }: { params: { slug: string }, searchParams: { edit?: string } }) {
   const slug = params.slug
+  console.log('📄 Loading page for slug:', slug)
+  
   const page = await getPageBySlug(slug)
   const isEdit = searchParams.edit === 'true'
 
   if (!page) {
+    console.error('❌ Page not found:', slug)
     notFound()
   }
 
+  console.log('✅ Page loaded successfully:', {
+    slug,
+    hasModules: !!page.modules,
+    moduleCount: page.modules?.length || 0
+  })
+
   if (isEdit) {
+    console.log('✏️ Loading edit mode')
     return (
       <EditorStateProvider initialModules={page.modules}>
         <PageContent />
@@ -42,6 +54,7 @@ export default async function Page({ params, searchParams }: { params: { slug: s
     )
   }
 
+  console.log('👁️ Loading public view')
   return (
     <EditorStateProvider initialModules={page.modules}>
       <main className="min-h-screen">

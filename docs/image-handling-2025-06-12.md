@@ -1,6 +1,4 @@
-# Image Handling System Documentation (Legacy - Pre June 2025)
-
-> **Note:** This document is maintained for historical reference. For the current implementation, see [Image Handling System Documentation (2025-06-12)](image-handling-2025-06-12.md)
+# Image Handling System Documentation (2025-06-12)
 
 ## Overview
 The image handling system in PageOne manages different types of images: temporary preview images, default module images, and user-uploaded images. This document provides a detailed explanation of the system's architecture, storage structure, and implementation details.
@@ -31,86 +29,34 @@ public-images/
         └── [timestamp]-[filename].webp
 ```
 
-## Image Types and Handling
-
-### 1. Temporary Images
-- Used for preview during image upload
-- Stored in browser memory using `URL.createObjectURL()`
-- Automatically cleaned up when component unmounts
-- Never persisted to storage
-
-### 2. Default Module Images
-- Pre-uploaded images for module templates
-- Stored in `/modules/[category]/[module-type]/`
-- Referenced in module templates database
-- Immutable after initial setup
-
-### 3. User-Uploaded Images
-- Stored in `/user/[page-slug]/`
-- Optimized and converted to WebP format
-- Unique filenames using timestamp
-- Associated with specific pages via slug
-
-## Database Schema
-
-### Module Templates Table
-```sql
-create table module_templates (
-  id uuid default uuid_generate_v4() primary key,
-  type text not null,
-  category text not null,
-  title text not null,
-  description text,
-  default_image_url text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-```
-
-### Storage Policies
-```sql
--- Allow public read access
-create policy "Public Access"
-on storage.objects for select
-using ( bucket_id = 'public-images' );
-
--- Allow authenticated uploads
-create policy "Authenticated Uploads"
-on storage.objects for insert
-with check (
-  bucket_id = 'public-images'
-  and auth.role() = 'authenticated'
-);
-
--- Allow users to update their own files
-create policy "User Update Access"
-on storage.objects for update
-using (
-  bucket_id = 'public-images'
-  and (storage.foldername(name))[1] = 'user'
-  and (storage.foldername(name))[2] = auth.uid()::text
-);
-```
-
 ## API Routes
 
-### 1. Image Upload (`/api/upload`)
+### 1. Secure Image Upload (`/api/uploadImage`)
 ```typescript
-POST /api/upload
-Content-Type: multipart/form-data
+POST /api/uploadImage
+Content-Type: application/json
 
-Parameters:
-- file: File (required)
-- moduleType: string (required)
-- pageSlug: string (required)
+Request Body:
+{
+  base64: string,    // Base64-encoded image data
+  name: string,      // Original filename
+  type: string,      // MIME type (image/jpeg, image/png, etc.)
+  slug: string       // Page slug for folder organization
+}
 
 Response:
 {
-  success: boolean,
-  url: string,
-  path: string
+  url: string        // Public URL of uploaded image
 }
 ```
+
+Features:
+- Server-side processing using `supabaseAdmin` client
+- Automatic image optimization via Sharp
+- WebP conversion for better performance
+- Secure filename sanitization
+- Proper error handling and validation
+- Content-Disposition headers for safe downloads
 
 ### 2. Slug Check (`/api/checkSlug`)
 ```typescript
@@ -178,13 +124,14 @@ Response:
 
 1. **Access Control**
    - Public read access
-   - Authenticated uploads
+   - Server-side uploads via `supabaseAdmin`
    - User-specific folders
 
 2. **File Validation**
    - Type checking
    - Size limits
    - Content scanning
+   - Filename sanitization
 
 ## Performance Optimization
 
@@ -214,14 +161,15 @@ Response:
 
 ### Uploading an Image
 ```typescript
-const formData = new FormData();
-formData.append('file', imageFile);
-formData.append('moduleType', 'classic_overlay_hero');
-formData.append('pageSlug', 'my-page');
-
-const response = await fetch('/api/upload', {
+const response = await fetch('/api/uploadImage', {
   method: 'POST',
-  body: formData
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    base64: imageData,
+    name: 'example.jpg',
+    type: 'image/jpeg',
+    slug: 'my-page'
+  })
 });
 
 const { url } = await response.json();
@@ -243,16 +191,4 @@ const { available } = await response.json();
 2. **Solutions**
    - Check permissions
    - Verify file types
-   - Clear cache
-
-## Maintenance
-
-1. **Regular Tasks**
-   - Storage cleanup
-   - Policy updates
-   - Performance monitoring
-
-2. **Backup Strategy**
-   - Regular backups
-   - Disaster recovery
-   - Version control 
+   - Clear cache 

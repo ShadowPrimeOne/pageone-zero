@@ -38,9 +38,9 @@ export function PageContent() {
         const templates = await getModuleTemplates()
         setModuleTemplates(templates)
         
-        // Filter for only classic overlay hero module
+        // Use the basic hero module as initial module
         const initialModules = templates
-          .filter(template => template.type === 'classic_overlay_hero')
+          .filter(template => template.type === 'hero')
           .map(template => ({
             ...template,
             id: `mod-${Date.now()}-${Math.random().toString(36).slice(2)}`

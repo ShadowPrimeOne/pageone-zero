@@ -3,7 +3,12 @@ export interface Background {
   color: string
   opacity: number
   image?: string
-  _tempFile?: File
+  _tempFile?: {
+    name: string
+    type: string
+    size: number
+    data: string
+  }
   overlay?: {
     color: string
     opacity: number

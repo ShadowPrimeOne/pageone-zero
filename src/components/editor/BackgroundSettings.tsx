@@ -7,7 +7,7 @@ import Image from 'next/image'
 
 interface Props {
   background?: Background
-  onChange: (updates: Partial<Background & { _tempFile?: File }>) => void
+  onChange: (updates: Partial<Background>) => void
 }
 
 const defaultBackground: Background = {
@@ -22,7 +22,8 @@ const defaultBackground: Background = {
 
 export function BackgroundSettings({ background = defaultBackground, onChange }: Props) {
   const [isUploading, setIsUploading] = useState(false)
-  const [tempImageUrl, setTempImageUrl] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [finalImageUrl, setFinalImageUrl] = useState<string | null>(null)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -31,21 +32,30 @@ export function BackgroundSettings({ background = defaultBackground, onChange }:
     setIsUploading(true)
     try {
       // Create temporary URL for preview
-      const tempUrl = URL.createObjectURL(file)
-      setTempImageUrl(tempUrl)
+      const previewUrl = URL.createObjectURL(file)
+      setPreviewUrl(previewUrl)
+
+      // Convert File to base64 for storage
+      const arrayBuffer = await file.arrayBuffer()
+      const base64 = Buffer.from(arrayBuffer).toString('base64')
 
       // Store the file in state for later upload
       onChange({
         type: 'image',
-        image: tempUrl,
+        image: previewUrl, // Use previewUrl for immediate display
         color: '#000000',
         opacity: 1,
         overlay: background.overlay || { color: '#000000', opacity: 0.5 },
-        _tempFile: file // Store the file for later upload
+        _tempFile: {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          data: base64
+        }
       })
     } catch (error) {
       console.error('Preview error:', error)
-      setTempImageUrl(null)
+      setPreviewUrl(null)
     } finally {
       setIsUploading(false)
     }
@@ -54,11 +64,18 @@ export function BackgroundSettings({ background = defaultBackground, onChange }:
   // Clean up temporary URL when component unmounts
   useEffect(() => {
     return () => {
-      if (tempImageUrl) {
-        URL.revokeObjectURL(tempImageUrl)
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
       }
     }
-  }, [tempImageUrl])
+  }, [previewUrl])
+
+  // Update finalImageUrl when background.image changes
+  useEffect(() => {
+    if (background.image && !background.image.startsWith('blob:')) {
+      setFinalImageUrl(background.image)
+    }
+  }, [background.image])
 
   const handleTypeChange = (type: 'color' | 'image') => {
     if (type === 'image') {
@@ -171,10 +188,10 @@ export function BackgroundSettings({ background = defaultBackground, onChange }:
       )}
 
       {/* Image Preview */}
-      {(tempImageUrl || background.image) && (
+      {(previewUrl || finalImageUrl) && (
         <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
           <Image
-            src={tempImageUrl || background.image || ''}
+            src={previewUrl || finalImageUrl || ''}
             alt="Background Preview"
             fill
             className="object-cover"

@@ -1,43 +1,88 @@
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { join, resolve, relative, basename, extname, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __dirname = dirname(__filename)
 
-// Define the target files for audit
-const targetFiles = [
-  'src/app/page/[slug]/page.tsx',
-  'src/app/page.tsx',
-  'src/app/layout.tsx',
-  'src/app/api/publishPage/route.ts',
-  'src/components/modules/ModuleRenderer.tsx',
-  'src/components/modules/HeroModule.tsx',
-  'src/components/modules/FormModule.tsx',
-  'src/components/modules/ModuleWrapper.tsx',
-  'src/components/editor/PublishModal.tsx',
-  'src/components/editor/EditorPanel.tsx',
-  'src/components/editor/AddModuleModal.tsx',
-  'src/lib/hooks/useEditorState.ts',
-  'src/lib/editor/types.ts',
-  'src/lib/data.ts',
-  'src/lib/supabase.ts',
-  'src/lib/keyManager.ts',
-  'src/lib/encryption.ts'
+// Directories to scan
+const SCAN_DIRS = ['src', 'scripts', 'tools']
+
+// Files/directories to exclude
+const EXCLUDE_PATTERNS = [
+  'node_modules',
+  '.git',
+  '.next',
+  'dist',
+  'build',
+  '.DS_Store',
+  '*.log',
+  '*.lock',
+  '*.md',
+  '*.txt',
+  '*.json',
+  '*.config.js',
+  '*.config.ts'
 ]
 
-const outputPath = 'doc1.txt'
-let output = `🧩 Full Project Source Audit for React Component Import Error\n\n`
+function shouldIncludeFile(filePath: string): boolean {
+  const fileName = basename(filePath)
+  return !EXCLUDE_PATTERNS.some(pattern => {
+    if (pattern.includes('*')) {
+      const regex = new RegExp(pattern.replace('*', '.*'))
+      return regex.test(fileName)
+    }
+    return fileName === pattern || filePath.includes(pattern)
+  })
+}
 
-for (const file of targetFiles) {
-  const fullPath = path.resolve(__dirname, '..', file)
-  if (fs.existsSync(fullPath)) {
-    const content = fs.readFileSync(fullPath, 'utf-8')
-    output += `\n\n--- FILE: ${file} ---\n\n` + content
-  } else {
-    output += `\n\n--- FILE NOT FOUND: ${file} ---\n\n`
+function scanDirectory(dir: string): string[] {
+  const files: string[] = []
+  const entries = readdirSync(dir, { withFileTypes: true })
+
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name)
+    
+    if (entry.isDirectory()) {
+      if (shouldIncludeFile(fullPath)) {
+        files.push(...scanDirectory(fullPath))
+      }
+    } else if (entry.isFile() && shouldIncludeFile(fullPath)) {
+      files.push(fullPath)
+    }
+  }
+
+  return files
+}
+
+// Generate timestamp for the output file
+const timestamp = new Date().toISOString().replace(/[:.]/g, '_')
+const outputPath = `Audit${timestamp}.md`
+
+let output = `# 🧩 Full Project Source Audit\n\n`
+output += `Generated on: ${new Date().toISOString()}\n\n`
+output += `## 📁 Project Structure\n\n`
+
+// Scan all directories
+const allFiles = SCAN_DIRS.flatMap(dir => {
+  const fullDir = resolve(__dirname, '..', dir)
+  return scanDirectory(fullDir)
+})
+
+// Sort files for consistent output
+allFiles.sort()
+
+// Add file contents
+for (const file of allFiles) {
+  const relativePath = relative(resolve(__dirname, '..'), file)
+  try {
+    const content = readFileSync(file, 'utf-8')
+    output += `\n\n## 📄 ${relativePath}\n\n\`\`\`${extname(file).slice(1) || 'text'}\n${content}\n\`\`\`\n`
+  } catch (error) {
+    output += `\n\n## ❌ ${relativePath}\n\nError reading file: ${error}\n`
   }
 }
 
-fs.writeFileSync(outputPath, output)
+// Write the audit file
+writeFileSync(outputPath, output)
 console.log('✅ Full audit file written to', outputPath) 

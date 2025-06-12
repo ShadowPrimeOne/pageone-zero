@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useEditorState } from '@/lib/editor/useEditorState'
 import { showModal } from '@/lib/modal'
 import { generateQRCode } from '@/lib/qr'
+import { uploadUserImage } from '@/lib/uploadUserImage'
 
 interface PublishModalProps {
   isOpen: boolean
@@ -67,6 +68,46 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
         throw new Error('Failed to generate key')
       }
 
+      // Process modules to handle image uploads
+      const processedModules = await Promise.all(modules.map(async (module) => {
+        if (module.props?.background?.type === 'image' && module.props.background._tempFile) {
+          try {
+            // Convert base64 data back to File
+            const base64Data = module.props.background._tempFile.data
+            const binaryString = atob(base64Data)
+            const bytes = new Uint8Array(binaryString.length)
+            for (let i = 0; i < binaryString.length; i++) {
+              bytes[i] = binaryString.charCodeAt(i)
+            }
+            const file = new File([bytes], module.props.background._tempFile.name, {
+              type: module.props.background._tempFile.type
+            })
+
+            // Upload the file
+            const url = await uploadUserImage(file, slug)
+
+            // Update the module with the new URL and remove _tempFile
+            return {
+              ...module,
+              props: {
+                ...module.props,
+                background: {
+                  ...module.props.background,
+                  image: url,
+                  _tempFile: undefined
+                }
+              }
+            }
+          } catch (error) {
+            console.error('Error uploading image:', error)
+            throw new Error(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          }
+        }
+        return module
+      }))
+
+      console.log('📤 Sending modules to server:', processedModules)
+
       const response = await fetch('/api/publishPage', {
         method: 'POST',
         headers: {
@@ -75,7 +116,7 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
         body: JSON.stringify({
           slug,
           key,
-          modules: modules,
+          modules: processedModules,
         }),
       })
 
@@ -101,6 +142,7 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
       })
 
     } catch (err) {
+      console.error('❌ Publishing error:', err)
       setError(err instanceof Error ? err.message : 'Failed to publish page')
       
       // Show error modal
