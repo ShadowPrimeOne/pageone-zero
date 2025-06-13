@@ -81,7 +81,17 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
       props: {
         ...moduleData.props,
         heading,
-        subheading
+        subheading,
+        background: moduleData.props.background ? {
+          ...moduleData.props.background,
+          // Preserve the temporary file data if it exists
+          _tempFile: moduleData.props.background._tempFile,
+          // Ensure image URL is set if we have a temporary file
+          image: moduleData.props.background._tempFile ? 
+            URL.createObjectURL(new Blob([Buffer.from(moduleData.props.background._tempFile.data, 'base64')], 
+              { type: moduleData.props.background._tempFile.type })) : 
+            moduleData.props.background.image
+        } : undefined
       }
     }
     

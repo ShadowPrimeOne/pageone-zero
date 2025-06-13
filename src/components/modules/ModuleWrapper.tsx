@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, ReactNode, useState } from 'react'
 import React from 'react'
-import type { Module, HeroProps, Hero2Props, Background } from '@/lib/editor/types'
+import type { Module, HeroProps, Hero2Props, ModuleBackground } from '@/lib/editor/types'
 import Image from 'next/image'
 import { EditModuleModal } from '../editor/EditModuleModal'
 import clsx from 'clsx'
@@ -79,18 +79,37 @@ export function ModuleWrapper({
     }
   }, [selected])
 
-  // Clean up temporary URL when component unmounts
+  // Clean up temporary URL when component unmounts or background changes
   useEffect(() => {
     return () => {
       if (tempUrl) {
         URL.revokeObjectURL(tempUrl)
+        setTempUrl(null)
       }
     }
-  }, [tempUrl])
+  }, [tempUrl, module.background])
+
+  // Create temporary URL only when needed
+  useEffect(() => {
+    const background = module.background as ModuleBackground
+    if (background?.type === 'image' && background._tempFile && !tempUrl) {
+      // Convert base64 to Blob
+      const base64Data = background._tempFile.data
+      const binaryString = atob(base64Data)
+      const bytes = new Uint8Array(binaryString.length)
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i)
+      }
+      const blob = new Blob([bytes], { type: background._tempFile.type })
+      const url = URL.createObjectURL(blob)
+      setTempUrl(url)
+    }
+  }, [module.background, tempUrl])
 
   // Handle parallax effect
   useEffect(() => {
-    if (!module.background?.parallax || !wrapperRef.current) return
+    const background = module.background as ModuleBackground
+    if (!background?.parallax || !wrapperRef.current) return
 
     const handleScroll = () => {
       if (!wrapperRef.current) return
@@ -103,21 +122,18 @@ export function ModuleWrapper({
     return () => window.removeEventListener('scroll', handleScroll)
   }, [module.background?.parallax])
 
-  const backgroundStyle = module.background ? {
-    backgroundImage: module.background.type === 'image' ? `url(${module.background.image || (module.background._tempFile ? (() => {
-      const url = URL.createObjectURL(module.background._tempFile!)
-      setTempUrl(url)
-      return url
-    })() : undefined)})` : undefined,
-    backgroundColor: module.background.type === 'color' ? module.background.color : undefined,
-    backgroundSize: module.background.type === 'image' ? 'cover' : undefined,
-    backgroundPosition: module.background.type === 'image' ? 'center' : undefined,
-    backgroundAttachment: module.background.parallax ? 'fixed' : 'scroll',
+  const background = module.background as ModuleBackground
+  const backgroundStyle = background ? {
+    backgroundImage: background.type === 'image' ? `url(${background.image || tempUrl})` : undefined,
+    backgroundColor: background.type === 'color' ? background.color : undefined,
+    backgroundSize: background.type === 'image' ? 'cover' : undefined,
+    backgroundPosition: background.type === 'image' ? 'center' : undefined,
+    backgroundAttachment: background.parallax ? 'fixed' : 'scroll',
   } : {}
 
-  const overlayStyle = module.background?.type === 'image' && module.background.overlay ? {
-    backgroundColor: module.background.overlay.color,
-    opacity: module.background.overlay.opacity,
+  const overlayStyle = background?.type === 'image' && background.overlay ? {
+    backgroundColor: background.overlay.color,
+    opacity: background.overlay.opacity,
   } : {}
 
   const handleModuleClick = (e: React.MouseEvent) => {
@@ -132,8 +148,8 @@ export function ModuleWrapper({
   const handleUpdate = (updates: Partial<Module['props']>) => {
     if (updates.background) {
       console.log('ModuleWrapper: Background update:', updates.background)
-      const currentBackground = (module.props.background || {}) as Background
-      const newBackground: Background = {
+      const currentBackground = (module.props.background || {}) as ModuleBackground
+      const newBackground: ModuleBackground = {
         ...currentBackground,
         ...updates.background,
         type: updates.background.type || currentBackground.type || 'color',
@@ -323,7 +339,7 @@ export function ModuleWrapper({
         style={backgroundStyle}
       >
         {/* Background overlay */}
-        {module.background?.type === 'image' && module.background.overlay && (
+        {background?.type === 'image' && background.overlay && (
           <div
             className="absolute inset-0 pointer-events-none"
             style={overlayStyle}

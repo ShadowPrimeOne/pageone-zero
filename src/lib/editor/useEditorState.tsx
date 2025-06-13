@@ -94,19 +94,40 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
 
       // Handle background updates separately to ensure proper merging
       if (updates.props?.background) {
-        updatedModule.props.background = {
-          ...moduleToUpdate.props.background,
-          ...updates.props.background,
+        const newBackground: {
+          type: 'color' | 'image';
+          color: string;
+          opacity: number;
+          overlay: {
+            color: string;
+            opacity: number;
+          };
+          image?: string;
+          _tempFile?: {
+            name: string;
+            type: string;
+            size: number;
+            data: string;
+          };
+        } = {
           type: updates.props.background.type || moduleToUpdate.props.background?.type || 'color',
-          color: updates.props.background.type === 'color' ? (updates.props.background.color || moduleToUpdate.props.background?.color || '#000000') : '#000000',
+          color: '#000000',
           opacity: updates.props.background.opacity ?? moduleToUpdate.props.background?.opacity ?? 1,
-          image: updates.props.background.type === 'image' ? updates.props.background.image : moduleToUpdate.props.background?.image,
-          _tempFile: updates.props.background._tempFile || moduleToUpdate.props.background?._tempFile,
           overlay: {
             color: updates.props.background.overlay?.color || moduleToUpdate.props.background?.overlay?.color || '#000000',
             opacity: updates.props.background.overlay?.opacity ?? moduleToUpdate.props.background?.overlay?.opacity ?? 0.5
           }
         }
+
+        // Handle type-specific properties
+        if (newBackground.type === 'color') {
+          newBackground.color = updates.props.background.color || moduleToUpdate.props.background?.color || '#000000'
+        } else if (newBackground.type === 'image') {
+          newBackground.image = updates.props.background.image || moduleToUpdate.props.background?.image
+          newBackground._tempFile = updates.props.background._tempFile || moduleToUpdate.props.background?._tempFile
+        }
+
+        updatedModule.props.background = newBackground
       }
 
       console.log('useEditorState: Applying updates:', updatedModule)

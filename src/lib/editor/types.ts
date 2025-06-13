@@ -22,10 +22,7 @@ export interface ModuleBackground extends Background {
 export interface HeroProps {
   heading: string
   subheading: string
-  background?: {
-    image?: string
-    alt?: string
-  }
+  background?: ModuleBackground
   topBackground?: {
     url?: string
     type?: string

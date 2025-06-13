@@ -3,14 +3,10 @@ import { getPageBySlug } from '@/lib/data'
 import { notFound } from 'next/navigation'
 import PublicModuleRenderer from '@/components/modules/PublicModuleRenderer'
 import type { Metadata } from 'next'
-import { EditorStateProvider } from '@/lib/editor/useEditorState'
-import PageContent from '@/app/page'
+import EditorPage from '@/components/editor/EditorPage'
 
-export const dynamic = 'force-dynamic'
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const resolvedParams = await params
-  const { slug } = resolvedParams
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const { slug } = params
   console.log('🔍 Generating metadata for slug:', slug)
   const page = await getPageBySlug(slug)
   
@@ -32,19 +28,16 @@ export default async function Page({
   params,
   searchParams 
 }: { 
-  params: Promise<{ slug: string }>,
-  searchParams: Promise<{ edit?: string, key?: string }>
+  params: { slug: string },
+  searchParams: { edit?: string, key?: string }
 }) {
-  const resolvedParams = await params
-  const resolvedSearchParams = await searchParams
-  const { slug } = resolvedParams
-  const { edit, key } = resolvedSearchParams
+  const { slug } = params
+  const { edit, key } = searchParams
   
   console.log('📄 Loading page for slug:', slug, 'with key:', key ? 'present' : 'not present')
   
   try {
     const page = await getPageBySlug(slug, key)
-    const isEdit = edit === 'true'
 
     if (!page) {
       console.error('❌ Page not found:', slug)
@@ -57,22 +50,18 @@ export default async function Page({
       moduleCount: Array.isArray(page.modules) ? page.modules.length : 0
     })
 
-    if (isEdit) {
+    // If edit mode is requested, render the editor
+    if (edit === 'true') {
       console.log('✏️ Loading edit mode')
-      return (
-        <EditorStateProvider initialModules={page.modules}>
-          <PageContent />
-        </EditorStateProvider>
-      )
+      return <EditorPage modules={page.modules} />
     }
 
+    // Otherwise render the public view
     console.log('👁️ Loading public view')
     return (
-      <EditorStateProvider initialModules={page.modules}>
-        <main className="min-h-screen">
-          <PublicModuleRenderer modules={page.modules} />
-        </main>
-      </EditorStateProvider>
+      <main className="min-h-screen bg-white">
+        <PublicModuleRenderer modules={page.modules} />
+      </main>
     )
   } catch (error) {
     console.error('❌ Error loading page:', error)
