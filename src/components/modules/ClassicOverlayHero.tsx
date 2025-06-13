@@ -75,8 +75,14 @@ export default function ClassicOverlayHero({ props }: { props: HeroProps }) {
     return (
       <section className="relative w-full h-screen overflow-hidden text-white bg-gray-900">
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center z-10">
-          <h1 className="text-4xl font-bold">{props.heading || 'Missing Heading'}</h1>
-          <p className="text-lg mt-2">{props.subheading || 'Missing Subheading'}</p>
+          <div 
+            className="text-4xl font-bold"
+            dangerouslySetInnerHTML={{ __html: props.htmlContent?.heading || props.heading || 'Missing Heading' }}
+          />
+          <div 
+            className="text-lg mt-2"
+            dangerouslySetInnerHTML={{ __html: props.htmlContent?.subheading || props.subheading || 'Missing Subheading' }}
+          />
         </div>
       </section>
     )
@@ -120,8 +126,14 @@ export default function ClassicOverlayHero({ props }: { props: HeroProps }) {
           backgroundColor: `${overlayColor}${Math.round(overlayOpacity * 255).toString(16).padStart(2, '0')}`
         }}
       >
-        <h1 className="text-4xl font-bold">{props.heading || 'Missing Heading'}</h1>
-        <p className="text-lg mt-2">{props.subheading || 'Missing Subheading'}</p>
+        <div 
+          className="text-4xl font-bold"
+          dangerouslySetInnerHTML={{ __html: props.htmlContent?.heading || props.heading || 'Missing Heading' }}
+        />
+        <div 
+          className="text-lg mt-2"
+          dangerouslySetInnerHTML={{ __html: props.htmlContent?.subheading || props.subheading || 'Missing Subheading' }}
+        />
       </div>
     </section>
   )

@@ -28,6 +28,11 @@ export interface HeroProps {
     type?: string
   }
   ctaText?: string
+  onUpdate?: (updates: Partial<HeroProps>) => void
+  htmlContent?: {
+    heading?: string
+    subheading?: string
+  }
 }
 
 export interface ClassicOverlayHeroProps extends HeroProps {
@@ -55,6 +60,7 @@ export interface FormProps {
   submitText: string
   fields: FormField[]
   background?: ModuleBackground
+  onUpdate?: (updates: Partial<FormProps>) => void
 }
 
 export type ModuleCategory = 'hero' | 'content' | 'form' | 'process' | 'contact';
@@ -83,12 +89,14 @@ export interface OurProcessProps {
   heading: string
   subheading: string
   background?: ModuleBackground
+  onUpdate?: (updates: Partial<OurProcessProps>) => void
 }
 
 export interface ContactFormProps {
   heading: string
   subheading: string
   background?: ModuleBackground
+  onUpdate?: (updates: Partial<ContactFormProps>) => void
 }
 
 export interface HeroModuleContent {

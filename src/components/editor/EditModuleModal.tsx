@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Module, HeroProps, Background } from '@/lib/editor/types'
+import { Module, HeroProps, Background, ClassicOverlayHeroProps } from '@/lib/editor/types'
 import { BackgroundSettings } from './BackgroundSettings'
 import { TextFormattingControls } from './TextFormattingControls'
 
@@ -20,30 +20,84 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   const [heading, setHeading] = useState((module.props as HeroProps).heading || '')
   const [subheading, setSubheading] = useState((module.props as HeroProps).subheading || '')
   const [localContent, setLocalContent] = useState((module.props as HeroProps).heading || '')
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const updateTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const lastSelectionRef = useRef<{ start: number; end: number } | null>(null)
+  const isUpdatingRef = useRef(false)
 
   // Update local state when module prop changes
   useEffect(() => {
-    setModuleData(module)
-    setHeading((module.props as HeroProps).heading || '')
-    setSubheading((module.props as HeroProps).subheading || '')
-    setLocalContent(selectedField === 'heading' ? (module.props as HeroProps).heading || '' : (module.props as HeroProps).subheading || '')
+    if (!isUpdatingRef.current) {
+      setModuleData(module)
+      setHeading((module.props as HeroProps).heading || '')
+      setSubheading((module.props as HeroProps).subheading || '')
+      setLocalContent(selectedField === 'heading' ? (module.props as HeroProps).heading || '' : (module.props as HeroProps).subheading || '')
+    }
   }, [module, selectedField])
 
-  const handleEditorChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const content = e.target.value
-    setLocalContent(content)
-    
-    // Clear any existing timeout
-    if (updateTimeoutRef.current) {
-      clearTimeout(updateTimeoutRef.current)
+  const saveSelection = () => {
+    if (!contentRef.current) return
+    const selection = window.getSelection()
+    if (!selection) return
+
+    const range = selection.getRangeAt(0)
+    if (!contentRef.current.contains(range.commonAncestorContainer)) return
+
+    const preSelectionRange = range.cloneRange()
+    preSelectionRange.selectNodeContents(contentRef.current)
+    preSelectionRange.setEnd(range.startContainer, range.startOffset)
+    const start = preSelectionRange.toString().length
+
+    lastSelectionRef.current = {
+      start,
+      end: start + range.toString().length
     }
-    
-    // Set a new timeout to update the actual content
-    updateTimeoutRef.current = setTimeout(() => {
-      setCurrentValue(content)
-    }, 500) // 500ms debounce
+  }
+
+  const restoreSelection = () => {
+    if (!lastSelectionRef.current || !contentRef.current) return
+
+    const selection = window.getSelection()
+    if (!selection) return
+
+    const range = document.createRange()
+    let charIndex = 0
+    let startNode: Node | null = null
+    let startOffset = 0
+    let endNode: Node | null = null
+    let endOffset = 0
+
+    const traverseNodes = (node: Node) => {
+      if (startNode && endNode) return
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        const nextCharIndex = charIndex + node.textContent!.length
+
+        if (!startNode && charIndex <= lastSelectionRef.current!.start && lastSelectionRef.current!.start <= nextCharIndex) {
+          startNode = node
+          startOffset = lastSelectionRef.current!.start - charIndex
+        }
+
+        if (!endNode && charIndex <= lastSelectionRef.current!.end && lastSelectionRef.current!.end <= nextCharIndex) {
+          endNode = node
+          endOffset = lastSelectionRef.current!.end - charIndex
+        }
+
+        charIndex = nextCharIndex
+      } else {
+        for (const child of Array.from(node.childNodes)) {
+          traverseNodes(child)
+        }
+      }
+    }
+
+    traverseNodes(contentRef.current)
+
+    if (startNode && endNode) {
+      range.setStart(startNode, startOffset)
+      range.setEnd(endNode, endOffset)
+      selection.removeAllRanges()
+      selection.addRange(range)
+    }
   }
 
   const handleContentChange = (updates: Partial<HeroProps>) => {
@@ -54,7 +108,11 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
       ...moduleData,
       props: {
         ...moduleData.props,
-        ...updates
+        ...updates,
+        htmlContent: {
+          ...(moduleData.props as ClassicOverlayHeroProps).htmlContent,
+          [selectedField]: updates[selectedField as keyof HeroProps]
+        }
       }
     }
     
@@ -119,10 +177,6 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     close()
   }
 
-  const getCurrentValue = () => {
-    return selectedField === 'heading' ? heading : subheading
-  }
-
   const setCurrentValue = (value: string) => {
     if (selectedField === 'heading') {
       setHeading(value)
@@ -133,14 +187,70 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     }
   }
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (updateTimeoutRef.current) {
-        clearTimeout(updateTimeoutRef.current)
-      }
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    if (!e.currentTarget) return
+    
+    try {
+      saveSelection()
+      const content = e.currentTarget.innerHTML
+      setLocalContent(content)
+      
+      isUpdatingRef.current = true
+      setCurrentValue(content)
+      requestAnimationFrame(() => {
+        isUpdatingRef.current = false
+        restoreSelection()
+      })
+    } catch (error) {
+      console.error('Error updating content:', error)
     }
-  }, [])
+  }
+
+  const handleFormatChange = (value: string) => {
+    if (!contentRef.current) return
+    
+    saveSelection()
+    setLocalContent(value)
+    setCurrentValue(value)
+    
+    isUpdatingRef.current = true
+    requestAnimationFrame(() => {
+      isUpdatingRef.current = false
+      restoreSelection()
+    })
+  }
+
+  const handleStyleChange = (style: string, value: string) => {
+    if (!contentRef.current) return
+    
+    saveSelection()
+    const selection = window.getSelection()
+    if (!selection) return
+
+    const range = selection.getRangeAt(0)
+    if (!contentRef.current.contains(range.commonAncestorContainer)) return
+
+    const span = document.createElement('span')
+    span.style[style as any] = value
+    range.surroundContents(span)
+
+    const content = contentRef.current.innerHTML
+    setLocalContent(content)
+    setCurrentValue(content)
+    
+    isUpdatingRef.current = true
+    requestAnimationFrame(() => {
+      isUpdatingRef.current = false
+      restoreSelection()
+    })
+  }
+
+  // Restore selection after content update
+  useEffect(() => {
+    if (contentRef.current && !isUpdatingRef.current) {
+      requestAnimationFrame(restoreSelection)
+    }
+  }, [localContent])
 
   if (!isOpen) return null
 
@@ -216,33 +326,24 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
 
               {/* Text Formatting Controls */}
               <TextFormattingControls
-                value={getCurrentValue()}
-                onChange={setCurrentValue}
+                value={localContent}
+                onChange={handleFormatChange}
+                onStyleChange={handleStyleChange}
                 className="mb-4"
               />
 
               {/* Rich Text Editor */}
-              <div className="mt-4 relative">
-                <textarea
-                  ref={textareaRef}
-                  value={localContent}
-                  onChange={handleEditorChange}
-                  className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent text-transparent caret-gray-900 dark:caret-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  style={{ 
-                    fontFamily: 'inherit',
-                    fontSize: selectedField === 'heading' ? '1.5rem' : '1rem',
-                    fontWeight: selectedField === 'heading' ? 'bold' : 'normal',
-                    resize: 'vertical',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: 1
-                  }}
-                />
+              <div className="mt-4">
                 <div
-                  className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  ref={contentRef}
+                  contentEditable
+                  suppressContentEditableWarning
+                  onInput={handleInput}
+                  onBlur={handleInput}
+                  onKeyUp={saveSelection}
+                  onMouseUp={saveSelection}
+                  onSelect={saveSelection}
+                  className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   style={{ 
                     fontFamily: 'inherit',
                     fontSize: selectedField === 'heading' ? '1.5rem' : '1rem',

@@ -5,6 +5,7 @@ import { useEditorState } from '@/lib/editor/useEditorState'
 import { showModal } from '@/lib/modal'
 import { generateQRCode } from '@/lib/qr'
 import { uploadUserImage } from '@/lib/uploadUserImage'
+import { usePathname, useSearchParams } from 'next/navigation'
 
 interface PublishModalProps {
   isOpen: boolean
@@ -18,19 +19,38 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null)
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const isEditMode = searchParams.get('edit') === 'true'
+  const currentSlug = pathname.split('/').pop()
 
   // Debug logging
   useEffect(() => {
     if (isOpen) {
       console.log('🔍 PublishModal opened with modules:', modules)
       console.log('🔍 PublishModal isDirty:', isDirty)
+      console.log('🔍 PublishModal isEditMode:', isEditMode)
+      console.log('🔍 PublishModal currentSlug:', currentSlug)
     }
-  }, [isOpen, modules, isDirty])
+  }, [isOpen, modules, isDirty, isEditMode, currentSlug])
+
+  useEffect(() => {
+    // If we're in edit mode, set the current slug
+    if (isEditMode && currentSlug) {
+      setSlug(currentSlug)
+    }
+  }, [isEditMode, currentSlug])
 
   useEffect(() => {
     const checkSlug = async () => {
       if (!slug) {
         setIsSlugAvailable(null)
+        return
+      }
+
+      // If we're in edit mode and the slug hasn't changed, skip the check
+      if (isEditMode && slug === currentSlug) {
+        setIsSlugAvailable(true)
         return
       }
 
@@ -54,7 +74,7 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
     // Debounce the check
     const timeoutId = setTimeout(checkSlug, 500)
     return () => clearTimeout(timeoutId)
-  }, [slug])
+  }, [slug, isEditMode, currentSlug])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -109,8 +129,12 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
 
       console.log('📤 Sending modules to server:', processedModules)
 
-      const response = await fetch('/api/publishPage', {
-        method: 'POST',
+      // Determine if we're updating an existing page or creating a new one
+      const endpoint = isEditMode ? '/api/updatePage' : '/api/publishPage'
+      const method = isEditMode ? 'PUT' : 'POST'
+
+      const response = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -124,16 +148,16 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to publish page')
+        throw new Error(data.error || `Failed to ${isEditMode ? 'update' : 'publish'} page`)
       }
 
       // Close publish modal
       onClose()
 
-      // Show success modal
+      // Show success modal with appropriate message
       showModal({
-        title: "🎉 Your Page is Live!",
-        message: "You can now visit or share your page.",
+        title: isEditMode ? "✅ Page Updated!" : "🎉 Your Page is Live!",
+        message: isEditMode ? "Your changes have been saved successfully." : "You can now visit or share your page.",
         actions: [
           { label: "🔗 View Page", href: `/page/${slug}` },
           { label: "✏️ Edit Page", href: `/page/${slug}?edit=true` },
@@ -144,12 +168,12 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
 
     } catch (err) {
       console.error('❌ Publishing error:', err)
-      setError(err instanceof Error ? err.message : 'Failed to publish page')
+      setError(err instanceof Error ? err.message : `Failed to ${isEditMode ? 'update' : 'publish'} page`)
       
       // Show error modal
       showModal({
-        title: "❌ Publishing Failed",
-        message: "Your page couldn't be saved. Please check your connection or try again.",
+        title: "❌ Operation Failed",
+        message: `Your page couldn't be ${isEditMode ? 'updated' : 'published'}. Please check your connection or try again.`,
         button: "Back to Editor"
       })
     } finally {
@@ -164,7 +188,9 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-semibold text-gray-900">Publish Page</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              {isEditMode ? 'Update Page' : 'Publish Page'}
+            </h2>
             {isDirty && (
               <span className="text-green-600 text-sm">✓ Changes saved</span>
             )}
@@ -188,21 +214,27 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
               <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                 page.one/
               </span>
-              <input
-                type="text"
-                id="slug"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:ring-[#004225] focus:border-[#004225] text-gray-900"
-                placeholder="your-page"
-                required
-                disabled={isSubmitting}
-              />
+              {isEditMode ? (
+                <div className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 bg-gray-50 text-gray-900">
+                  {slug}
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  id="slug"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                  className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:ring-[#004225] focus:border-[#004225] text-gray-900"
+                  placeholder="your-page"
+                  required
+                  disabled={isSubmitting}
+                />
+              )}
             </div>
-            {isSlugAvailable === true && (
+            {!isEditMode && isSlugAvailable === true && (
               <p className="mt-1 text-sm text-green-600">✅ Available</p>
             )}
-            {isSlugAvailable === false && (
+            {!isEditMode && isSlugAvailable === false && (
               <p className="mt-1 text-sm text-red-600">❌ Not available</p>
             )}
           </div>
@@ -237,10 +269,10 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || !slug || isSlugAvailable === false}
+              disabled={isSubmitting || !slug || (isSlugAvailable === false && !isEditMode)}
               className="px-4 py-2 text-sm font-medium text-white bg-[#004225] border border-transparent rounded-md hover:bg-[#005c33] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#004225] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Publishing...' : 'Next'}
+              {isSubmitting ? (isEditMode ? 'Updating...' : 'Publishing...') : (isEditMode ? 'Update' : 'Publish')}
             </button>
           </div>
         </form>
