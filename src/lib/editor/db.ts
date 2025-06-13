@@ -157,7 +157,6 @@ export async function fetchModuleTemplateById(id: string) {
         ctaText: 'Get Started',
         background: {
           type: 'image',
-          image: '/images/hero-bg.jpg',
           color: '#000000',
           opacity: 1,
           parallax: true,

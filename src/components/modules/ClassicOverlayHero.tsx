@@ -1,90 +1,37 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react'
+import Image from "next/image"
+import React from "react"
 import type { HeroProps } from '@/lib/editor/types'
-import Image from 'next/image'
 
-interface Props extends HeroProps {
-  onUpdate?: (updates: Partial<HeroProps>) => void
-}
-
-export function ClassicOverlayHero({ heading, subheading, background, onUpdate }: Props) {
-  const [localHeading, setLocalHeading] = useState(heading)
-  const [localSubheading, setLocalSubheading] = useState(subheading)
-  const [cta, setCta] = useState('Get Started')
-
-  // Sync local state with props
-  useEffect(() => {
-    setLocalHeading(heading)
-    setLocalSubheading(subheading)
-  }, [heading, subheading])
-
-  // Handle text updates
-  const handleTextUpdate = (type: 'heading' | 'subheading' | 'cta', value: string) => {
-    switch (type) {
-      case 'heading':
-        setLocalHeading(value)
-        onUpdate?.({ heading: value })
-        break
-      case 'subheading':
-        setLocalSubheading(value)
-        onUpdate?.({ subheading: value })
-        break
-      case 'cta':
-        setCta(value)
-        break
-    }
-  }
+export default function ClassicOverlayHero({ props }: { props: HeroProps }) {
+  console.log('🧩 ClassicOverlayHero Props:', props)
+  
+  // Get background image from various possible sources
+  const bgImage = props.background?.image || 
+                 props.topBackground?.url || 
+                 'https://xkpxwcrxjgjmbxgupkhq.supabase.co/storage/v1/object/public/public-images/modules/hero/classic_overlay_hero/1749617291214-hero-background.webp'
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        {background?.type === 'image' && background.image ? (
-          <Image
-            src={background.image}
-            alt="Hero Background"
-            fill
-            priority
-            quality={90}
-            className="object-cover"
-            sizes="100vw"
-            style={{
-              objectPosition: 'center',
-              objectFit: 'cover'
-            }}
-          />
-        ) : (
-          <div 
-            className="w-full h-full"
-            style={{
-              backgroundColor: background?.color || '#000000',
-              opacity: background?.opacity || 1
-            }}
-          />
-        )}
-        {/* Dark overlay */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            backgroundColor: background?.overlay?.color || '#000000',
-            opacity: background?.overlay?.opacity || 0.5
-          }}
-        />
+    <section className="relative w-full h-[90vh] overflow-hidden text-white">
+      <Image
+        src={bgImage}
+        alt="Hero Background"
+        fill
+        className="object-cover object-center"
+        unoptimized
+        priority
+        onError={(e) => {
+          console.error('❌ Error loading hero background image:', e)
+          // Fallback to a solid color if image fails to load
+          const target = e.target as HTMLImageElement
+          target.style.display = 'none'
+        }}
+      />
+      <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center px-4 text-center">
+        <h1 className="text-4xl font-bold">{props.heading || 'Missing Heading'}</h1>
+        <p className="text-lg mt-2">{props.subheading || 'Missing Subheading'}</p>
       </div>
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-          {localHeading}
-        </h1>
-        <p className="text-xl md:text-2xl text-white/90 mb-8">
-          {localSubheading}
-        </p>
-        <button className="px-8 py-3 bg-white text-black rounded-lg font-medium hover:bg-white/90 transition-colors">
-          {cta}
-        </button>
-      </div>
-    </div>
+    </section>
   )
 } 

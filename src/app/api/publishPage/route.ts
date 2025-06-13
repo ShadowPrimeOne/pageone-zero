@@ -113,6 +113,7 @@ export async function POST(request: Request) {
       .from('pages')
       .upsert({
         slug,
+        key,
         modules: encryptedData,
         updated_at: new Date().toISOString()
       })

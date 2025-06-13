@@ -22,8 +22,15 @@ export interface ModuleBackground extends Background {
 export interface HeroProps {
   heading: string
   subheading: string
+  background?: {
+    image?: string
+    alt?: string
+  }
+  topBackground?: {
+    url?: string
+    type?: string
+  }
   ctaText?: string
-  background?: ModuleBackground
 }
 
 export interface ClassicOverlayHeroProps extends HeroProps {

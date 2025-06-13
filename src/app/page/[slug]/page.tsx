@@ -4,12 +4,13 @@ import { notFound } from 'next/navigation'
 import PublicModuleRenderer from '@/components/modules/PublicModuleRenderer'
 import type { Metadata } from 'next'
 import { EditorStateProvider } from '@/lib/editor/useEditorState'
-import { PageContent } from '@/app/page'
+import PageContent from '@/app/page'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const slug = params.slug
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params
+  const { slug } = resolvedParams
   console.log('🔍 Generating metadata for slug:', slug)
   const page = await getPageBySlug(slug)
   
@@ -27,39 +28,54 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function Page({ params, searchParams }: { params: { slug: string }, searchParams: { edit?: string } }) {
-  const slug = params.slug
-  console.log('📄 Loading page for slug:', slug)
+export default async function Page({ 
+  params,
+  searchParams 
+}: { 
+  params: Promise<{ slug: string }>,
+  searchParams: Promise<{ edit?: string, key?: string }>
+}) {
+  const resolvedParams = await params
+  const resolvedSearchParams = await searchParams
+  const { slug } = resolvedParams
+  const { edit, key } = resolvedSearchParams
   
-  const page = await getPageBySlug(slug)
-  const isEdit = searchParams.edit === 'true'
+  console.log('📄 Loading page for slug:', slug, 'with key:', key ? 'present' : 'not present')
+  
+  try {
+    const page = await getPageBySlug(slug, key)
+    const isEdit = edit === 'true'
 
-  if (!page) {
-    console.error('❌ Page not found:', slug)
-    notFound()
-  }
+    if (!page) {
+      console.error('❌ Page not found:', slug)
+      notFound()
+    }
 
-  console.log('✅ Page loaded successfully:', {
-    slug,
-    hasModules: !!page.modules,
-    moduleCount: page.modules?.length || 0
-  })
+    console.log('✅ Page loaded successfully:', {
+      slug,
+      hasModules: !!page.modules,
+      moduleCount: Array.isArray(page.modules) ? page.modules.length : 0
+    })
 
-  if (isEdit) {
-    console.log('✏️ Loading edit mode')
+    if (isEdit) {
+      console.log('✏️ Loading edit mode')
+      return (
+        <EditorStateProvider initialModules={page.modules}>
+          <PageContent />
+        </EditorStateProvider>
+      )
+    }
+
+    console.log('👁️ Loading public view')
     return (
       <EditorStateProvider initialModules={page.modules}>
-        <PageContent />
+        <main className="min-h-screen">
+          <PublicModuleRenderer modules={page.modules} />
+        </main>
       </EditorStateProvider>
     )
+  } catch (error) {
+    console.error('❌ Error loading page:', error)
+    throw error
   }
-
-  console.log('👁️ Loading public view')
-  return (
-    <EditorStateProvider initialModules={page.modules}>
-      <main className="min-h-screen">
-        <PublicModuleRenderer modules={page.modules} />
-      </main>
-    </EditorStateProvider>
-  )
 }
