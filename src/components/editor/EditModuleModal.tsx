@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Module, HeroProps, Background } from '@/lib/editor/types'
 import { BackgroundSettings } from './BackgroundSettings'
+import { TextFormattingControls } from './TextFormattingControls'
 
 interface Props {
   isOpen: boolean
@@ -15,17 +16,35 @@ interface Props {
 export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   const [activeTab, setActiveTab] = useState<'content' | 'background'>('content')
   const [moduleData, setModuleData] = useState(module)
+  const [selectedField, setSelectedField] = useState<'heading' | 'subheading'>('heading')
   const [heading, setHeading] = useState((module.props as HeroProps).heading || '')
   const [subheading, setSubheading] = useState((module.props as HeroProps).subheading || '')
+  const [localContent, setLocalContent] = useState((module.props as HeroProps).heading || '')
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const updateTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
   // Update local state when module prop changes
   useEffect(() => {
     setModuleData(module)
     setHeading((module.props as HeroProps).heading || '')
     setSubheading((module.props as HeroProps).subheading || '')
-  }, [module])
+    setLocalContent(selectedField === 'heading' ? (module.props as HeroProps).heading || '' : (module.props as HeroProps).subheading || '')
+  }, [module, selectedField])
 
-  if (!isOpen) return null
+  const handleEditorChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const content = e.target.value
+    setLocalContent(content)
+    
+    // Clear any existing timeout
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current)
+    }
+    
+    // Set a new timeout to update the actual content
+    updateTimeoutRef.current = setTimeout(() => {
+      setCurrentValue(content)
+    }, 500) // 500ms debounce
+  }
 
   const handleContentChange = (updates: Partial<HeroProps>) => {
     console.log('EditModuleModal: handleContentChange called with:', updates)
@@ -100,6 +119,31 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     close()
   }
 
+  const getCurrentValue = () => {
+    return selectedField === 'heading' ? heading : subheading
+  }
+
+  const setCurrentValue = (value: string) => {
+    if (selectedField === 'heading') {
+      setHeading(value)
+      handleContentChange({ heading: value })
+    } else {
+      setSubheading(value)
+      handleContentChange({ subheading: value })
+    }
+  }
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  if (!isOpen) return null
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -146,38 +190,67 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
         <div className="flex-1 overflow-y-auto p-4">
           {activeTab === 'content' && (
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {/* Field Selection */}
+              <div className="flex gap-4 mb-4">
+                <button
+                  onClick={() => setSelectedField('heading')}
+                  className={`px-4 py-2 rounded-md ${
+                    selectedField === 'heading'
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
                   Heading
-                </label>
-                <input
-                  type="text"
-                  value={heading}
-                  onChange={(e) => {
-                    setHeading(e.target.value)
-                    handleContentChange({
-                      heading: e.target.value
-                    })
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter heading"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                </button>
+                <button
+                  onClick={() => setSelectedField('subheading')}
+                  className={`px-4 py-2 rounded-md ${
+                    selectedField === 'subheading'
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
                   Subheading
-                </label>
-                <input
-                  type="text"
-                  value={subheading}
-                  onChange={(e) => {
-                    setSubheading(e.target.value)
-                    handleContentChange({
-                      subheading: e.target.value
-                    })
+                </button>
+              </div>
+
+              {/* Text Formatting Controls */}
+              <TextFormattingControls
+                value={getCurrentValue()}
+                onChange={setCurrentValue}
+                className="mb-4"
+              />
+
+              {/* Rich Text Editor */}
+              <div className="mt-4 relative">
+                <textarea
+                  ref={textareaRef}
+                  value={localContent}
+                  onChange={handleEditorChange}
+                  className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-transparent text-transparent caret-gray-900 dark:caret-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  style={{ 
+                    fontFamily: 'inherit',
+                    fontSize: selectedField === 'heading' ? '1.5rem' : '1rem',
+                    fontWeight: selectedField === 'heading' ? 'bold' : 'normal',
+                    resize: 'vertical',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: 1
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter subheading"
+                />
+                <div
+                  className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  style={{ 
+                    fontFamily: 'inherit',
+                    fontSize: selectedField === 'heading' ? '1.5rem' : '1rem',
+                    fontWeight: selectedField === 'heading' ? 'bold' : 'normal',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word'
+                  }}
+                  dangerouslySetInnerHTML={{ __html: localContent }}
                 />
               </div>
             </div>
