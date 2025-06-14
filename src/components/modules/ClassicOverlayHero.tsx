@@ -1,6 +1,6 @@
 "use client"
 
-import type { ClassicOverlayHeroProps } from '@/lib/editor/types'
+import type { ClassicOverlayHeroProps, ClassicOverlayHeroHtmlContent } from '@/lib/editor/types'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 
@@ -29,7 +29,7 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
   const isEditMode = pathname?.startsWith('/edit/')
 
   // Handle text updates
-  const handleTextUpdate = (type: 'heading' | 'subheading', value: string) => {
+  const handleTextUpdate = (type: keyof ClassicOverlayHeroHtmlContent, value: string) => {
     if (!isEditMode) return
     console.log('📝 Text update:', { type, value })
     if (onUpdate) {
@@ -170,11 +170,18 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
             dangerouslySetInnerHTML={{ __html: htmlContent?.heading || '' }}
           />
           <p 
-            className="text-xl sm:text-2xl text-white/80 outline-none"
+            className="text-xl sm:text-2xl text-white/80 outline-none mb-6"
             contentEditable={isEditMode}
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('subheading', e.currentTarget.textContent || '')}
             dangerouslySetInnerHTML={{ __html: htmlContent?.subheading || '' }}
+          />
+          <p 
+            className="text-lg sm:text-xl text-white/70 outline-none max-w-3xl mx-auto"
+            contentEditable={isEditMode}
+            suppressContentEditableWarning
+            onBlur={(e) => handleTextUpdate('bodyText', e.currentTarget.textContent || '')}
+            dangerouslySetInnerHTML={{ __html: htmlContent?.bodyText || '' }}
           />
         </div>
       </div>

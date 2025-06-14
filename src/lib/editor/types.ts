@@ -1,6 +1,7 @@
 export interface Background {
-  type: 'color' | 'image'
-  color: string
+  type: 'image' | 'color'
+  url?: string
+  color?: string
   opacity: number
   image?: string
   _tempFile?: {
@@ -20,9 +21,9 @@ export interface ModuleBackground extends Background {
 }
 
 export interface HeroProps {
-  heading: string
-  subheading: string
-  background?: ModuleBackground
+  heading?: string
+  subheading?: string
+  background?: Background
   topBackground?: {
     url?: string
     type?: string
@@ -33,10 +34,43 @@ export interface HeroProps {
     heading?: string
     subheading?: string
   }
+  textPosition?: 'top' | 'center' | 'bottom'
 }
 
-export interface ClassicOverlayHeroProps extends HeroProps {
-  background?: ModuleBackground
+export interface ClassicOverlayHeroProps {
+  background?: {
+    type: 'image' | 'color'
+    url?: string
+    image?: string
+    color?: string
+    opacity?: number
+    overlay?: {
+      color: string
+      opacity: number
+    }
+    _tempFile?: {
+      data: string
+      type: string
+    }
+  }
+  topBackground?: {
+    url: string
+  }
+  htmlContent?: {
+    heading?: string
+    subheading?: string
+    bodyText?: string
+  }
+  onUpdate?: (updates: Partial<ClassicOverlayHeroProps>) => void
+  textPosition?: 'top' | 'center' | 'bottom'
+  startAnimation?: 'none' | 'fadeIn' | 'slideUp' | 'slideDown'
+  hoverAnimation?: 'none' | 'scale' | 'lift' | 'glow'
+}
+
+export interface ClassicOverlayHeroHtmlContent {
+  heading: string
+  subheading: string
+  bodyText: string
 }
 
 export interface TopImageCenterTextHeroProps extends HeroProps {
