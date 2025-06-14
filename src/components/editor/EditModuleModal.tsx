@@ -37,7 +37,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   const saveSelection = () => {
     if (!contentRef.current) return
     const selection = window.getSelection()
-    if (!selection) return
+    if (!selection || selection.rangeCount === 0) return
 
     const range = selection.getRangeAt(0)
     if (!contentRef.current.contains(range.commonAncestorContainer)) return
@@ -93,10 +93,14 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     traverseNodes(contentRef.current)
 
     if (startNode && endNode) {
-      range.setStart(startNode, startOffset)
-      range.setEnd(endNode, endOffset)
-      selection.removeAllRanges()
-      selection.addRange(range)
+      try {
+        range.setStart(startNode, startOffset)
+        range.setEnd(endNode, endOffset)
+        selection.removeAllRanges()
+        selection.addRange(range)
+      } catch (error) {
+        console.error('Error restoring selection:', error)
+      }
     }
   }
 
@@ -245,6 +249,20 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     })
   }
 
+  // Add event listeners for selection changes
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      if (!isUpdatingRef.current) {
+        saveSelection()
+      }
+    }
+
+    document.addEventListener('selectionchange', handleSelectionChange)
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange)
+    }
+  }, [])
+
   // Restore selection after content update
   useEffect(() => {
     if (contentRef.current && !isUpdatingRef.current) {
@@ -349,7 +367,8 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                     fontSize: selectedField === 'heading' ? '1.5rem' : '1rem',
                     fontWeight: selectedField === 'heading' ? 'bold' : 'normal',
                     whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word'
+                    wordBreak: 'break-word',
+                    lineHeight: 'inherit'
                   }}
                   dangerouslySetInnerHTML={{ __html: localContent }}
                 />

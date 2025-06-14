@@ -6,9 +6,9 @@ import { ModuleWrapper } from './ModuleWrapper'
 import { HeroModule } from './HeroModule'
 import { Hero2Module } from './Hero2Module'
 import ClassicOverlayHero from './ClassicOverlayHero'
-import { TopImageCenterTextHero } from './TopImageCenterTextHero'
+import TopImageCenterTextHero from './TopImageCenterTextHero'
 import { SplitLayoutHero } from './SplitLayoutHero'
-import { FormModule } from './FormModule'
+import FormModule from './FormModule'
 import OurProcessModule from './OurProcessModule'
 import { ContactFormModule } from './ContactFormModule'
 import { useEditorControls } from '@/lib/editor/useEditorControls'
@@ -71,7 +71,7 @@ export function ModuleRenderer({
       case 'hero2':
         return <Hero2Module {...module.props as Hero2Props} onUpdate={handleUpdate} />
       case 'form':
-        return <FormModule {...module.props as FormProps} />
+        return <FormModule props={module.props as FormProps} />
       case 'classic_overlay_hero':
         return (
           <ClassicOverlayHero
@@ -88,10 +88,14 @@ export function ModuleRenderer({
       case 'top_image_center_text_hero':
         return (
           <TopImageCenterTextHero
-            {...(module.props as TopImageCenterTextHeroProps)}
-            heading={(module.props as TopImageCenterTextHeroProps).htmlContent?.heading || (module.props as TopImageCenterTextHeroProps).heading}
-            subheading={(module.props as TopImageCenterTextHeroProps).htmlContent?.subheading || (module.props as TopImageCenterTextHeroProps).subheading}
-            onUpdate={(updates: Partial<TopImageCenterTextHeroProps>) => handleUpdate(updates)}
+            props={{
+              ...(module.props as TopImageCenterTextHeroProps),
+              htmlContent: (module.props as TopImageCenterTextHeroProps).htmlContent || {
+                heading: (module.props as TopImageCenterTextHeroProps).heading,
+                subheading: (module.props as TopImageCenterTextHeroProps).subheading
+              },
+              onUpdate: (updates: Partial<TopImageCenterTextHeroProps>) => handleUpdate(updates)
+            }}
           />
         )
       case 'split_layout_hero':

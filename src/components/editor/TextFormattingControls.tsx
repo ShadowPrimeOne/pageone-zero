@@ -122,7 +122,6 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
           // Remove bold
           const newContent = content.replace(/<strong>(.*?)<\/strong>/g, '$1')
           tempDiv.innerHTML = newContent
-          setIsBold(false)
         } else {
           // Add bold
           const newContent = content.replace(/([^<]*)(<[^>]*>)?/g, (match, text, tag) => {
@@ -130,7 +129,6 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
             return `<strong>${text}</strong>${tag || ''}`
           })
           tempDiv.innerHTML = newContent
-          setIsBold(true)
         }
         break
 
@@ -139,7 +137,6 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
           // Remove italic
           const newContent = content.replace(/<em>(.*?)<\/em>/g, '$1')
           tempDiv.innerHTML = newContent
-          setIsItalic(false)
         } else {
           // Add italic
           const newContent = content.replace(/([^<]*)(<[^>]*>)?/g, (match, text, tag) => {
@@ -147,7 +144,6 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
             return `<em>${text}</em>${tag || ''}`
           })
           tempDiv.innerHTML = newContent
-          setIsItalic(true)
         }
         break
 
@@ -156,7 +152,6 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
           // Remove underline
           const newContent = content.replace(/<u>(.*?)<\/u>/g, '$1')
           tempDiv.innerHTML = newContent
-          setIsUnderline(false)
         } else {
           // Add underline
           const newContent = content.replace(/([^<]*)(<[^>]*>)?/g, (match, text, tag) => {
@@ -164,7 +159,6 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
             return `<u>${text}</u>${tag || ''}`
           })
           tempDiv.innerHTML = newContent
-          setIsUnderline(true)
         }
         break
     }
@@ -172,6 +166,22 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
     // Ensure we have a valid string before calling onChange
     const newValue = tempDiv.innerHTML || ''
     onChange(newValue)
+  }
+
+  const handleAlignmentChange = (alignment: 'left' | 'center' | 'right') => {
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = value
+
+    // Get the current content
+    const content = tempDiv.innerHTML
+
+    // Remove any existing text-align style
+    const cleanContent = content.replace(/<div[^>]*style="[^"]*text-align:[^"]*"[^>]*>(.*?)<\/div>/g, '$1')
+
+    // Always wrap in a div with text-align, even for left alignment
+    tempDiv.innerHTML = `<div style="text-align: ${alignment}">${cleanContent}</div>`
+
+    onChange(tempDiv.innerHTML)
   }
 
   const handleFontFamilyChange = (family: string) => {
@@ -218,60 +228,21 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = value
 
+    // Get the current content
+    const content = tempDiv.innerHTML
+
     // Remove any existing color style
-    tempDiv.querySelectorAll('[style*="color"]').forEach(el => {
-      const style = el.getAttribute('style') || ''
-      el.setAttribute('style', style.replace(/color:[^;"]+;?/g, ''))
-    })
+    const cleanContent = content.replace(/<span[^>]*style="[^"]*color:[^"]*"[^>]*>(.*?)<\/span>/g, '$1')
 
     if (color !== 'inherit') {
-      const span = document.createElement('span')
-      span.style.color = color
-      span.innerHTML = tempDiv.innerHTML
-      tempDiv.innerHTML = ''
-      tempDiv.appendChild(span)
+      // Wrap content in a span with the new color
+      tempDiv.innerHTML = `<span style="color: ${color}">${cleanContent}</span>`
+    } else {
+      tempDiv.innerHTML = cleanContent
     }
 
     onChange(tempDiv.innerHTML)
     setShowColorPicker(false)
-  }
-
-  const handleAlignmentChange = (alignment: 'left' | 'center' | 'right') => {
-    console.log('Alignment change requested:', alignment)
-    console.log('Current value:', value)
-    
-    const tempDiv = document.createElement('div')
-    tempDiv.innerHTML = value
-
-    // If the current alignment matches the new one, remove it
-    if (textAlign === alignment) {
-      console.log('Removing existing alignment')
-      // Remove any existing text-align style
-      tempDiv.querySelectorAll('[style*="text-align"]').forEach(el => {
-        const style = el.getAttribute('style') || ''
-        el.setAttribute('style', style.replace(/text-align:[^;"]+;?/g, ''))
-      })
-      setTextAlign('left') // Reset to default
-    } else {
-      console.log('Applying new alignment:', alignment)
-      // Remove any existing text-align style
-      tempDiv.querySelectorAll('[style*="text-align"]').forEach(el => {
-        const style = el.getAttribute('style') || ''
-        el.setAttribute('style', style.replace(/text-align:[^;"]+;?/g, ''))
-      })
-
-      // Create a new div with the alignment
-      const alignedDiv = document.createElement('div')
-      alignedDiv.style.textAlign = alignment
-      alignedDiv.innerHTML = tempDiv.innerHTML
-      tempDiv.innerHTML = ''
-      tempDiv.appendChild(alignedDiv)
-      setTextAlign(alignment)
-    }
-
-    const newValue = tempDiv.innerHTML
-    console.log('New value:', newValue)
-    onChange(newValue)
   }
 
   const handleLineSpacingChange = (spacing: string) => {
