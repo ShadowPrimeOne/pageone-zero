@@ -5,8 +5,12 @@ import PublicModuleRenderer from '@/components/modules/PublicModuleRenderer'
 import type { Metadata } from 'next'
 import EditorPage from '@/components/editor/EditorPage'
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const { slug } = params
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
   console.log('🔍 Generating metadata for slug:', slug)
   const page = await getPageBySlug(slug)
   
@@ -28,11 +32,11 @@ export default async function Page({
   params,
   searchParams 
 }: { 
-  params: { slug: string },
-  searchParams: { edit?: string, key?: string }
+  params: Promise<{ slug: string }>,
+  searchParams: Promise<{ edit?: string, key?: string }>
 }) {
-  const { slug } = params
-  const { edit, key } = searchParams
+  const { slug } = await params
+  const { edit, key } = await searchParams
   
   console.log('📄 Loading page for slug:', slug, 'with key:', key ? 'present' : 'not present')
   
