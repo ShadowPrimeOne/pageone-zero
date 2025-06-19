@@ -8,10 +8,11 @@ interface Props extends Hero2Props {
   onUpdate?: (updates: Partial<Hero2Props>) => void
 }
 
-export function Hero2Module({ heading, subheading, background, onUpdate }: Props) {
+export function Hero2Module({ heading, subheading, body, background, onUpdate }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [localHeading, setLocalHeading] = useState(heading)
   const [localSubheading, setLocalSubheading] = useState(subheading)
+  const [localBody, setLocalBody] = useState(body)
   const [cta1, setCta1] = useState('CTA 1')
   const [cta2, setCta2] = useState('CTA 2')
 
@@ -19,7 +20,8 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
   useEffect(() => {
     setLocalHeading(heading)
     setLocalSubheading(subheading)
-  }, [heading, subheading])
+    setLocalBody(body)
+  }, [heading, subheading, body])
 
   // Parallax effect for the background
   useEffect(() => {
@@ -35,7 +37,7 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
   }, [])
 
   // Handle text updates
-  const handleTextUpdate = (type: 'heading' | 'subheading' | 'cta1' | 'cta2', value: string) => {
+  const handleTextUpdate = (type: 'heading' | 'subheading' | 'body' | 'cta1' | 'cta2', value: string) => {
     switch (type) {
       case 'heading':
         setLocalHeading(value)
@@ -44,6 +46,10 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
       case 'subheading':
         setLocalSubheading(value)
         onUpdate?.({ subheading: value })
+        break
+      case 'body':
+        setLocalBody(value)
+        onUpdate?.({ body: value })
         break
       case 'cta1':
         setCta1(value)
@@ -123,6 +129,13 @@ export function Hero2Module({ heading, subheading, background, onUpdate }: Props
             onBlur={(e) => handleTextUpdate('subheading', e.currentTarget.textContent || '')}
           >
             {localSubheading}
+          </p>
+          <p 
+            className="text-lg sm:text-xl text-white/60 outline-none mt-4"
+            suppressContentEditableWarning
+            onBlur={(e) => handleTextUpdate('body', e.currentTarget.textContent || '')}
+          >
+            {localBody}
           </p>
         </div>
 

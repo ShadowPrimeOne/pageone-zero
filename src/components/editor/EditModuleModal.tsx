@@ -16,9 +16,12 @@ interface Props {
 export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   const [activeTab, setActiveTab] = useState<'content' | 'background'>('content')
   const [moduleData, setModuleData] = useState(module)
-  const [selectedField, setSelectedField] = useState<'heading' | 'subheading'>('heading')
+  const [selectedField, setSelectedField] = useState<'heading' | 'subheading' | 'body' | 'cta'>('heading')
   const [heading, setHeading] = useState((module.props as HeroProps).heading || '')
   const [subheading, setSubheading] = useState((module.props as HeroProps).subheading || '')
+  const [body, setBody] = useState((module.props as HeroProps).body || '')
+  const [ctaText, setCtaText] = useState((module.props as HeroProps).ctaText || '')
+  const [ctaLink, setCtaLink] = useState((module.props as HeroProps).ctaLink || '')
   const [localContent, setLocalContent] = useState((module.props as HeroProps).heading || '')
   const contentRef = useRef<HTMLDivElement>(null)
   const lastSelectionRef = useRef<{ start: number; end: number } | null>(null)
@@ -30,6 +33,9 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
       setModuleData(module)
       setHeading((module.props as HeroProps).heading || '')
       setSubheading((module.props as HeroProps).subheading || '')
+      setBody((module.props as HeroProps).body || '')
+      setCtaText((module.props as HeroProps).ctaText || '')
+      setCtaLink((module.props as HeroProps).ctaLink || '')
       setLocalContent(selectedField === 'heading' ? (module.props as HeroProps).heading || '' : (module.props as HeroProps).subheading || '')
     }
   }, [module, selectedField])
@@ -163,6 +169,9 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
         ...moduleData.props,
         heading,
         subheading,
+        body,
+        ctaText,
+        ctaLink,
         background: moduleData.props.background ? {
           ...moduleData.props.background,
           // Preserve the temporary file data if it exists
@@ -185,11 +194,30 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     if (selectedField === 'heading') {
       setHeading(value)
       handleContentChange({ heading: value })
-    } else {
+    } else if (selectedField === 'subheading') {
       setSubheading(value)
       handleContentChange({ subheading: value })
+    } else if (selectedField === 'body') {
+      setBody(value)
+      handleContentChange({ body: value })
+    } else {
+      setCtaText(value)
+      handleContentChange({ ctaText: value })
     }
   }
+
+  // Update localContent when selectedField changes
+  useEffect(() => {
+    if (selectedField === 'heading') {
+      setLocalContent((module.props as HeroProps).heading || '')
+    } else if (selectedField === 'subheading') {
+      setLocalContent((module.props as HeroProps).subheading || '')
+    } else if (selectedField === 'body') {
+      setLocalContent((module.props as HeroProps).body || '')
+    } else {
+      setLocalContent((module.props as HeroProps).ctaText || '')
+    }
+  }, [selectedField, module.props])
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
     if (!e.currentTarget) return
@@ -340,6 +368,26 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                 >
                   Subheading
                 </button>
+                <button
+                  onClick={() => setSelectedField('body')}
+                  className={`px-4 py-2 rounded-md ${
+                    selectedField === 'body'
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  Body
+                </button>
+                <button
+                  onClick={() => setSelectedField('cta')}
+                  className={`px-4 py-2 rounded-md ${
+                    selectedField === 'cta'
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  CTA
+                </button>
               </div>
 
               {/* Text Formatting Controls */}
@@ -364,8 +412,8 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                   className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   style={{ 
                     fontFamily: 'inherit',
-                    fontSize: selectedField === 'heading' ? '1.5rem' : '1rem',
-                    fontWeight: selectedField === 'heading' ? 'bold' : 'normal',
+                    fontSize: selectedField === 'heading' ? '1.5rem' : selectedField === 'subheading' ? '1rem' : '0.875rem',
+                    fontWeight: selectedField === 'heading' ? 'bold' : selectedField === 'subheading' ? 'semibold' : 'normal',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
                     lineHeight: 'inherit'

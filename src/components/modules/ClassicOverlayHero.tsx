@@ -22,7 +22,6 @@ const hoverAnimations = {
 export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHeroProps }) {
   const { background, topBackground, htmlContent, onUpdate } = props
   const [imageUrl, setImageUrl] = useState<string | undefined>(background?.url)
-  const [imageState, setImageState] = useState<'loading' | 'error' | 'success'>('loading')
   const pathname = usePathname()
 
   // Only enable content editing if we're in edit mode
@@ -31,7 +30,6 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
   // Handle text updates
   const handleTextUpdate = (type: keyof ClassicOverlayHeroHtmlContent, value: string) => {
     if (!isEditMode) return
-    console.log('📝 Text update:', { type, value })
     if (onUpdate) {
       onUpdate({
         htmlContent: {
@@ -43,13 +41,6 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
   }
 
   useEffect(() => {
-    console.log('🔄 ClassicOverlayHero mounted with props:', {
-      background,
-      topBackground,
-      imageUrl,
-      textPosition: props.textPosition
-    })
-
     // Determine the image URL
     let bgImage: string | undefined = undefined
 
@@ -64,10 +55,8 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
         }
         const blob = new Blob([bytes], { type: background._tempFile.type })
         bgImage = URL.createObjectURL(blob)
-        console.log('✅ Created temporary URL from base64 data')
-      } catch (error) {
-        console.error('❌ Error creating temporary URL:', error)
-        setImageState('error')
+      } catch {
+        // Handle error silently
       }
     } else {
       bgImage = background?.image || 
@@ -80,14 +69,9 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
       try {
         new URL(bgImage)
         setImageUrl(bgImage)
-        console.log('✅ Valid image URL:', bgImage)
       } catch {
-        console.error('❌ Invalid image URL:', bgImage)
-        setImageState('error')
+        // Handle error silently
       }
-    } else {
-      console.error('❌ No image URL available')
-      setImageState('error')
     }
 
     // Cleanup function to revoke temporary URL
@@ -112,25 +96,6 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
               src={imageUrl}
               alt="Background"
               className="w-full h-full object-cover"
-              onLoad={() => {
-                console.log('✅ Image loaded successfully:', imageUrl)
-                setImageState('success')
-              }}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                console.error('❌ Error loading hero background image:', {
-                  error: e,
-                  target,
-                  currentSrc: target?.currentSrc,
-                  props: props,
-                  imageState,
-                  url: imageUrl,
-                  naturalWidth: target?.naturalWidth,
-                  naturalHeight: target?.naturalHeight,
-                  complete: target?.complete
-                })
-                setImageState('error')
-              }}
             />
           )}
           {background.type === 'color' && background.color && (
@@ -180,9 +145,17 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
             className="text-lg sm:text-xl text-white/70 outline-none max-w-3xl mx-auto"
             contentEditable={isEditMode}
             suppressContentEditableWarning
-            onBlur={(e) => handleTextUpdate('bodyText', e.currentTarget.textContent || '')}
-            dangerouslySetInnerHTML={{ __html: htmlContent?.bodyText || '' }}
+            onBlur={(e) => handleTextUpdate('body', e.currentTarget.textContent || '')}
+            dangerouslySetInnerHTML={{ __html: htmlContent?.body || '' }}
           />
+          {htmlContent?.ctaText || props.ctaText ? (
+            <a
+              href={props.ctaLink || '#'}
+              className="inline-block bg-white text-black px-8 py-3 rounded-md hover:bg-gray-100 transition-colors mt-6"
+            >
+              {htmlContent?.ctaText || props.ctaText}
+            </a>
+          ) : null}
         </div>
       </div>
     </div>

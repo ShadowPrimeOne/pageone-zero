@@ -5,16 +5,18 @@ import type { HeroProps } from '@/lib/editor/types'
 import Image from 'next/image'
 
 interface Props extends HeroProps {
+  ctaText: string
+  ctaLink: string
   onUpdate?: (updates: Partial<HeroProps>) => void
 }
 
-export function SplitLayoutHero({ heading, subheading, onUpdate }: Props) {
+export function SplitLayoutHero({ heading, subheading, body, ctaText, ctaLink, onUpdate }: Props) {
   const [localHeading, setLocalHeading] = useState(heading)
   const [localSubheading, setLocalSubheading] = useState(subheading)
-  const [cta, setCta] = useState('Book a Call')
+  const [localBody, setLocalBody] = useState(body)
 
   // Handle text updates
-  const handleTextUpdate = (type: 'heading' | 'subheading' | 'cta', value: string) => {
+  const handleTextUpdate = (type: 'heading' | 'subheading' | 'body', value: string) => {
     switch (type) {
       case 'heading':
         setLocalHeading(value)
@@ -24,8 +26,9 @@ export function SplitLayoutHero({ heading, subheading, onUpdate }: Props) {
         setLocalSubheading(value)
         onUpdate?.({ subheading: value })
         break
-      case 'cta':
-        setCta(value)
+      case 'body':
+        setLocalBody(value)
+        onUpdate?.({ body: value })
         break
     }
   }
@@ -50,14 +53,22 @@ export function SplitLayoutHero({ heading, subheading, onUpdate }: Props) {
         >
           {localSubheading}
         </p>
-        <button 
+        <p 
+          className="text-base md:text-lg text-white/70 mb-8 outline-none"
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => handleTextUpdate('body', e.currentTarget.textContent || '')}
+        >
+          {localBody}
+        </p>
+        <a 
+          href={ctaLink}
           className="px-6 py-3 bg-white text-[#1B0029] text-base font-semibold rounded-md hover:bg-white/90 transition-all duration-200 w-fit outline-none"
           contentEditable
           suppressContentEditableWarning
-          onBlur={(e) => handleTextUpdate('cta', e.currentTarget.textContent || '')}
         >
-          {cta}
-        </button>
+          {ctaText}
+        </a>
       </div>
 
       {/* Right Column: Image */}

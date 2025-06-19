@@ -129,47 +129,8 @@ export async function publishPage({ slug, modules, key, phoneNumber }: PublishPa
   }
 }
 
-export const moduleTemplates: Module[] = [
-  // ... existing templates ...
-  {
-    id: 'our-process',
-    type: 'OurProcess',
-    heading: 'Our Process',
-    subheading: 'Simple steps to create your perfect page',
-    background: {
-      type: 'color',
-      color: '#ffffff',
-      opacity: 1
-    }
-  }
-]
-
 export async function fetchModuleTemplateById(id: string) {
-  // If it's a default module ID, return the default template
-  if (id === 'default-id-classic-overlay-hero') {
-    return {
-      id: 'default-id-classic-overlay-hero',
-      type: 'classic_overlay_hero',
-      category: 'hero',
-      props: {
-        heading: 'Welcome to Your New Page',
-        subheading: 'Start building your page by adding modules below',
-        ctaText: 'Get Started',
-        background: {
-          type: 'image',
-          color: '#000000',
-          opacity: 1,
-          parallax: true,
-          overlay: {
-            color: '#000000',
-            opacity: 0.5
-          }
-        }
-      }
-    } as Module
-  }
-
-  // Otherwise, try to fetch from database
+  // Try to fetch from database
   const { data, error } = await supabase
     .from('module_templates')
     .select('*')

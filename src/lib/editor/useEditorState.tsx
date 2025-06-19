@@ -68,20 +68,13 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
   }, [])
 
   const updateModule = useCallback((moduleId: string, updates: Partial<Module>) => {
-    console.log('useEditorState: updateModule called with:', { moduleId, updates })
-    console.log('useEditorState: Current modules state:', modules)
-    
     setModules(prevModules => {
-      console.log('useEditorState: Previous modules:', prevModules)
-      
       const moduleIndex = prevModules.findIndex(m => m.id === moduleId)
       if (moduleIndex === -1) {
-        console.log('useEditorState: Module not found:', moduleId)
         return prevModules
       }
 
       const moduleToUpdate = prevModules[moduleIndex]
-      console.log('useEditorState: Found module to update:', moduleToUpdate)
 
       // Create a new module with merged updates
       const updatedModule = {
@@ -129,20 +122,17 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
 
         updatedModule.props.background = newBackground
       }
-
-      console.log('useEditorState: Applying updates:', updatedModule)
       
       // Create new array with updated module
       const newModules = [...prevModules]
       newModules[moduleIndex] = updatedModule
       
-      console.log('useEditorState: New modules state:', newModules)
       return newModules
     })
 
     // Set dirty state to true when module is updated
     setIsDirty(true)
-  }, [modules]) // Add modules to dependency array
+  }, [modules])
 
   const moveModuleUp = (id: string) => {
     setModules(prevModules => {

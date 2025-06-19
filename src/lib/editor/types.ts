@@ -23,16 +23,20 @@ export interface ModuleBackground extends Background {
 export interface HeroProps {
   heading?: string
   subheading?: string
+  body?: string
   background?: Background
   topBackground?: {
     url?: string
     type?: string
   }
   ctaText?: string
+  ctaLink?: string
   onUpdate?: (updates: Partial<HeroProps>) => void
   htmlContent?: {
     heading?: string
     subheading?: string
+    body?: string
+    ctaText?: string
   }
   textPosition?: 'top' | 'center' | 'bottom'
 }
@@ -59,8 +63,11 @@ export interface ClassicOverlayHeroProps {
   htmlContent?: {
     heading?: string
     subheading?: string
-    bodyText?: string
+    body?: string
+    ctaText?: string
   }
+  ctaText?: string
+  ctaLink?: string
   onUpdate?: (updates: Partial<ClassicOverlayHeroProps>) => void
   textPosition?: 'top' | 'center' | 'bottom'
   startAnimation?: 'none' | 'fadeIn' | 'slideUp' | 'slideDown'
@@ -70,7 +77,7 @@ export interface ClassicOverlayHeroProps {
 export interface ClassicOverlayHeroHtmlContent {
   heading: string
   subheading: string
-  bodyText: string
+  body: string
 }
 
 export interface TopImageCenterTextHeroProps extends HeroProps {

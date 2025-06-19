@@ -52,6 +52,25 @@ const heroTemplates = [
       <rect x="30" y="135" rx="3" ry="3" width="40" height="12" fill="#000" />
       <text x="50" y="143" font-size="5" fill="#fff" text-anchor="middle" font-family="Arial">Learn More</text>
     </svg>`
+  },
+  {
+    type: 'split_layout_hero' as const,
+    title: 'Split Layout Hero',
+    description: 'Personal brands, consultants, lawyers',
+    svg: `<svg viewBox="0 0 100 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <!-- Left Side (50%) -->
+      <rect x="0" y="0" width="50" height="180" fill="#333" />
+      <text x="25" y="90" font-size="6" fill="white" text-anchor="middle" font-family="Arial">Image</text>
+      <!-- Right Side (50%) -->
+      <rect x="50" y="0" width="50" height="180" fill="#f5f5f5" />
+      <!-- Heading -->
+      <text x="75" y="60" font-size="8" fill="#222" text-anchor="middle" font-family="Arial">Headline</text>
+      <!-- Subheading -->
+      <text x="75" y="80" font-size="5" fill="#555" text-anchor="middle" font-family="Arial">Subtitle</text>
+      <!-- CTA Button -->
+      <rect x="60" y="100" rx="3" ry="3" width="30" height="10" fill="#000" />
+      <text x="75" y="107" font-size="4" fill="#fff" text-anchor="middle" font-family="Arial">CTA</text>
+    </svg>`
   }
 ]
 

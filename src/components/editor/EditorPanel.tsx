@@ -79,6 +79,24 @@ export function EditorPanel({
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
+                Body
+              </label>
+              <input
+                className="w-full p-2 border-2 border-gray-300 rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-colors text-gray-900 bg-white"
+                value={props.body || ''}
+                onChange={(e) =>
+                  updateModule(selectedModule.id, {
+                    props: {
+                      ...props,
+                      body: e.target.value,
+                    },
+                  })
+                }
+                placeholder="Enter body text"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Top Background Image
               </label>
               <ImageUploader

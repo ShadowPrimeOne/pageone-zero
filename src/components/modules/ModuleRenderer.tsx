@@ -1,17 +1,20 @@
 'use client'
 
 import React from 'react'
-import type { Module, HeroProps, FormProps, OurProcessProps, ContactFormProps, Hero2Props, ClassicOverlayHeroProps, TopImageCenterTextHeroProps, SplitLayoutHeroProps } from '@/lib/editor/types'
+import type { Module, HeroProps, FormProps, OurProcessProps, ContactFormProps, Hero2Props, ClassicOverlayHeroProps, TopImageCenterTextHeroProps, SplitLayoutHeroProps, ModuleBackground } from '@/lib/editor/types'
 import { ModuleWrapper } from './ModuleWrapper'
-import { HeroModule } from './HeroModule'
-import { Hero2Module } from './Hero2Module'
-import ClassicOverlayHero from './ClassicOverlayHero'
-import TopImageCenterTextHero from './TopImageCenterTextHero'
-import { SplitLayoutHero } from './SplitLayoutHero'
-import FormModule from './FormModule'
-import OurProcessModule from './OurProcessModule'
-import { ContactFormModule } from './ContactFormModule'
+import dynamic from 'next/dynamic'
 import { useEditorControls } from '@/lib/editor/useEditorControls'
+
+// Lazy load all module components
+const HeroModule = dynamic(() => import('./HeroModule').then(mod => ({ default: mod.HeroModule })))
+const Hero2Module = dynamic(() => import('./Hero2Module').then(mod => ({ default: mod.Hero2Module })))
+const ClassicOverlayHero = dynamic(() => import('./ClassicOverlayHero'))
+const TopImageCenterTextHero = dynamic(() => import('./TopImageCenterTextHero'))
+const SplitLayoutHero = dynamic(() => import('./SplitLayoutHero').then(mod => ({ default: mod.SplitLayoutHero })))
+const FormModule = dynamic(() => import('./FormModule'))
+const OurProcessModule = dynamic(() => import('./OurProcessModule'))
+const ContactFormModule = dynamic(() => import('./ContactFormModule').then(mod => ({ default: mod.ContactFormModule })))
 
 interface ModuleRendererProps {
   modules: Module[]
@@ -56,11 +59,30 @@ export function ModuleRenderer({
   const renderModule = (module: Module) => {
     const Component = MODULE_COMPONENTS[module.type as keyof typeof MODULE_COMPONENTS]
     if (!Component) {
-      console.error(`No component found for module type: ${module.type}`)
       return null
     }
 
     const handleUpdate = (updates: Partial<ModuleComponentProps>) => {
+      if (updates.background) {
+        const currentBackground = module.props.background || {} as ModuleBackground
+        const newBackground: ModuleBackground = {
+          type: updates.background.type || currentBackground.type || 'color',
+          color: updates.background.type === 'color' ? (updates.background.color || currentBackground.color || '#000000') : '#000000',
+          opacity: updates.background.opacity ?? currentBackground.opacity ?? 1,
+          image: updates.background.type === 'image' ? updates.background.image : currentBackground.image,
+          _tempFile: updates.background._tempFile ? {
+            name: updates.background._tempFile.name || 'temp',
+            type: updates.background._tempFile.type,
+            size: updates.background._tempFile.size || 0,
+            data: updates.background._tempFile.data
+          } : currentBackground._tempFile,
+          overlay: {
+            color: updates.background.overlay?.color || currentBackground.overlay?.color || '#000000',
+            opacity: updates.background.overlay?.opacity ?? currentBackground.overlay?.opacity ?? 0.5
+          }
+        }
+        updates.background = newBackground
+      }
       onUpdate(module.id, { props: { ...module.props, ...updates } })
     }
 
@@ -78,8 +100,9 @@ export function ModuleRenderer({
             props={{
               ...(module.props as ClassicOverlayHeroProps),
               htmlContent: (module.props as ClassicOverlayHeroProps).htmlContent || {
-                heading: (module.props as ClassicOverlayHeroProps).heading,
-                subheading: (module.props as ClassicOverlayHeroProps).subheading
+                heading: (module.props as ClassicOverlayHeroProps).heading || '',
+                subheading: (module.props as ClassicOverlayHeroProps).subheading || '',
+                body: (module.props as ClassicOverlayHeroProps).body || ''
               },
               onUpdate: (updates: Partial<ClassicOverlayHeroProps>) => handleUpdate(updates)
             }}
@@ -91,8 +114,9 @@ export function ModuleRenderer({
             props={{
               ...(module.props as TopImageCenterTextHeroProps),
               htmlContent: (module.props as TopImageCenterTextHeroProps).htmlContent || {
-                heading: (module.props as TopImageCenterTextHeroProps).heading,
-                subheading: (module.props as TopImageCenterTextHeroProps).subheading
+                heading: (module.props as TopImageCenterTextHeroProps).heading || '',
+                subheading: (module.props as TopImageCenterTextHeroProps).subheading || '',
+                body: (module.props as TopImageCenterTextHeroProps).body || ''
               },
               onUpdate: (updates: Partial<TopImageCenterTextHeroProps>) => handleUpdate(updates)
             }}
@@ -104,6 +128,9 @@ export function ModuleRenderer({
             {...(module.props as SplitLayoutHeroProps)}
             heading={(module.props as SplitLayoutHeroProps).htmlContent?.heading || (module.props as SplitLayoutHeroProps).heading}
             subheading={(module.props as SplitLayoutHeroProps).htmlContent?.subheading || (module.props as SplitLayoutHeroProps).subheading}
+            body={(module.props as SplitLayoutHeroProps).htmlContent?.body || (module.props as SplitLayoutHeroProps).body}
+            ctaText={(module.props as SplitLayoutHeroProps).htmlContent?.ctaText || (module.props as SplitLayoutHeroProps).ctaText || 'Get Started'}
+            ctaLink={(module.props as SplitLayoutHeroProps).ctaLink || '#'}
             onUpdate={(updates: Partial<SplitLayoutHeroProps>) => handleUpdate(updates)}
           />
         )
