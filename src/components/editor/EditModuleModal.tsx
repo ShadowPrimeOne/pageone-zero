@@ -22,6 +22,10 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   const [body, setBody] = useState((module.props as HeroProps).body || '')
   const [ctaText, setCtaText] = useState((module.props as HeroProps).ctaText || '')
   const [ctaLink, setCtaLink] = useState((module.props as HeroProps).ctaLink || '')
+  const [ctaTextColor, setCtaTextColor] = useState((module.props as HeroProps).ctaTextColor || '#ffffff')
+  const [ctaBorderColor, setCtaBorderColor] = useState((module.props as HeroProps).ctaBorderColor || '#000000')
+  const [ctaBackgroundColor, setCtaBackgroundColor] = useState((module.props as HeroProps).ctaBackgroundColor || 'transparent')
+  const [ctaBackgroundOpacity, setCtaBackgroundOpacity] = useState((module.props as HeroProps).ctaBackgroundOpacity ?? 100)
   const [localContent, setLocalContent] = useState((module.props as HeroProps).heading || '')
   const contentRef = useRef<HTMLDivElement>(null)
   const lastSelectionRef = useRef<{ start: number; end: number } | null>(null)
@@ -36,6 +40,10 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
       setBody((module.props as HeroProps).body || '')
       setCtaText((module.props as HeroProps).ctaText || '')
       setCtaLink((module.props as HeroProps).ctaLink || '')
+      setCtaTextColor((module.props as HeroProps).ctaTextColor || '#ffffff')
+      setCtaBorderColor((module.props as HeroProps).ctaBorderColor || '#000000')
+      setCtaBackgroundColor((module.props as HeroProps).ctaBackgroundColor || 'transparent')
+      setCtaBackgroundOpacity((module.props as HeroProps).ctaBackgroundOpacity ?? 100)
       setLocalContent(selectedField === 'heading' ? (module.props as HeroProps).heading || '' : (module.props as HeroProps).subheading || '')
     }
   }, [module, selectedField])
@@ -172,6 +180,9 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
         body,
         ctaText,
         ctaLink,
+        ctaTextColor,
+        ctaBorderColor,
+        ctaBackgroundColor,
         background: moduleData.props.background ? {
           ...moduleData.props.background,
           // Preserve the temporary file data if it exists
@@ -200,7 +211,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     } else if (selectedField === 'body') {
       setBody(value)
       handleContentChange({ body: value })
-    } else {
+    } else if (selectedField === 'cta') {
       setCtaText(value)
       handleContentChange({ ctaText: value })
     }
@@ -391,36 +402,145 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
               </div>
 
               {/* Text Formatting Controls */}
-              <TextFormattingControls
-                value={localContent}
-                onChange={handleFormatChange}
-                onStyleChange={handleStyleChange}
-                className="mb-4"
-              />
+              {selectedField !== 'cta' && (
+                <TextFormattingControls
+                  value={localContent}
+                  onChange={handleFormatChange}
+                  onStyleChange={handleStyleChange}
+                  className="mb-4"
+                />
+              )}
+
+              {/* CTA Button Editor */}
+              {selectedField === 'cta' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Link (Button links to...)
+                    </label>
+                    <input
+                      type="text"
+                      value={ctaLink}
+                      onChange={(e) => {
+                        setCtaLink(e.target.value)
+                        handleContentChange({ ctaLink: e.target.value })
+                      }}
+                      placeholder="https://example.com or #section"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Button Text (Displayed Text)
+                    </label>
+                    <input
+                      type="text"
+                      value={ctaText}
+                      onChange={(e) => {
+                        setCtaText(e.target.value)
+                        handleContentChange({ ctaText: e.target.value })
+                      }}
+                      placeholder="Get Started"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Text Color
+                    </label>
+                    <input
+                      type="color"
+                      value={ctaTextColor}
+                      onChange={(e) => {
+                        setCtaTextColor(e.target.value)
+                        handleContentChange({ ctaTextColor: e.target.value })
+                      }}
+                      className="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-md"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Border/Outline Color
+                    </label>
+                    <input
+                      type="color"
+                      value={ctaBorderColor}
+                      onChange={(e) => {
+                        setCtaBorderColor(e.target.value)
+                        handleContentChange({ ctaBorderColor: e.target.value })
+                      }}
+                      className="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-md"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Background Color
+                    </label>
+                    <input
+                      type="color"
+                      value={ctaBackgroundColor}
+                      onChange={(e) => {
+                        setCtaBackgroundColor(e.target.value)
+                        handleContentChange({ ctaBackgroundColor: e.target.value })
+                      }}
+                      className="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-md"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Background Transparency
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={ctaBackgroundOpacity}
+                        onChange={(e) => {
+                          const opacity = parseInt(e.target.value)
+                          setCtaBackgroundOpacity(opacity)
+                          handleContentChange({ ctaBackgroundOpacity: opacity })
+                        }}
+                        className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <span className="text-sm text-gray-600 dark:text-gray-400 w-12">
+                        {ctaBackgroundOpacity}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Rich Text Editor */}
-              <div className="mt-4">
-                <div
-                  ref={contentRef}
-                  contentEditable
-                  suppressContentEditableWarning
-                  onInput={handleInput}
-                  onBlur={handleInput}
-                  onKeyUp={saveSelection}
-                  onMouseUp={saveSelection}
-                  onSelect={saveSelection}
-                  className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  style={{ 
-                    fontFamily: 'inherit',
-                    fontSize: selectedField === 'heading' ? '1.5rem' : selectedField === 'subheading' ? '1rem' : '0.875rem',
-                    fontWeight: selectedField === 'heading' ? 'bold' : selectedField === 'subheading' ? 'semibold' : 'normal',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    lineHeight: 'inherit'
-                  }}
-                  dangerouslySetInnerHTML={{ __html: localContent }}
-                />
-              </div>
+              {selectedField !== 'cta' && (
+                <div className="mt-4">
+                  <div
+                    ref={contentRef}
+                    contentEditable
+                    suppressContentEditableWarning
+                    onInput={handleInput}
+                    onBlur={handleInput}
+                    onKeyUp={saveSelection}
+                    onMouseUp={saveSelection}
+                    onSelect={saveSelection}
+                    className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    style={{ 
+                      fontFamily: 'inherit',
+                      fontSize: selectedField === 'heading' ? '1.5rem' : selectedField === 'subheading' ? '1rem' : '0.875rem',
+                      fontWeight: selectedField === 'heading' ? 'bold' : selectedField === 'subheading' ? 'semibold' : 'normal',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                      lineHeight: 'inherit'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: localContent }}
+                  />
+                </div>
+              )}
             </div>
           )}
 

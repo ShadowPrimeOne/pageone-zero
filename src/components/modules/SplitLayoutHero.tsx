@@ -7,10 +7,31 @@ import Image from 'next/image'
 interface Props extends HeroProps {
   ctaText: string
   ctaLink: string
+  ctaTextColor?: string
+  ctaBorderColor?: string
+  ctaBackgroundColor?: string
+  ctaBackgroundOpacity?: number
   onUpdate?: (updates: Partial<HeroProps>) => void
 }
 
-export function SplitLayoutHero({ heading, subheading, body, ctaText, ctaLink, onUpdate }: Props) {
+// Helper function to convert hex to RGB
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0'
+}
+
+export function SplitLayoutHero({ 
+  heading, 
+  subheading, 
+  body, 
+  ctaText, 
+  ctaLink, 
+  ctaTextColor,
+  ctaBorderColor,
+  ctaBackgroundColor,
+  ctaBackgroundOpacity,
+  onUpdate 
+}: Props) {
   const [localHeading, setLocalHeading] = useState(heading)
   const [localSubheading, setLocalSubheading] = useState(subheading)
   const [localBody, setLocalBody] = useState(body)
@@ -61,14 +82,21 @@ export function SplitLayoutHero({ heading, subheading, body, ctaText, ctaLink, o
         >
           {localBody}
         </p>
-        <a 
-          href={ctaLink}
-          className="px-6 py-3 bg-white text-[#1B0029] text-base font-semibold rounded-md hover:bg-white/90 transition-all duration-200 w-fit outline-none"
-          contentEditable
-          suppressContentEditableWarning
-        >
-          {ctaText}
-        </a>
+        {ctaText && (
+          <a
+            href={ctaLink || '#'}
+            className="inline-block px-8 py-3 rounded-md hover:opacity-90 transition-all mt-6"
+            style={{
+              backgroundColor: ctaBackgroundColor && ctaBackgroundOpacity !== undefined 
+                ? `rgba(${hexToRgb(ctaBackgroundColor)}, ${ctaBackgroundOpacity / 100})`
+                : ctaBackgroundColor || 'white',
+              color: ctaTextColor || '#1B0029',
+              border: ctaBorderColor ? `2px solid ${ctaBorderColor}` : 'none'
+            }}
+          >
+            {ctaText}
+          </a>
+        )}
       </div>
 
       {/* Right Column: Image */}

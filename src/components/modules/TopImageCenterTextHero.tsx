@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react'
 import type { HeroProps } from '@/lib/editor/types'
 import Image from 'next/image'
 
+// Helper function to convert hex to RGB
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0'
+}
+
 export default function TopImageCenterTextHero({ props }: { props: HeroProps }) {
   const [imageError, setImageError] = useState(false)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -94,7 +100,14 @@ export default function TopImageCenterTextHero({ props }: { props: HeroProps }) 
         {props.htmlContent?.ctaText || props.ctaText ? (
           <a
             href={props.ctaLink || '#'}
-            className="inline-block bg-black text-white px-8 py-3 rounded-md hover:bg-gray-800 transition-colors mt-6"
+            className="inline-block px-8 py-3 rounded-md hover:opacity-90 transition-all mt-6"
+            style={{
+              backgroundColor: props.ctaBackgroundColor && props.ctaBackgroundOpacity !== undefined 
+                ? `rgba(${hexToRgb(props.ctaBackgroundColor)}, ${props.ctaBackgroundOpacity / 100})`
+                : props.ctaBackgroundColor || 'black',
+              color: props.ctaTextColor || 'white',
+              border: props.ctaBorderColor ? `2px solid ${props.ctaBorderColor}` : 'none'
+            }}
           >
             {props.htmlContent?.ctaText || props.ctaText}
           </a>

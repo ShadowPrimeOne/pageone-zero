@@ -31,6 +31,10 @@ export interface HeroProps {
   }
   ctaText?: string
   ctaLink?: string
+  ctaTextColor?: string
+  ctaBorderColor?: string
+  ctaBackgroundColor?: string
+  ctaBackgroundOpacity?: number
   onUpdate?: (updates: Partial<HeroProps>) => void
   htmlContent?: {
     heading?: string
@@ -68,6 +72,10 @@ export interface ClassicOverlayHeroProps {
   }
   ctaText?: string
   ctaLink?: string
+  ctaTextColor?: string
+  ctaBorderColor?: string
+  ctaBackgroundColor?: string
+  ctaBackgroundOpacity?: number
   onUpdate?: (updates: Partial<ClassicOverlayHeroProps>) => void
   textPosition?: 'top' | 'center' | 'bottom'
   startAnimation?: 'none' | 'fadeIn' | 'slideUp' | 'slideDown'

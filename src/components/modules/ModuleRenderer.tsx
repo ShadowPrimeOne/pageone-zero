@@ -131,7 +131,20 @@ export function ModuleRenderer({
             body={(module.props as SplitLayoutHeroProps).htmlContent?.body || (module.props as SplitLayoutHeroProps).body}
             ctaText={(module.props as SplitLayoutHeroProps).htmlContent?.ctaText || (module.props as SplitLayoutHeroProps).ctaText || 'Get Started'}
             ctaLink={(module.props as SplitLayoutHeroProps).ctaLink || '#'}
-            onUpdate={(updates: Partial<SplitLayoutHeroProps>) => handleUpdate(updates)}
+            ctaTextColor={(module.props as SplitLayoutHeroProps).ctaTextColor}
+            ctaBorderColor={(module.props as SplitLayoutHeroProps).ctaBorderColor}
+            ctaBackgroundColor={(module.props as SplitLayoutHeroProps).ctaBackgroundColor}
+            ctaBackgroundOpacity={(module.props as SplitLayoutHeroProps).ctaBackgroundOpacity}
+            onUpdate={(updates: Partial<SplitLayoutHeroProps>) => {
+              const updatedModule = {
+                ...module,
+                props: {
+                  ...module.props,
+                  ...updates
+                }
+              }
+              onUpdate(updatedModule)
+            }}
           />
         )
       case 'OurProcess':

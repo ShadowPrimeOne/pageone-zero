@@ -19,6 +19,12 @@ const hoverAnimations = {
   glow: 'hover:shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-shadow duration-300'
 }
 
+// Helper function to convert hex to RGB
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0'
+}
+
 export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHeroProps }) {
   const { background, topBackground, htmlContent, onUpdate } = props
   const [imageUrl, setImageUrl] = useState<string | undefined>(background?.url)
@@ -151,7 +157,14 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
           {htmlContent?.ctaText || props.ctaText ? (
             <a
               href={props.ctaLink || '#'}
-              className="inline-block bg-white text-black px-8 py-3 rounded-md hover:bg-gray-100 transition-colors mt-6"
+              className="inline-block px-8 py-3 rounded-md hover:opacity-90 transition-all mt-6"
+              style={{
+                backgroundColor: props.ctaBackgroundColor && props.ctaBackgroundOpacity !== undefined 
+                  ? `rgba(${hexToRgb(props.ctaBackgroundColor)}, ${props.ctaBackgroundOpacity / 100})`
+                  : props.ctaBackgroundColor || 'white',
+                color: props.ctaTextColor || 'black',
+                border: props.ctaBorderColor ? `2px solid ${props.ctaBorderColor}` : 'none'
+              }}
             >
               {htmlContent?.ctaText || props.ctaText}
             </a>
