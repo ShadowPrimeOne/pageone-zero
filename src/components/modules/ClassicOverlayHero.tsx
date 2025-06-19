@@ -38,10 +38,16 @@ function getContentWithFallback(htmlContent: string | undefined, fallback: strin
 export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHeroProps }) {
   const { background, topBackground, htmlContent, onUpdate } = props
   const [imageUrl, setImageUrl] = useState<string | undefined>(background?.url)
+  const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
 
   // Only enable content editing if we're in edit mode
   const isEditMode = pathname?.startsWith('/edit/')
+
+  // Ensure client-side hydration
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   // Handle text updates
   const handleTextUpdate = (type: keyof ClassicOverlayHeroHtmlContent, value: string) => {
@@ -148,21 +154,21 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
             contentEditable={isEditMode}
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('heading', e.currentTarget.textContent || '')}
-            dangerouslySetInnerHTML={{ __html: htmlContent?.heading || 'Classic Overlay Hero' }}
+            dangerouslySetInnerHTML={{ __html: isClient ? (htmlContent?.heading || 'Classic Overlay Hero') : 'Classic Overlay Hero' }}
           />
           <p 
             className="text-xl sm:text-2xl text-white/80 outline-none mb-6"
             contentEditable={isEditMode}
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('subheading', e.currentTarget.textContent || '')}
-            dangerouslySetInnerHTML={{ __html: htmlContent?.subheading || 'High-impact visual services (e.g., automotive, fitness, travel)' }}
+            dangerouslySetInnerHTML={{ __html: isClient ? (htmlContent?.subheading || 'High-impact visual services (e.g., automotive, fitness, travel)') : 'High-impact visual services (e.g., automotive, fitness, travel)' }}
           />
           <p 
             className="text-lg sm:text-xl text-white/70 outline-none max-w-3xl mx-auto"
             contentEditable={isEditMode}
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('body', e.currentTarget.textContent || '')}
-            dangerouslySetInnerHTML={{ __html: htmlContent?.body || 'High-impact visual services perfect for automotive, fitness, travel, and other visually-driven industries. Create compelling content that converts visitors into customers.' }}
+            dangerouslySetInnerHTML={{ __html: isClient ? (htmlContent?.body || 'High-impact visual services perfect for automotive, fitness, travel, and other visually-driven industries. Create compelling content that converts visitors into customers.') : 'High-impact visual services perfect for automotive, fitness, travel, and other visually-driven industries. Create compelling content that converts visitors into customers.' }}
           />
           {htmlContent?.ctaText || props.ctaText ? (
             <a
