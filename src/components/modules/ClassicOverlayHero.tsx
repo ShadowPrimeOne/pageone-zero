@@ -25,6 +25,16 @@ function hexToRgb(hex: string): string {
   return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0'
 }
 
+// Helper function to get content with fallback to placeholder
+function getContentWithFallback(htmlContent: string | undefined, fallback: string): string {
+  // If htmlContent is undefined, it means the field was never edited - show placeholder
+  if (htmlContent === undefined) return fallback
+  // If htmlContent is an empty string, it means user cleared it - show nothing
+  if (htmlContent === '') return ''
+  // If htmlContent has content, show it
+  return htmlContent
+}
+
 export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHeroProps }) {
   const { background, topBackground, htmlContent, onUpdate } = props
   const [imageUrl, setImageUrl] = useState<string | undefined>(background?.url)
@@ -138,21 +148,21 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
             contentEditable={isEditMode}
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('heading', e.currentTarget.textContent || '')}
-            dangerouslySetInnerHTML={{ __html: htmlContent?.heading || '' }}
+            dangerouslySetInnerHTML={{ __html: htmlContent?.heading || 'Classic Overlay Hero' }}
           />
           <p 
             className="text-xl sm:text-2xl text-white/80 outline-none mb-6"
             contentEditable={isEditMode}
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('subheading', e.currentTarget.textContent || '')}
-            dangerouslySetInnerHTML={{ __html: htmlContent?.subheading || '' }}
+            dangerouslySetInnerHTML={{ __html: htmlContent?.subheading || 'High-impact visual services (e.g., automotive, fitness, travel)' }}
           />
           <p 
             className="text-lg sm:text-xl text-white/70 outline-none max-w-3xl mx-auto"
             contentEditable={isEditMode}
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('body', e.currentTarget.textContent || '')}
-            dangerouslySetInnerHTML={{ __html: htmlContent?.body || '' }}
+            dangerouslySetInnerHTML={{ __html: htmlContent?.body || 'High-impact visual services perfect for automotive, fitness, travel, and other visually-driven industries. Create compelling content that converts visitors into customers.' }}
           />
           {htmlContent?.ctaText || props.ctaText ? (
             <a

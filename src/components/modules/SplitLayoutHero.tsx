@@ -20,6 +20,11 @@ function hexToRgb(hex: string): string {
   return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0'
 }
 
+// Helper function to get content with fallback to placeholder
+function getContentWithFallback(content: string | undefined, fallback: string): string {
+  return content && content.trim() !== '' ? content : fallback
+}
+
 export function SplitLayoutHero({ 
   heading, 
   subheading, 
@@ -32,9 +37,9 @@ export function SplitLayoutHero({
   ctaBackgroundOpacity,
   onUpdate 
 }: Props) {
-  const [localHeading, setLocalHeading] = useState(heading)
-  const [localSubheading, setLocalSubheading] = useState(subheading)
-  const [localBody, setLocalBody] = useState(body)
+  const [localHeading, setLocalHeading] = useState(getContentWithFallback(heading, 'Enter Heading'))
+  const [localSubheading, setLocalSubheading] = useState(getContentWithFallback(subheading, 'Enter Subheading'))
+  const [localBody, setLocalBody] = useState(getContentWithFallback(body, 'Enter Body'))
 
   // Handle text updates
   const handleTextUpdate = (type: 'heading' | 'subheading' | 'body', value: string) => {

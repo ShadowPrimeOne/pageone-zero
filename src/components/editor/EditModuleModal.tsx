@@ -122,15 +122,37 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     console.log('EditModuleModal: handleContentChange called with:', updates)
     console.log('EditModuleModal: Current moduleData:', moduleData)
     
+    // Only update htmlContent for the specific field being edited
+    const textFields = ['heading', 'subheading', 'body', 'ctaText']
+    const htmlContentUpdates: { [key: string]: string | undefined } = {}
+    
+    // Only update htmlContent if we're editing a text field AND that specific field is in the updates
+    Object.keys(updates).forEach(key => {
+      if (textFields.includes(key) && key === selectedField) {
+        // Only set htmlContent if the field actually has content (not empty string)
+        const value = updates[key as keyof HeroProps] as string | undefined
+        if (value && value.trim() !== '') {
+          htmlContentUpdates[key] = value
+        } else if (value === '') {
+          // If user cleared the field, set it to empty string to show nothing
+          htmlContentUpdates[key] = ''
+        }
+        // If value is undefined, don't set htmlContent (preserve original placeholder)
+      }
+    })
+    
+    // Only update htmlContent if there are actual text field changes
     const updatedModule = {
       ...moduleData,
       props: {
         ...moduleData.props,
         ...updates,
-        htmlContent: {
-          ...(moduleData.props as ClassicOverlayHeroProps).htmlContent,
-          [selectedField]: updates[selectedField as keyof HeroProps]
-        }
+        ...(Object.keys(htmlContentUpdates).length > 0 && {
+          htmlContent: {
+            ...(moduleData.props as ClassicOverlayHeroProps).htmlContent,
+            ...htmlContentUpdates
+          }
+        })
       }
     }
     

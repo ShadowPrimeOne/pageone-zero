@@ -10,6 +10,19 @@ function hexToRgb(hex: string): string {
   return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0'
 }
 
+// Helper function to get content with fallback to placeholder
+function getContentWithFallback(htmlContent: string | undefined, propContent: string | undefined, fallback: string): string {
+  // If htmlContent is undefined, it means the field was never edited - check propContent or show placeholder
+  if (htmlContent === undefined) {
+    if (propContent && propContent.trim() !== '') return propContent
+    return fallback
+  }
+  // If htmlContent is an empty string, it means user cleared it - show nothing
+  if (htmlContent === '') return ''
+  // If htmlContent has content, show it
+  return htmlContent
+}
+
 export default function TopImageCenterTextHero({ props }: { props: HeroProps }) {
   const [imageError, setImageError] = useState(false)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -82,19 +95,19 @@ export default function TopImageCenterTextHero({ props }: { props: HeroProps }) 
         <h1 
           className="text-4xl font-bold mb-4"
           dangerouslySetInnerHTML={{ 
-            __html: props.htmlContent?.heading || props.heading || 'Missing Heading' 
+            __html: getContentWithFallback(props.htmlContent?.heading, props.heading, 'Missing Heading') 
           }}
         />
         <p 
           className="text-lg max-w-2xl mb-4"
           dangerouslySetInnerHTML={{ 
-            __html: props.htmlContent?.subheading || props.subheading || 'Missing Subheading' 
+            __html: getContentWithFallback(props.htmlContent?.subheading, props.subheading, 'Missing Subheading') 
           }}
         />
         <p 
           className="text-base max-w-2xl text-gray-600"
           dangerouslySetInnerHTML={{ 
-            __html: props.htmlContent?.body || props.body || '' 
+            __html: getContentWithFallback(props.htmlContent?.body, props.body, '') 
           }}
         />
         {props.htmlContent?.ctaText || props.ctaText ? (
