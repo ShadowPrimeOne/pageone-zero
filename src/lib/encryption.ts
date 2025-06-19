@@ -1,10 +1,7 @@
 import { Module } from '@/lib/editor/types'
 
-const DEV_KEY = process.env.NEXT_PUBLIC_DEV_KEY || 'dev-key-1234'
-
 export async function generateKey(passphrase: string): Promise<CryptoKey> {
   try {
-    console.log('🔑 Generating key from passphrase')
     const encoder = new TextEncoder()
     const keyMaterial = await crypto.subtle.importKey(
       'raw',
@@ -34,7 +31,6 @@ export async function generateKey(passphrase: string): Promise<CryptoKey> {
 
 export async function encryptData(data: Module[], key: CryptoKey): Promise<string> {
   try {
-    console.log('🔒 Encrypting data')
     const encoder = new TextEncoder()
     const jsonString = JSON.stringify(data)
     const dataBuffer = encoder.encode(jsonString)
@@ -63,7 +59,6 @@ export async function encryptData(data: Module[], key: CryptoKey): Promise<strin
 
 export async function decryptData(encryptedData: string, key: CryptoKey): Promise<Module[]> {
   try {
-    console.log('🔓 Decrypting data')
     const dataBytes = Uint8Array.from(atob(encryptedData), c => c.charCodeAt(0))
     const iv = dataBytes.slice(0, 12)
     const encrypted = dataBytes.slice(12)

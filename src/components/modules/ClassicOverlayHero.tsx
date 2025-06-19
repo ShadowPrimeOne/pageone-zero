@@ -1,7 +1,7 @@
 "use client"
 
 import type { ClassicOverlayHeroProps, ClassicOverlayHeroHtmlContent } from '@/lib/editor/types'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 
 // Animation classes
@@ -40,6 +40,7 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
   const [imageUrl, setImageUrl] = useState<string | undefined>(background?.url)
   const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
+  const blobUrlRef = useRef<string | null>(null)
 
   // Only enable content editing if we're in edit mode
   const isEditMode = pathname?.startsWith('/edit/')
@@ -63,6 +64,12 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
   }
 
   useEffect(() => {
+    // Clean up previous blob URL
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current)
+      blobUrlRef.current = null
+    }
+
     // Determine the image URL
     let bgImage: string | undefined = undefined
 
@@ -77,6 +84,7 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
         }
         const blob = new Blob([bytes], { type: background._tempFile.type })
         bgImage = URL.createObjectURL(blob)
+        blobUrlRef.current = bgImage
       } catch {
         // Handle error silently
       }
@@ -95,14 +103,16 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
         // Handle error silently
       }
     }
+  }, [background?._tempFile?.data, background?.image, topBackground?.url])
 
-    // Cleanup function to revoke temporary URL
+  // Cleanup blob URL on unmount
+  useEffect(() => {
     return () => {
-      if (bgImage && bgImage.startsWith('blob:')) {
-        URL.revokeObjectURL(bgImage)
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current)
       }
     }
-  }, [background, topBackground, props.textPosition])
+  }, [])
 
   // Get animation classes
   const startAnimationClass = startAnimations[props.startAnimation || 'none']

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { generateKey } from '@/lib/encryption'
+import { generateKey, encryptData } from '@/lib/encryption'
 import { Module } from '@/lib/editor/types'
 import sharp from 'sharp'
 
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
 
           // Generate unique filename with timestamp
           const timestamp = Date.now()
-          const filename = `${timestamp}-${module.props.background._tempFile.name.replace(/\.[^/.]+$/, '')}.webp`
+          const filename = `${timestamp}-${(module.props.background._tempFile as { name?: string; type: string; data: string }).name?.replace(/\.[^/.]+$/, '') || 'image'}.webp`
           const filePath = `user/${slug}/${filename}`
 
           // Upload to Supabase Storage
@@ -115,6 +115,7 @@ export async function POST(request: Request) {
         slug,
         key,
         modules: encryptedData,
+        created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
 
@@ -134,27 +135,4 @@ export async function POST(request: Request) {
       { status: 500 }
     )
   }
-}
-
-async function encryptData(data: Module[], key: CryptoKey): Promise<string> {
-  const encoder = new TextEncoder()
-  const jsonString = JSON.stringify(data)
-  const dataBuffer = encoder.encode(jsonString)
-
-  const iv = crypto.getRandomValues(new Uint8Array(12))
-  const encryptedBuffer = await crypto.subtle.encrypt(
-    {
-      name: 'AES-GCM',
-      iv
-    },
-    key,
-    dataBuffer
-  )
-
-  const encryptedArray = new Uint8Array(encryptedBuffer)
-  const combinedArray = new Uint8Array(iv.length + encryptedArray.length)
-  combinedArray.set(iv)
-  combinedArray.set(encryptedArray, iv.length)
-
-  return btoa(String.fromCharCode(...combinedArray))
 } 

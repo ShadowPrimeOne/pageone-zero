@@ -3,30 +3,35 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import EditorPage from '@/components/editor/EditorPage'
 import PublicModuleRenderer from '@/components/modules/PublicModuleRenderer'
+import { supabase } from '@/lib/supabase/server'
+import { decryptData, generateKey } from '@/lib/encryption'
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const { slug } = params
+const DEV_KEY = process.env.NEXT_PUBLIC_DEV_KEY || 'dev-key-1234'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
   
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pages/${slug}`, {
-      cache: 'no-store'
-    })
-    
-    if (!response.ok) {
+    // Fetch the page from the database
+    const { data: page, error } = await supabase
+      .from('pages')
+      .select('*')
+      .eq('slug', slug)
+      .maybeSingle()
+
+    if (error || !page) {
       return {
         title: 'Page Not Found',
         description: 'The requested page could not be found.'
       }
     }
     
-    const data = await response.json()
-    
     return {
-      title: data.title || 'Page',
-      description: data.description || 'A page created with PageOne.',
+      title: page.title || 'Page',
+      description: page.description || 'A page created with PageOne.',
       openGraph: {
-        title: data.title || 'Page',
-        description: data.description || 'A page created with PageOne.',
+        title: page.title || 'Page',
+        description: page.description || 'A page created with PageOne.',
         type: 'website',
       },
     }
@@ -38,24 +43,54 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function Page({ params, searchParams }: { 
-  params: { slug: string }, 
-  searchParams: { edit?: string } 
+export default async function Page({ 
+  params, 
+  searchParams 
+}: { 
+  params: Promise<{ slug: string }>, 
+  searchParams: Promise<{ edit?: string }> 
 }) {
-  const { slug } = params
-  const { edit } = searchParams
+  const { slug } = await params
+  const { edit } = await searchParams
   
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/pages/${slug}`, {
-      cache: 'no-store'
-    })
-    
-    if (!response.ok) {
+    // Fetch the page from the database
+    const { data: page, error } = await supabase
+      .from('pages')
+      .select('*')
+      .eq('slug', slug)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Database error:', error)
       notFound()
     }
-    
-    const data = await response.json()
-    const modules = data.modules || []
+
+    if (!page) {
+      notFound()
+    }
+
+    // Handle encrypted modules
+    let modules = page.modules
+    if (typeof modules === 'string') {
+      try {
+        // Try to decrypt with dev key first
+        const cryptoKey = await generateKey(DEV_KEY)
+        if (!cryptoKey) {
+          throw new Error('Failed to generate encryption key')
+        }
+        modules = await decryptData(modules, cryptoKey)
+      } catch (error) {
+        console.error('Error decrypting modules:', error)
+        notFound()
+      }
+    }
+
+    // Validate modules data
+    if (!modules || !Array.isArray(modules)) {
+      console.error('Invalid modules data:', modules)
+      notFound()
+    }
     
     // Check if we're in edit mode
     const isEditMode = edit === 'true'
@@ -69,7 +104,8 @@ export default async function Page({ params, searchParams }: {
         </main>
       )
     }
-  } catch {
+  } catch (error) {
+    console.error('Error fetching page:', error)
     notFound()
   }
 }

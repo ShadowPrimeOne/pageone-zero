@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useEditorState } from '@/lib/editor/useEditorState'
 import { showModal } from '@/lib/modal'
 import { generateQRCode } from '@/lib/qr'
-import { uploadUserImage } from '@/lib/uploadUserImage'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 interface PublishModalProps {
@@ -92,9 +91,9 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
           background: module.props.background ? {
             ...module.props.background,
             _tempFile: module.props.background._tempFile ? {
-              name: module.props.background._tempFile.name || 'temp-file',
+              name: (module.props.background._tempFile as { name?: string; type: string; size?: number; data: string }).name || 'temp-file',
               type: module.props.background._tempFile.type,
-              size: module.props.background._tempFile.size || 0,
+              size: (module.props.background._tempFile as { name?: string; type: string; size?: number; data: string }).size || 0,
               data: module.props.background._tempFile.data
             } : undefined
           } : undefined
@@ -102,7 +101,7 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
       }))
 
       // Send to server
-      const response = await fetch('/api/publish', {
+      const response = await fetch('/api/publishPage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

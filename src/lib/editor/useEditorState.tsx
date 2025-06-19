@@ -132,7 +132,7 @@ export const EditorStateProvider: React.FC<EditorStateProviderProps> = ({
 
     // Set dirty state to true when module is updated
     setIsDirty(true)
-  }, [modules])
+  }, [])
 
   const moveModuleUp = (id: string) => {
     setModules(prevModules => {

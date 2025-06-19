@@ -5,8 +5,6 @@ import { decryptData, generateKey } from './encryption'
 const DEV_KEY = process.env.NEXT_PUBLIC_DEV_KEY || 'dev-key-1234'
 
 export async function getPageBySlug(slug: string, key?: string) {
-  console.log('🔍 Fetching page data for slug:', slug)
-
   try {
     const { data, error } = await supabase
       .from('pages')
@@ -29,13 +27,11 @@ export async function getPageBySlug(slug: string, key?: string) {
     if (typeof modules === 'string') {
       try {
         const encryptionKey = key || DEV_KEY
-        console.log('🔐 Attempting to decrypt modules with key:', encryptionKey ? 'provided' : 'dev key')
         const cryptoKey = await generateKey(encryptionKey)
         if (!cryptoKey) {
           throw new Error('Failed to generate encryption key')
         }
         modules = await decryptData(modules, cryptoKey)
-        console.log('✅ Modules decrypted successfully')
       } catch (error) {
         console.error('❌ Error decrypting modules:', error)
         throw new Error('Failed to decrypt page data')
@@ -47,12 +43,6 @@ export async function getPageBySlug(slug: string, key?: string) {
       console.error('❌ Invalid modules data:', modules)
       throw new Error('Invalid modules data')
     }
-
-    console.log('✅ Page data fetched successfully:', {
-      slug,
-      hasModules: !!modules,
-      moduleCount: modules.length
-    })
 
     return {
       ...data,

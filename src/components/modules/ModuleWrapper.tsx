@@ -87,7 +87,7 @@ export function ModuleWrapper({
         setTempUrl(null)
       }
     }
-  }, [tempUrl, module.background])
+  }, [])
 
   // Create temporary URL only when needed
   useEffect(() => {
@@ -104,7 +104,7 @@ export function ModuleWrapper({
       const url = URL.createObjectURL(blob)
       setTempUrl(url)
     }
-  }, [module.background, tempUrl])
+  }, [module.background?._tempFile?.data, tempUrl])
 
   // Handle parallax effect
   useEffect(() => {

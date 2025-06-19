@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { HeroProps } from '@/lib/editor/types'
 import Image from 'next/image'
 
@@ -26,8 +26,15 @@ function getContentWithFallback(htmlContent: string | undefined, propContent: st
 export default function TopImageCenterTextHero({ props }: { props: HeroProps }) {
   const [imageError, setImageError] = useState(false)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const blobUrlRef = useRef<string | null>(null)
   
   useEffect(() => {
+    // Clean up previous blob URL
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current)
+      blobUrlRef.current = null
+    }
+
     // Determine the image URL
     let bgImage: string | null = null
 
@@ -42,6 +49,7 @@ export default function TopImageCenterTextHero({ props }: { props: HeroProps }) 
         }
         const blob = new Blob([bytes], { type: props.background._tempFile.type })
         bgImage = URL.createObjectURL(blob)
+        blobUrlRef.current = bgImage
       } catch {
         setImageError(true)
       }
@@ -62,14 +70,16 @@ export default function TopImageCenterTextHero({ props }: { props: HeroProps }) 
     } else {
       setImageError(true)
     }
+  }, [props.background?._tempFile?.data, props.background?.image, props.topBackground?.url])
 
-    // Cleanup function to revoke temporary URL
+  // Cleanup blob URL on unmount
+  useEffect(() => {
     return () => {
-      if (bgImage && bgImage.startsWith('blob:')) {
-        URL.revokeObjectURL(bgImage)
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current)
       }
     }
-  }, [props])
+  }, [])
 
   return (
     <section className="relative w-full min-h-screen flex flex-col items-center">
