@@ -147,7 +147,6 @@ export function ModuleWrapper({
 
   const handleUpdate = (updates: Partial<Module['props']>) => {
     if (updates.background) {
-      console.log('ModuleWrapper: Background update:', updates.background)
       const currentBackground = (module.props.background || {}) as ModuleBackground
       const newBackground: ModuleBackground = {
         ...currentBackground,

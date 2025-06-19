@@ -26,13 +26,8 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
 
   // Debug logging
   useEffect(() => {
-    if (isOpen) {
-      console.log('🔍 PublishModal opened with modules:', modules)
-      console.log('🔍 PublishModal isDirty:', isDirty)
-      console.log('🔍 PublishModal isEditMode:', isEditMode)
-      console.log('🔍 PublishModal currentSlug:', currentSlug)
-    }
-  }, [isOpen, modules, isDirty, isEditMode, currentSlug])
+    // Modal opened
+  }, [modules, isDirty, isEditMode, currentSlug])
 
   useEffect(() => {
     // If we're in edit mode, set the current slug
@@ -89,52 +84,26 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
         throw new Error('Failed to generate key')
       }
 
-      // Process modules to handle image uploads
-      const processedModules = await Promise.all(modules.map(async (module) => {
-        if (module.props?.background?.type === 'image' && module.props.background._tempFile) {
-          try {
-            // Convert base64 data back to File
-            const base64Data = module.props.background._tempFile.data
-            const binaryString = atob(base64Data)
-            const bytes = new Uint8Array(binaryString.length)
-            for (let i = 0; i < binaryString.length; i++) {
-              bytes[i] = binaryString.charCodeAt(i)
-            }
-            const file = new File([bytes], module.props.background._tempFile.name, {
-              type: module.props.background._tempFile.type
-            })
-
-            // Upload the file
-            const url = await uploadUserImage(file, slug)
-
-            // Update the module with the new URL and remove _tempFile
-            return {
-              ...module,
-              props: {
-                ...module.props,
-                background: {
-                  ...module.props.background,
-                  image: url,
-                  _tempFile: undefined
-                }
-              }
-            }
-          } catch (error) {
-            console.error('Error uploading image:', error)
-            throw new Error(`Failed to upload image: ${error instanceof Error ? error.message : 'Unknown error'}`)
-          }
+      // Process modules for publishing
+      const processedModules = modules.map(module => ({
+        ...module,
+        props: {
+          ...module.props,
+          background: module.props.background ? {
+            ...module.props.background,
+            _tempFile: module.props.background._tempFile ? {
+              name: module.props.background._tempFile.name || 'temp-file',
+              type: module.props.background._tempFile.type,
+              size: module.props.background._tempFile.size || 0,
+              data: module.props.background._tempFile.data
+            } : undefined
+          } : undefined
         }
-        return module
       }))
 
-      console.log('📤 Sending modules to server:', processedModules)
-
-      // Determine if we're updating an existing page or creating a new one
-      const endpoint = isEditMode ? '/api/updatePage' : '/api/publishPage'
-      const method = isEditMode ? 'PUT' : 'POST'
-
-      const response = await fetch(endpoint, {
-        method,
+      // Send to server
+      const response = await fetch('/api/publish', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -148,7 +117,7 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || `Failed to ${isEditMode ? 'update' : 'publish'} page`)
+        throw new Error(data.error || 'Failed to publish page')
       }
 
       // Close publish modal
@@ -156,11 +125,10 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
 
       // Show success modal with appropriate message
       showModal({
-        title: isEditMode ? "✅ Page Updated!" : "🎉 Your Page is Live!",
-        message: isEditMode ? "Your changes have been saved successfully." : "You can now visit or share your page.",
+        title: "🎉 Your Page is Live!",
+        message: "You can now visit or share your page.",
         actions: [
           { label: "🔗 View Page", href: `/page/${slug}` },
-          { label: "✏️ Edit Page", href: `/page/${slug}?edit=true` },
           { label: "📲 QR Code", action: () => generateQRCode(slug) },
           { label: "⬅ Back to Editor", href: "/" }
         ]
@@ -168,12 +136,12 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
 
     } catch (err) {
       console.error('❌ Publishing error:', err)
-      setError(err instanceof Error ? err.message : `Failed to ${isEditMode ? 'update' : 'publish'} page`)
+      setError(err instanceof Error ? err.message : 'Failed to publish page')
       
       // Show error modal
       showModal({
         title: "❌ Operation Failed",
-        message: `Your page couldn't be ${isEditMode ? 'updated' : 'published'}. Please check your connection or try again.`,
+        message: "Your page couldn't be published. Please check your connection or try again.",
         button: "Back to Editor"
       })
     } finally {

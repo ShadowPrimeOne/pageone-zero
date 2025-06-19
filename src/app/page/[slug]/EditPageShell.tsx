@@ -14,11 +14,11 @@ export default function EditPageShell({ slug, isEdit, justPublished, modules }: 
   const { showQRModal, setShowQRModal } = useQRModal()
 
   useEffect(() => {
+    // Check if we just published
     if (justPublished) {
-      console.log('🎉 Just published, showing QR modal')
       setShowQRModal(true)
     }
-  }, [justPublished, setShowQRModal])
+  }, [justPublished])
 
   return (
     <div className="min-h-screen">

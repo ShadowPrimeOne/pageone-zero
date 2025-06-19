@@ -25,8 +25,6 @@ export default function SaveModal({ isOpen, onClose, onSave, modules }: SaveModa
         throw new Error('No modules to save')
       }
 
-      console.log('📦 Validating modules before save:', modules)
-
       const sessionKey = localStorage.getItem('sessionKey')
       const slug = window.location.pathname.split('/').pop()
 

@@ -41,7 +41,6 @@ function TestPageContent() {
   }
 
   const handlePublishSuccess = (slug: string, key?: string) => {
-    console.log('✅ Publish successful:', { slug, key, moduleCount: modules.length })
     setIsPublishModalOpen(false)
     setPublishedSlug(slug)
     setPublishedKey(key || '')

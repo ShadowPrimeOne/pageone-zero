@@ -11,12 +11,13 @@ interface Props {
 
 export default function PublicModuleRenderer({ modules }: Props) {
   useEffect(() => {
-    console.log('🔄 PublicModuleRenderer mounted')
-    return () => console.log('🔄 PublicModuleRenderer unmounted')
+    // Component mounted
+    return () => {
+      // Component unmounted
+    }
   }, [])
 
-  console.log('🎨 PublicModuleRenderer rendering with modules:', modules)
-
+  // Render modules
   return (
     <ModuleRenderer
       modules={modules}
@@ -28,6 +29,7 @@ export default function PublicModuleRenderer({ modules }: Props) {
       onDuplicate={() => {}}
       onEdit={() => {}}
       onAddRequest={() => {}}
+      onUpdate={() => {}}
     />
   )
 } 

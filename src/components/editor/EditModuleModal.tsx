@@ -123,9 +123,6 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   }
 
   const handleContentChange = (updates: Partial<HeroProps>) => {
-    console.log('EditModuleModal: handleContentChange called with:', updates)
-    console.log('EditModuleModal: Current moduleData:', moduleData)
-    
     // Only update htmlContent for the specific field being edited
     const textFields = ['heading', 'subheading', 'body', 'ctaText']
     const htmlContentUpdates: { [key: string]: string | undefined } = {}
@@ -160,13 +157,11 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
       }
     }
     
-    console.log('EditModuleModal: Created content update:', updatedModule)
     setModuleData(updatedModule)
     onUpdate(updatedModule)
   }
 
   const handleLayoutChange = (position: 'top' | 'center' | 'bottom') => {
-    console.log('EditModuleModal: Layout change:', position)
     setTextPosition(position)
     
     const updatedModule = {
@@ -182,8 +177,6 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   }
 
   const handleBackgroundChange = (updates: Partial<Background>) => {
-    console.log('EditModuleModal: Background update:', updates)
-    
     // Create updated module with background changes
     const updatedModule = {
       ...moduleData,
@@ -209,9 +202,6 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   }
 
   const handleSave = () => {
-    console.log('EditModuleModal: handleSave called')
-    console.log('EditModuleModal: Current moduleData:', moduleData)
-    
     // Ensure all changes are saved before closing
     const finalModule = {
       ...moduleData,
@@ -238,7 +228,6 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
       }
     }
     
-    console.log('EditModuleModal: Saving final module:', finalModule)
     onUpdate(finalModule)
     close()
   }

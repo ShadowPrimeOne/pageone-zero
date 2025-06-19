@@ -20,10 +20,10 @@ export function ContactFormModule({
     message: ''
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement form submission
-    console.log('Form submitted:', formData)
+    // Form submission logic would go here
+    // For now, just prevent default
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
