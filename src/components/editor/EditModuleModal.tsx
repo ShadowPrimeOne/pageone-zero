@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
-  const [activeTab, setActiveTab] = useState<'content' | 'background'>('content')
+  const [activeTab, setActiveTab] = useState<'content' | 'background' | 'layout'>('content')
   const [moduleData, setModuleData] = useState(module)
   const [selectedField, setSelectedField] = useState<'heading' | 'subheading' | 'body' | 'cta'>('heading')
   const [heading, setHeading] = useState((module.props as HeroProps).heading || '')
@@ -26,6 +26,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   const [ctaBorderColor, setCtaBorderColor] = useState((module.props as HeroProps).ctaBorderColor || '#000000')
   const [ctaBackgroundColor, setCtaBackgroundColor] = useState((module.props as HeroProps).ctaBackgroundColor || 'transparent')
   const [ctaBackgroundOpacity, setCtaBackgroundOpacity] = useState((module.props as HeroProps).ctaBackgroundOpacity ?? 100)
+  const [textPosition, setTextPosition] = useState((module.props as HeroProps).textPosition || 'center')
   const [localContent, setLocalContent] = useState((module.props as HeroProps).heading || '')
   const contentRef = useRef<HTMLDivElement>(null)
   const lastSelectionRef = useRef<{ start: number; end: number } | null>(null)
@@ -44,6 +45,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
       setCtaBorderColor((module.props as HeroProps).ctaBorderColor || '#000000')
       setCtaBackgroundColor((module.props as HeroProps).ctaBackgroundColor || 'transparent')
       setCtaBackgroundOpacity((module.props as HeroProps).ctaBackgroundOpacity ?? 100)
+      setTextPosition((module.props as HeroProps).textPosition || 'center')
       setLocalContent(selectedField === 'heading' ? (module.props as HeroProps).heading || '' : (module.props as HeroProps).subheading || '')
     }
   }, [module, selectedField])
@@ -157,6 +159,22 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     }
     
     console.log('EditModuleModal: Created content update:', updatedModule)
+    setModuleData(updatedModule)
+    onUpdate(updatedModule)
+  }
+
+  const handleLayoutChange = (position: 'top' | 'center' | 'bottom') => {
+    console.log('EditModuleModal: Layout change:', position)
+    setTextPosition(position)
+    
+    const updatedModule = {
+      ...moduleData,
+      props: {
+        ...moduleData.props,
+        textPosition: position
+      }
+    }
+    
     setModuleData(updatedModule)
     onUpdate(updatedModule)
   }
@@ -372,6 +390,16 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
             >
               Background
             </button>
+            <button
+              className={`flex-1 px-4 py-3 text-sm font-medium ${
+                activeTab === 'layout'
+                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+              }`}
+              onClick={() => setActiveTab('layout')}
+            >
+              Layout
+            </button>
           </div>
         </div>
 
@@ -572,6 +600,59 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                 background={moduleData.props.background}
                 onChange={handleBackgroundChange}
               />
+            </div>
+          )}
+
+          {activeTab === 'layout' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                  Content Position
+                </label>
+                <div className="grid grid-cols-3 gap-4">
+                  <button
+                    onClick={() => handleLayoutChange('top')}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      textPosition === 'top'
+                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-lg font-semibold mb-1">Top</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Center of top 50%</div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleLayoutChange('center')}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      textPosition === 'center'
+                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-lg font-semibold mb-1">Center</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Middle of whole page</div>
+                    </div>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleLayoutChange('bottom')}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      textPosition === 'bottom'
+                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-lg font-semibold mb-1">Bottom</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Center of bottom 50%</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
