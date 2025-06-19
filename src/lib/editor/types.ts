@@ -35,6 +35,7 @@ export interface HeroProps {
   ctaBorderColor?: string
   ctaBackgroundColor?: string
   ctaBackgroundOpacity?: number
+  ctaAlignment?: 'left' | 'center' | 'right'
   onUpdate?: (updates: Partial<HeroProps>) => void
   htmlContent?: {
     heading?: string
@@ -76,6 +77,7 @@ export interface ClassicOverlayHeroProps {
   ctaBorderColor?: string
   ctaBackgroundColor?: string
   ctaBackgroundOpacity?: number
+  ctaAlignment?: 'left' | 'center' | 'right'
   onUpdate?: (updates: Partial<ClassicOverlayHeroProps>) => void
   textPosition?: 'top' | 'center' | 'bottom'
   startAnimation?: 'none' | 'fadeIn' | 'slideUp' | 'slideDown'

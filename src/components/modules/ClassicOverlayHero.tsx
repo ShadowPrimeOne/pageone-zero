@@ -164,26 +164,32 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
             dangerouslySetInnerHTML={{ __html: isClient ? (htmlContent?.subheading || 'High-impact visual services (e.g., automotive, fitness, travel)') : 'High-impact visual services (e.g., automotive, fitness, travel)' }}
           />
           <p 
-            className="text-lg sm:text-xl text-white/70 outline-none max-w-3xl mx-auto"
+            className="text-lg sm:text-xl text-white/70 outline-none"
             contentEditable={isEditMode}
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('body', e.currentTarget.textContent || '')}
             dangerouslySetInnerHTML={{ __html: isClient ? (htmlContent?.body || 'High-impact visual services perfect for automotive, fitness, travel, and other visually-driven industries. Create compelling content that converts visitors into customers.') : 'High-impact visual services perfect for automotive, fitness, travel, and other visually-driven industries. Create compelling content that converts visitors into customers.' }}
           />
           {htmlContent?.ctaText || props.ctaText ? (
-            <a
-              href={props.ctaLink || '#'}
-              className="inline-block px-8 py-3 rounded-md hover:opacity-90 transition-all mt-6"
-              style={{
-                backgroundColor: props.ctaBackgroundColor && props.ctaBackgroundOpacity !== undefined 
-                  ? `rgba(${hexToRgb(props.ctaBackgroundColor)}, ${props.ctaBackgroundOpacity / 100})`
-                  : props.ctaBackgroundColor || 'white',
-                color: props.ctaTextColor || 'black',
-                border: props.ctaBorderColor ? `2px solid ${props.ctaBorderColor}` : 'none'
-              }}
-            >
-              {htmlContent?.ctaText || props.ctaText}
-            </a>
+            <div className={`mt-6 ${
+              props.ctaAlignment === 'left' ? 'text-left' :
+              props.ctaAlignment === 'right' ? 'text-right' :
+              'text-center'
+            }`}>
+              <a
+                href={props.ctaLink || '#'}
+                className="inline-block px-8 py-3 rounded-md hover:opacity-90 transition-all"
+                style={{
+                  backgroundColor: props.ctaBackgroundColor && props.ctaBackgroundOpacity !== undefined 
+                    ? `rgba(${hexToRgb(props.ctaBackgroundColor)}, ${props.ctaBackgroundOpacity / 100})`
+                    : props.ctaBackgroundColor || 'white',
+                  color: props.ctaTextColor || 'black',
+                  border: props.ctaBorderColor ? `2px solid ${props.ctaBorderColor}` : 'none'
+                }}
+              >
+                {htmlContent?.ctaText || props.ctaText}
+              </a>
+            </div>
           ) : null}
         </div>
       </div>

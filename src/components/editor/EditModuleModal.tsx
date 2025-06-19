@@ -26,6 +26,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   const [ctaBorderColor, setCtaBorderColor] = useState((module.props as HeroProps).ctaBorderColor || '#000000')
   const [ctaBackgroundColor, setCtaBackgroundColor] = useState((module.props as HeroProps).ctaBackgroundColor || 'transparent')
   const [ctaBackgroundOpacity, setCtaBackgroundOpacity] = useState((module.props as HeroProps).ctaBackgroundOpacity ?? 100)
+  const [ctaAlignment, setCtaAlignment] = useState((module.props as HeroProps).ctaAlignment || 'center')
   const [textPosition, setTextPosition] = useState((module.props as HeroProps).textPosition || 'center')
   const [localContent, setLocalContent] = useState((module.props as HeroProps).heading || '')
   const contentRef = useRef<HTMLDivElement>(null)
@@ -45,6 +46,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
       setCtaBorderColor((module.props as HeroProps).ctaBorderColor || '#000000')
       setCtaBackgroundColor((module.props as HeroProps).ctaBackgroundColor || 'transparent')
       setCtaBackgroundOpacity((module.props as HeroProps).ctaBackgroundOpacity ?? 100)
+      setCtaAlignment((module.props as HeroProps).ctaAlignment || 'center')
       setTextPosition((module.props as HeroProps).textPosition || 'center')
       setLocalContent(selectedField === 'heading' ? (module.props as HeroProps).heading || '' : (module.props as HeroProps).subheading || '')
     }
@@ -303,31 +305,6 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
     })
   }
 
-  const handleStyleChange = (style: string, value: string) => {
-    if (!contentRef.current) return
-    
-    saveSelection()
-    const selection = window.getSelection()
-    if (!selection) return
-
-    const range = selection.getRangeAt(0)
-    if (!contentRef.current.contains(range.commonAncestorContainer)) return
-
-    const span = document.createElement('span')
-    span.style[style as any] = value
-    range.surroundContents(span)
-
-    const content = contentRef.current.innerHTML
-    setLocalContent(content)
-    setCurrentValue(content)
-    
-    isUpdatingRef.current = true
-    requestAnimationFrame(() => {
-      isUpdatingRef.current = false
-      restoreSelection()
-    })
-  }
-
   // Add event listeners for selection changes
   useEffect(() => {
     const handleSelectionChange = () => {
@@ -456,7 +433,6 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                 <TextFormattingControls
                   value={localContent}
                   onChange={handleFormatChange}
-                  onStyleChange={handleStyleChange}
                   className="mb-4"
                 />
               )}
@@ -561,6 +537,61 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                       <span className="text-sm text-gray-600 dark:text-gray-400 w-12">
                         {ctaBackgroundOpacity}%
                       </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Button Alignment
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        onClick={() => {
+                          setCtaAlignment('left')
+                          handleContentChange({ ctaAlignment: 'left' })
+                        }}
+                        className={`p-3 rounded-md border-2 transition-all ${
+                          ctaAlignment === 'left'
+                            ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-sm font-medium">Left</div>
+                        </div>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          setCtaAlignment('center')
+                          handleContentChange({ ctaAlignment: 'center' })
+                        }}
+                        className={`p-3 rounded-md border-2 transition-all ${
+                          ctaAlignment === 'center'
+                            ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-sm font-medium">Center</div>
+                        </div>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          setCtaAlignment('right')
+                          handleContentChange({ ctaAlignment: 'right' })
+                        }}
+                        className={`p-3 rounded-md border-2 transition-all ${
+                          ctaAlignment === 'right'
+                            ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-sm font-medium">Right</div>
+                        </div>
+                      </button>
                     </div>
                   </div>
                 </div>

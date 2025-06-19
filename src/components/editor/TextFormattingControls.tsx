@@ -72,9 +72,14 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
     const tempDiv = document.createElement('div')
     tempDiv.innerHTML = value
 
-    // Check for text alignment first
-    const alignMatch = value.match(/text-align:\s*([^;"]+)/)
-    const currentAlign = alignMatch ? alignMatch[1] : 'left'
+    // Check for text alignment - look for wrapper div with text-align style
+    const alignDiv = tempDiv.querySelector('div[style*="text-align"]')
+    let currentAlign = 'left'
+    if (alignDiv) {
+      const style = alignDiv.getAttribute('style')
+      const alignMatch = style?.match(/text-align:\s*([^;"]+)/)
+      currentAlign = alignMatch ? alignMatch[1] : 'left'
+    }
     setTextAlign(currentAlign)
 
     // Check for bold
