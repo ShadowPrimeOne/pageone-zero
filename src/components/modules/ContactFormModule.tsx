@@ -35,14 +35,16 @@ export function ContactFormModule({
   }
 
   // Set background styles
-  const backgroundStyle = background?.type === 'gradient' 
-    ? {
-        background: `linear-gradient(${background.gradient?.angle || 135}deg, ${background.gradient?.from || '#1a1a1a'}, ${background.gradient?.to || '#000000'})`,
-        opacity: background.opacity
-      }
-    : background?.type === 'color'
+  const backgroundStyle = background?.type === 'color'
     ? {
         backgroundColor: background.color,
+        opacity: background.opacity
+      }
+    : background?.type === 'image'
+    ? {
+        backgroundImage: `url(${background.image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         opacity: background.opacity
       }
     : {}
@@ -85,7 +87,7 @@ export function ContactFormModule({
                   id="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#00FFD1] focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#00FFD1] focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                   placeholder="Your name"
                   required
                 />
@@ -102,7 +104,7 @@ export function ContactFormModule({
                   id="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#00FFD1] focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#00FFD1] focus:border-transparent transition-all duration-200 backdrop-blur-sm"
                   placeholder="your@email.com"
                   required
                 />
@@ -119,7 +121,7 @@ export function ContactFormModule({
                   rows={6}
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#00FFD1] focus:border-transparent transition-all duration-200 resize-none"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#00FFD1] focus:border-transparent transition-all duration-200 resize-none backdrop-blur-sm"
                   placeholder="Your message..."
                   required
                 />

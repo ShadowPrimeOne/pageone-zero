@@ -130,17 +130,36 @@ export async function publishPage({ slug, modules, key, phoneNumber }: PublishPa
 }
 
 export async function fetchModuleTemplateById(id: string) {
-  // Try to fetch from database
-  const { data, error } = await supabase
-    .from('module_templates')
-    .select('*')
-    .eq('id', id)
-    .single()
+  try {
+    // Try to fetch from database
+    const { data, error } = await supabase
+      .from('module_templates')
+      .select('*')
+      .eq('id', id)
+      .single()
 
-  if (error) {
-    console.error('Error fetching module template:', error)
+    if (error) {
+      console.error('Error fetching module template:', {
+        id,
+        error: error.message || error,
+        details: error.details || 'No additional details',
+        hint: error.hint || 'No hint provided'
+      })
+      return null
+    }
+
+    if (!data) {
+      console.error('No module template found for ID:', id)
+      return null
+    }
+
+    return data
+  } catch (err) {
+    console.error('Unexpected error fetching module template:', {
+      id,
+      error: err instanceof Error ? err.message : 'Unknown error',
+      stack: err instanceof Error ? err.stack : undefined
+    })
     return null
   }
-
-  return data
 } 

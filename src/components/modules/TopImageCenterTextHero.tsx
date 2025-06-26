@@ -82,7 +82,7 @@ export default function TopImageCenterTextHero({ props }: { props: HeroProps }) 
   }, [])
 
   return (
-    <section className="relative w-full min-h-screen flex flex-col items-center">
+    <section className="relative w-full h-screen md:h-screen flex flex-col items-center" style={{ height: '100dvh' }}>
       <div className="w-full h-[50vh] relative">
         {!imageError && imageUrl && (
           <Image
@@ -101,7 +101,7 @@ export default function TopImageCenterTextHero({ props }: { props: HeroProps }) 
           />
         )}
       </div>
-      <div className="w-full flex-1 flex flex-col items-center justify-center px-4 text-center py-12">
+      <div className="w-full flex-1 flex flex-col items-center justify-center px-4 text-center py-12" style={{ minHeight: '50dvh' }}>
         <h1 
           className="text-4xl font-bold mb-4"
           dangerouslySetInnerHTML={{ 
@@ -127,8 +127,8 @@ export default function TopImageCenterTextHero({ props }: { props: HeroProps }) 
             style={{
               backgroundColor: props.ctaBackgroundColor && props.ctaBackgroundOpacity !== undefined 
                 ? `rgba(${hexToRgb(props.ctaBackgroundColor)}, ${props.ctaBackgroundOpacity / 100})`
-                : props.ctaBackgroundColor || 'black',
-              color: props.ctaTextColor || 'white',
+                : props.ctaBackgroundColor || 'rgba(0, 0, 0, 0.9)',
+              color: props.ctaTextColor || (props.ctaBackgroundColor ? '#ffffff' : '#000000'),
               border: props.ctaBorderColor ? `2px solid ${props.ctaBorderColor}` : 'none'
             }}
           >

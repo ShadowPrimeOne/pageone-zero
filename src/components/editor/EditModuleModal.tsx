@@ -318,15 +318,15 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4" data-editor-modal>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col border border-gray-200">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-6 border-b border-gray-200">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Edit Module</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Edit Module</h2>
             <button
               onClick={close}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100"
             >
               <XMarkIcon className="w-6 h-6" />
             </button>
@@ -334,33 +334,33 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200 dark:border-gray-700">
+        <div className="border-b border-gray-200">
           <div className="flex">
             <button
-              className={`flex-1 px-4 py-3 text-sm font-medium ${
+              className={`flex-1 px-6 py-4 text-base font-medium transition-colors ${
                 activeTab === 'content'
-                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  ? 'border-b-2 border-primary text-primary'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
               onClick={() => setActiveTab('content')}
             >
               Content
             </button>
             <button
-              className={`flex-1 px-4 py-3 text-sm font-medium ${
+              className={`flex-1 px-6 py-4 text-base font-medium transition-colors ${
                 activeTab === 'background'
-                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  ? 'border-b-2 border-primary text-primary'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
               onClick={() => setActiveTab('background')}
             >
               Background
             </button>
             <button
-              className={`flex-1 px-4 py-3 text-sm font-medium ${
+              className={`flex-1 px-6 py-4 text-base font-medium transition-colors ${
                 activeTab === 'layout'
-                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                  ? 'border-b-2 border-primary text-primary'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
               onClick={() => setActiveTab('layout')}
             >
@@ -370,47 +370,47 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-y-auto p-6">
           {activeTab === 'content' && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Field Selection */}
-              <div className="flex gap-4 mb-4">
+              <div className="flex gap-3 mb-6">
                 <button
                   onClick={() => setSelectedField('heading')}
-                  className={`px-4 py-2 rounded-md ${
+                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     selectedField === 'heading'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                      ? 'bg-primary text-white shadow-md'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   Heading
                 </button>
                 <button
                   onClick={() => setSelectedField('subheading')}
-                  className={`px-4 py-2 rounded-md ${
+                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     selectedField === 'subheading'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                      ? 'bg-primary text-white shadow-md'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   Subheading
                 </button>
                 <button
                   onClick={() => setSelectedField('body')}
-                  className={`px-4 py-2 rounded-md ${
+                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     selectedField === 'body'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                      ? 'bg-primary text-white shadow-md'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   Body
                 </button>
                 <button
                   onClick={() => setSelectedField('cta')}
-                  className={`px-4 py-2 rounded-md ${
+                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
                     selectedField === 'cta'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                      ? 'bg-primary text-white shadow-md'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
                   CTA
@@ -422,15 +422,15 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                 <TextFormattingControls
                   value={localContent}
                   onChange={handleFormatChange}
-                  className="mb-4"
+                  className="mb-6"
                 />
               )}
 
               {/* CTA Button Editor */}
               {selectedField === 'cta' && (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">
                       Link (Button links to...)
                     </label>
                     <input
@@ -441,12 +441,12 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                         handleContentChange({ ctaLink: e.target.value })
                       }}
                       placeholder="https://example.com or #section"
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-4 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary placeholder-gray-500"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">
                       Button Text (Displayed Text)
                     </label>
                     <input
@@ -457,92 +457,96 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                         handleContentChange({ ctaText: e.target.value })
                       }}
                       placeholder="Get Started"
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-4 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary placeholder-gray-500"
                     />
                   </div>
                   
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Text Color
-                    </label>
-                    <input
-                      type="color"
-                      value={ctaTextColor}
-                      onChange={(e) => {
-                        setCtaTextColor(e.target.value)
-                        handleContentChange({ ctaTextColor: e.target.value })
-                      }}
-                      className="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-md"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Border/Outline Color
-                    </label>
-                    <input
-                      type="color"
-                      value={ctaBorderColor}
-                      onChange={(e) => {
-                        setCtaBorderColor(e.target.value)
-                        handleContentChange({ ctaBorderColor: e.target.value })
-                      }}
-                      className="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-md"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Background Color
-                    </label>
-                    <input
-                      type="color"
-                      value={ctaBackgroundColor}
-                      onChange={(e) => {
-                        setCtaBackgroundColor(e.target.value)
-                        handleContentChange({ ctaBackgroundColor: e.target.value })
-                      }}
-                      className="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-md"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Background Transparency
-                    </label>
-                    <div className="flex items-center gap-4">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Text Color
+                      </label>
                       <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={ctaBackgroundOpacity}
+                        type="color"
+                        value={ctaTextColor}
                         onChange={(e) => {
-                          const opacity = parseInt(e.target.value)
-                          setCtaBackgroundOpacity(opacity)
-                          handleContentChange({ ctaBackgroundOpacity: opacity })
+                          setCtaTextColor(e.target.value)
+                          handleContentChange({ ctaTextColor: e.target.value })
                         }}
-                        className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-12 border border-gray-300 rounded-lg cursor-pointer"
                       />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 w-12">
-                        {ctaBackgroundOpacity}%
-                      </span>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Border Color
+                      </label>
+                      <input
+                        type="color"
+                        value={ctaBorderColor}
+                        onChange={(e) => {
+                          setCtaBorderColor(e.target.value)
+                          handleContentChange({ ctaBorderColor: e.target.value })
+                        }}
+                        className="w-full h-12 border border-gray-300 rounded-lg cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Background Color
+                      </label>
+                      <input
+                        type="color"
+                        value={ctaBackgroundColor}
+                        onChange={(e) => {
+                          setCtaBackgroundColor(e.target.value)
+                          handleContentChange({ ctaBackgroundColor: e.target.value })
+                        }}
+                        className="w-full h-12 border border-gray-300 rounded-lg cursor-pointer"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Background Transparency
+                      </label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={ctaBackgroundOpacity}
+                          onChange={(e) => {
+                            const opacity = parseInt(e.target.value)
+                            setCtaBackgroundOpacity(opacity)
+                            handleContentChange({ ctaBackgroundOpacity: opacity })
+                          }}
+                          className="flex-1 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                        />
+                        <span className="text-sm text-gray-600 w-12 font-medium">
+                          {ctaBackgroundOpacity}%
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-900 mb-3">
                       Button Alignment
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-3 gap-3">
                       <button
                         onClick={() => {
                           setCtaAlignment('left')
                           handleContentChange({ ctaAlignment: 'left' })
                         }}
-                        className={`p-3 rounded-md border-2 transition-all ${
+                        className={`p-4 rounded-lg border-2 transition-all ${
                           ctaAlignment === 'left'
-                            ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50'
                         }`}
                       >
                         <div className="text-center">
@@ -555,10 +559,10 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                           setCtaAlignment('center')
                           handleContentChange({ ctaAlignment: 'center' })
                         }}
-                        className={`p-3 rounded-md border-2 transition-all ${
+                        className={`p-4 rounded-lg border-2 transition-all ${
                           ctaAlignment === 'center'
-                            ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50'
                         }`}
                       >
                         <div className="text-center">
@@ -571,10 +575,10 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                           setCtaAlignment('right')
                           handleContentChange({ ctaAlignment: 'right' })
                         }}
-                        className={`p-3 rounded-md border-2 transition-all ${
+                        className={`p-4 rounded-lg border-2 transition-all ${
                           ctaAlignment === 'right'
-                            ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50'
                         }`}
                       >
                         <div className="text-center">
@@ -588,7 +592,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
 
               {/* Rich Text Editor */}
               {selectedField !== 'cta' && (
-                <div className="mt-4">
+                <div className="mt-6">
                   <div
                     ref={contentRef}
                     contentEditable
@@ -598,7 +602,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
                     onKeyUp={saveSelection}
                     onMouseUp={saveSelection}
                     onSelect={saveSelection}
-                    className="w-full min-h-[12rem] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full min-h-[12rem] px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                     style={{ 
                       fontFamily: 'inherit',
                       fontSize: selectedField === 'heading' ? '1.5rem' : selectedField === 'subheading' ? '1rem' : '0.875rem',
@@ -615,7 +619,7 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
           )}
 
           {activeTab === 'background' && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <BackgroundSettings
                 background={moduleData.props.background}
                 onChange={handleBackgroundChange}
@@ -624,51 +628,51 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
           )}
 
           {activeTab === 'layout' && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                <label className="block text-sm font-semibold text-gray-900 mb-4">
                   Content Position
                 </label>
                 <div className="grid grid-cols-3 gap-4">
                   <button
                     onClick={() => handleLayoutChange('top')}
-                    className={`p-4 rounded-lg border-2 transition-all ${
+                    className={`p-6 rounded-lg border-2 transition-all ${
                       textPosition === 'top'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50'
                     }`}
                   >
                     <div className="text-center">
                       <div className="text-lg font-semibold mb-1">Top</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Center of top 50%</div>
+                      <div className="text-xs text-gray-500">Center of top 50%</div>
                     </div>
                   </button>
                   
                   <button
                     onClick={() => handleLayoutChange('center')}
-                    className={`p-4 rounded-lg border-2 transition-all ${
+                    className={`p-6 rounded-lg border-2 transition-all ${
                       textPosition === 'center'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50'
                     }`}
                   >
                     <div className="text-center">
                       <div className="text-lg font-semibold mb-1">Center</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Middle of whole page</div>
+                      <div className="text-xs text-gray-500">Middle of whole page</div>
                     </div>
                   </button>
                   
                   <button
                     onClick={() => handleLayoutChange('bottom')}
-                    className={`p-4 rounded-lg border-2 transition-all ${
+                    className={`p-6 rounded-lg border-2 transition-all ${
                       textPosition === 'bottom'
-                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400 hover:bg-gray-50'
                     }`}
                   >
                     <div className="text-center">
                       <div className="text-lg font-semibold mb-1">Bottom</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Center of bottom 50%</div>
+                      <div className="text-xs text-gray-500">Center of bottom 50%</div>
                     </div>
                   </button>
                 </div>
@@ -678,17 +682,17 @@ export function EditModuleModal({ isOpen, close, module, onUpdate }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <div className="p-6 border-t border-gray-200 bg-gray-50">
           <div className="flex justify-end gap-4">
             <button
               onClick={close}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              className="btn btn-secondary px-6 py-3 text-base font-medium"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="btn btn-primary px-6 py-3 text-base font-medium"
             >
               Save Changes
             </button>

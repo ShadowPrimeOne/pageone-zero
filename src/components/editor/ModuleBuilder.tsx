@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ModuleRenderer } from '@/components/modules/ModuleRenderer'
 import { useEditorState } from '@/lib/editor/useEditorState'
 import { useEditorControls } from '@/lib/editor/useEditorControls'
@@ -27,12 +27,32 @@ export function ModuleBuilder() {
 
   const { isAddModalOpen, setIsAddModalOpen } = useEditorControls()
 
+  // Scroll to selected module when it changes (for newly added modules)
+  useEffect(() => {
+    if (selectedModuleId) {
+      // Small delay to ensure the module is rendered and editor state is updated
+      setTimeout(() => {
+        const moduleElement = document.getElementById(selectedModuleId)
+        if (moduleElement) {
+          // Check if we're in edit mode
+          const isEditMode = window.location.pathname.includes('/edit/')
+          if (isEditMode) {
+            // In edit mode, scroll to the module and let the scroll lock handle the rest
+            moduleElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          } else {
+            // In view mode, just scroll to the module normally
+            moduleElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }
+      }, 200) // Increased delay to ensure editor state is fully updated
+    }
+  }, [selectedModuleId])
+
   const handleAddModule = (type: ModuleType) => {
-    // When adding from empty state, we add at the beginning
+    // Always add at the end of the list
     if (modules.length === 0) {
       addModule(type, '', 'above')
     } else {
-      // When adding to existing modules, add after the last module
       addModule(type, modules[modules.length - 1].id, 'below')
     }
   }

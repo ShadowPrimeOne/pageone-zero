@@ -16,6 +16,28 @@ export function Hero2Module({ heading, subheading, body, background, onUpdate }:
   const [cta1, setCta1] = useState('CTA 1')
   const [cta2, setCta2] = useState('CTA 2')
 
+  // Debug logging
+  useEffect(() => {
+    console.log('🔍 Hero2Module Debug Info:')
+    console.log('Window dimensions:', window.innerWidth, 'x', window.innerHeight)
+    console.log('Document dimensions:', document.documentElement.clientWidth, 'x', document.documentElement.clientHeight)
+    console.log('Viewport height (vh):', window.innerHeight)
+    console.log('Screen height:', window.screen.height)
+    console.log('Available height:', window.screen.availHeight)
+    
+    // Check if we're in mobile viewport
+    const isMobile = window.innerWidth <= 768
+    console.log('Is mobile viewport:', isMobile)
+    
+    // Log the module container dimensions
+    const moduleContainer = document.querySelector('[data-module-id]')
+    if (moduleContainer) {
+      const rect = moduleContainer.getBoundingClientRect()
+      console.log('Module container dimensions:', rect.width, 'x', rect.height)
+      console.log('Module container styles:', window.getComputedStyle(moduleContainer))
+    }
+  }, [])
+
   // Sync local state with props
   useEffect(() => {
     setLocalHeading(heading)
@@ -76,7 +98,7 @@ export function Hero2Module({ heading, subheading, body, background, onUpdate }:
     : {}
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <div className="relative w-full h-screen md:h-screen" data-module-id="hero2" style={{ height: '100dvh' }}>
       {/* Background with parallax effect */}
       <div 
         className="absolute inset-0"
@@ -113,25 +135,25 @@ export function Hero2Module({ heading, subheading, body, background, onUpdate }:
       <div className="absolute inset-0 bg-gradient-to-b from-black via-black/80 to-[#00FFD1]/20" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center min-h-screen px-4 text-center sm:px-6 lg:px-8">
+      <div className="relative z-10 flex flex-col items-center justify-between h-full py-4 px-4 text-center sm:px-6 lg:px-8 sm:py-8" style={{ height: '100dvh' }}>
         {/* Top Section - H1 and Subtitle */}
-        <div className="relative z-20 pt-32">
+        <div className="relative z-20 pt-8 sm:pt-16">
           <h1 
-            className="text-4xl font-bold tracking-tight text-white sm:text-6xl mb-4 outline-none"
+            className="text-3xl sm:text-4xl lg:text-6xl font-bold tracking-tight text-white mb-2 sm:mb-4 outline-none"
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('heading', e.currentTarget.textContent || '')}
           >
             {localHeading}
           </h1>
           <p 
-            className="text-xl sm:text-2xl text-white/80 outline-none"
+            className="text-lg sm:text-xl lg:text-2xl text-white/80 outline-none"
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('subheading', e.currentTarget.textContent || '')}
           >
             {localSubheading}
           </p>
           <p 
-            className="text-lg sm:text-xl text-white/60 outline-none mt-4"
+            className="text-base sm:text-lg lg:text-xl text-white/60 outline-none mt-2 sm:mt-4"
             suppressContentEditableWarning
             onBlur={(e) => handleTextUpdate('body', e.currentTarget.textContent || '')}
           >
@@ -140,8 +162,8 @@ export function Hero2Module({ heading, subheading, body, background, onUpdate }:
         </div>
 
         {/* Middle Section - Animated SVG */}
-        <div className="relative z-20 flex-1 flex items-center justify-center">
-          <div className="w-[80vw] h-[80vw] max-w-[1200px] max-h-[1200px] opacity-30">
+        <div className="relative z-20 flex-1 flex items-center justify-center py-4">
+          <div className="w-[60vw] h-[60vw] sm:w-[80vw] sm:h-[80vw] max-w-[1200px] max-h-[1200px] opacity-30">
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
               <defs>
                 <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
@@ -195,17 +217,17 @@ export function Hero2Module({ heading, subheading, body, background, onUpdate }:
         </div>
 
         {/* Bottom Section - CTA Buttons */}
-        <div className="relative z-20 pb-32">
-          <div className="flex gap-0">
+        <div className="relative z-20 pb-4 sm:pb-8">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-0">
             <button 
-              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white text-lg font-medium transition-all duration-200 border-r border-white/20 outline-none"
+              className="px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 bg-white/20 hover:bg-white/30 text-white text-sm sm:text-base lg:text-lg font-medium transition-all duration-200 sm:border-r border-white/30 outline-none backdrop-blur-sm"
               suppressContentEditableWarning
               onBlur={(e) => handleTextUpdate('cta1', e.currentTarget.textContent || '')}
             >
               {cta1}
             </button>
             <button 
-              className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white text-lg font-medium transition-all duration-200 outline-none"
+              className="px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 bg-white/20 hover:bg-white/30 text-white text-sm sm:text-base lg:text-lg font-medium transition-all duration-200 outline-none backdrop-blur-sm"
               suppressContentEditableWarning
               onBlur={(e) => handleTextUpdate('cta2', e.currentTarget.textContent || '')}
             >

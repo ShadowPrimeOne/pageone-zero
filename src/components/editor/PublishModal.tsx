@@ -151,98 +151,121 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {isEditMode ? 'Update Page' : 'Publish Page'}
-            </h2>
-            {isDirty && (
-              <span className="text-green-600 text-sm">✓ Changes saved</span>
-            )}
-          </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-500"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="slug" className="block text-sm font-medium text-gray-700">
-              Page URL
-            </label>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                page.one/
-              </span>
-              {isEditMode ? (
-                <div className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 bg-gray-50 text-gray-900">
-                  {slug}
-                </div>
-              ) : (
-                <input
-                  type="text"
-                  id="slug"
-                  value={slug}
-                  onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
-                  className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-md border border-gray-300 focus:ring-[#004225] focus:border-[#004225] text-gray-900"
-                  placeholder="your-page"
-                  required
-                  disabled={isSubmitting}
-                />
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {isEditMode ? 'Update Page' : 'Publish Page'}
+              </h2>
+              {isDirty && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  ✓ Changes saved
+                </span>
               )}
             </div>
-            {!isEditMode && isSlugAvailable === true && (
-              <p className="mt-1 text-sm text-green-600">✅ Available</p>
-            )}
-            {!isEditMode && isSlugAvailable === false && (
-              <p className="mt-1 text-sm text-red-600">❌ Not available</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="passphrase" className="block text-sm font-medium text-gray-700">
-              Passphrase (optional)
-            </label>
-            <input
-              type="password"
-              id="passphrase"
-              value={passphrase}
-              onChange={(e) => setPassphrase(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#004225] focus:border-[#004225] text-gray-900"
-              placeholder="Leave empty for development key"
-              disabled={isSubmitting}
-            />
-          </div>
-
-          {error && (
-            <div className="text-red-600 text-sm">{error}</div>
-          )}
-
-          <div className="flex justify-end space-x-3">
             <button
-              type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#004225]"
-              disabled={isSubmitting}
+              className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100"
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting || !slug || (isSlugAvailable === false && !isEditMode)}
-              className="px-4 py-2 text-sm font-medium text-white bg-[#004225] border border-transparent rounded-md hover:bg-[#005c33] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#004225] disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? (isEditMode ? 'Updating...' : 'Publishing...') : (isEditMode ? 'Update' : 'Publish')}
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
-        </form>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="slug" className="block text-sm font-semibold text-gray-900 mb-2">
+                Page URL
+              </label>
+              <div className="flex rounded-lg shadow-sm border border-gray-300 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
+                <span className="inline-flex items-center px-4 rounded-l-lg border-0 bg-gray-50 text-gray-700 text-sm font-medium">
+                  page.one/
+                </span>
+                {isEditMode ? (
+                  <div className="flex-1 min-w-0 block w-full px-4 py-3 rounded-r-lg border-0 bg-gray-50 text-gray-900 font-medium">
+                    {slug}
+                  </div>
+                ) : (
+                  <input
+                    type="text"
+                    id="slug"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                    className="flex-1 min-w-0 block w-full px-4 py-3 rounded-r-lg border-0 focus:ring-0 focus:outline-none text-gray-900 placeholder-gray-500"
+                    placeholder="your-page"
+                    required
+                    disabled={isSubmitting}
+                  />
+                )}
+              </div>
+              {!isEditMode && isSlugAvailable === true && (
+                <p className="mt-2 text-sm text-green-600 flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Available
+                </p>
+              )}
+              {!isEditMode && isSlugAvailable === false && (
+                <p className="mt-2 text-sm text-red-600 flex items-center">
+                  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  Not available
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="passphrase" className="block text-sm font-semibold text-gray-900 mb-2">
+                Passphrase (optional)
+              </label>
+              <input
+                type="password"
+                id="passphrase"
+                value={passphrase}
+                onChange={(e) => setPassphrase(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 placeholder-gray-500"
+                placeholder="Leave empty for development key"
+                disabled={isSubmitting}
+              />
+            </div>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex">
+                  <svg className="w-5 h-5 text-red-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-800">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-secondary px-6 py-3 text-base font-medium"
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting || !slug || (isSlugAvailable === false && !isEditMode)}
+                className="btn btn-primary px-6 py-3 text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (isEditMode ? 'Updating...' : 'Publishing...') : (isEditMode ? 'Update' : 'Publish')}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )

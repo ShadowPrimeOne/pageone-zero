@@ -10,7 +10,7 @@ export const FloatingPublishButton: FC<FloatingPublishButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-8 right-8 bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+      className="btn btn-primary fixed bottom-8 right-8 px-6 py-3 rounded-full shadow-lg transition-colors"
     >
       Publish Page
     </button>

@@ -14,7 +14,12 @@ export function SaveButton() {
     <>
       <button
         onClick={() => setIsSaveModalOpen(true)}
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#004225] text-white shadow-lg hover:bg-[#005c33] hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center ring-1 ring-white/10"
+        className="btn btn-primary fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 flex items-center justify-center ring-1 ring-white/10"
+        style={{
+          backgroundColor: '#004225',
+          '--primary': '#004225',
+          '--primary-foreground': '#ffffff'
+        } as React.CSSProperties}
         title="Save Changes"
       >
         <svg

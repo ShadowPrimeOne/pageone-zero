@@ -26,14 +26,14 @@ function hexToRgb(hex: string): string {
 }
 
 // Helper function to get content with fallback to placeholder
-function getContentWithFallback(htmlContent: string | undefined, fallback: string): string {
-  // If htmlContent is undefined, it means the field was never edited - show placeholder
-  if (htmlContent === undefined) return fallback
-  // If htmlContent is an empty string, it means user cleared it - show nothing
-  if (htmlContent === '') return ''
-  // If htmlContent has content, show it
-  return htmlContent
-}
+// function getContentWithFallback(htmlContent: string | undefined, fallback: string): string {
+//   // If htmlContent is undefined, it means the field was never edited - show placeholder
+//   if (htmlContent === undefined) return fallback
+//   // If htmlContent is an empty string, it means user cleared it - show nothing
+//   if (htmlContent === '') return ''
+//   // If htmlContent has content, show it
+//   return htmlContent
+// }
 
 export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHeroProps }) {
   const { background, topBackground, htmlContent, onUpdate } = props
@@ -119,7 +119,7 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
   const hoverAnimationClass = hoverAnimations[props.hoverAnimation || 'none']
 
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative w-full h-screen overflow-hidden" style={{ height: '100dvh', minHeight: '100dvh', maxHeight: '100dvh' }}>
       {/* Background */}
       {background && (
         <div className="absolute inset-0">
@@ -127,13 +127,18 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
             <img
               src={imageUrl}
               alt="Background"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
+              style={{ height: '100dvh', minHeight: '100dvh' }}
             />
           )}
           {background.type === 'color' && background.color && (
             <div
               className="w-full h-full"
-              style={{ backgroundColor: background.color }}
+              style={{ 
+                backgroundColor: background.color,
+                height: '100dvh',
+                minHeight: '100dvh'
+              }}
             />
           )}
           {background.overlay && (
@@ -141,7 +146,9 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
               className="absolute inset-0"
               style={{ 
                 backgroundColor: background.overlay.color,
-                opacity: background.overlay.opacity
+                opacity: background.overlay.opacity,
+                height: '100dvh',
+                minHeight: '100dvh'
               }}
             />
           )}
@@ -149,11 +156,11 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
       )}
 
       {/* Content */}
-      <div className={`relative z-10 flex flex-col items-center min-h-screen px-4 text-center sm:px-6 lg:px-8 ${
+      <div className={`relative z-10 flex flex-col items-center justify-center h-full px-4 text-center sm:px-6 lg:px-8 ${
         props.textPosition === 'top' ? 'justify-start pt-20' :
         props.textPosition === 'bottom' ? 'justify-end pb-20' :
         'justify-center'
-      }`}>
+      }`} style={{ height: '100dvh', minHeight: '100dvh' }}>
         <div className={`w-full max-w-4xl ${startAnimationClass} ${hoverAnimationClass} ${
           props.textPosition === 'top' ? 'mt-20' :
           props.textPosition === 'bottom' ? 'mb-20' :
@@ -192,8 +199,8 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
                 style={{
                   backgroundColor: props.ctaBackgroundColor && props.ctaBackgroundOpacity !== undefined 
                     ? `rgba(${hexToRgb(props.ctaBackgroundColor)}, ${props.ctaBackgroundOpacity / 100})`
-                    : props.ctaBackgroundColor || 'white',
-                  color: props.ctaTextColor || 'black',
+                    : props.ctaBackgroundColor || 'rgba(255, 255, 255, 0.9)',
+                  color: props.ctaTextColor || (props.ctaBackgroundColor ? '#ffffff' : '#000000'),
                   border: props.ctaBorderColor ? `2px solid ${props.ctaBorderColor}` : 'none'
                 }}
               >

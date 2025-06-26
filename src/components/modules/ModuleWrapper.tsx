@@ -43,27 +43,65 @@ export function ModuleWrapper({
   const scrollPositionRef = useRef<number>(0)
   const [tempUrl, setTempUrl] = useState<string | null>(null)
 
-  // Handle scroll to top when module is selected
+  // Debug logging for ModuleWrapper
+  useEffect(() => {
+    console.log('🔍 ModuleWrapper Debug Info:')
+    console.log('Module type:', module.type)
+    console.log('Module ID:', module.id)
+    console.log('Is selected:', selected)
+    
+    if (wrapperRef.current) {
+      const rect = wrapperRef.current.getBoundingClientRect()
+      console.log('ModuleWrapper dimensions:', rect.width, 'x', rect.height)
+      console.log('ModuleWrapper styles:', window.getComputedStyle(wrapperRef.current))
+      
+      // Check parent containers
+      let parent = wrapperRef.current.parentElement
+      let level = 0
+      while (parent && level < 5) {
+        const parentRect = parent.getBoundingClientRect()
+        const parentStyles = window.getComputedStyle(parent)
+        console.log(`Parent level ${level}:`, parent.tagName, parentRect.width, 'x', parentRect.height)
+        console.log(`Parent level ${level} styles:`, {
+          height: parentStyles.height,
+          minHeight: parentStyles.minHeight,
+          maxHeight: parentStyles.maxHeight,
+          overflow: parentStyles.overflow,
+          display: parentStyles.display,
+          position: parentStyles.position
+        })
+        parent = parent.parentElement
+        level++
+      }
+    }
+  }, [module.type, module.id, selected])
+
+  // Handle scroll to top when module is selected and editor is open
   useEffect(() => {
     if (selected && wrapperRef.current) {
       // Store current scroll position before any changes
       scrollPositionRef.current = window.scrollY
       
-      // Get the menu element
-      const menuElement = document.querySelector('.sticky.top-0')
-      if (menuElement) {
-        // Get the menu's position
-        const menuRect = menuElement.getBoundingClientRect()
-        const menuTop = menuRect.top + window.scrollY
-        
-        // Scroll to the menu's position
-        window.scrollTo(0, menuTop)
-        
-        // Then lock the scroll
-        document.body.style.overflow = 'hidden'
-        document.body.style.position = 'fixed'
-        document.body.style.width = '100%'
-        document.body.style.top = `-${menuTop}px`
+      // Check if editor is actually open for this module
+      const isEditorOpen = document.querySelector('[data-editor-modal]') !== null
+      
+      if (isEditorOpen) {
+        // Get the menu element
+        const menuElement = document.querySelector('.sticky.top-0')
+        if (menuElement) {
+          // Get the menu's position
+          const menuRect = menuElement.getBoundingClientRect()
+          const menuTop = menuRect.top + window.scrollY
+          
+          // Scroll to the menu's position
+          window.scrollTo(0, menuTop)
+          
+          // Then lock the scroll
+          document.body.style.overflow = 'hidden'
+          document.body.style.position = 'fixed'
+          document.body.style.width = '100%'
+          document.body.style.top = `-${menuTop}px`
+        }
       }
     } else {
       // Restore scroll position and unlock
@@ -155,12 +193,25 @@ export function ModuleWrapper({
         color: updates.background.type === 'color' ? (updates.background.color || currentBackground.color || '#000000') : '#000000',
         opacity: updates.background.opacity ?? currentBackground.opacity ?? 1,
         image: updates.background.type === 'image' ? updates.background.image : currentBackground.image,
-        _tempFile: updates.background._tempFile || currentBackground._tempFile,
         overlay: {
           color: updates.background.overlay?.color || currentBackground.overlay?.color || '#000000',
           opacity: updates.background.overlay?.opacity ?? currentBackground.overlay?.opacity ?? 0.5
         }
       }
+      
+      // Handle _tempFile with type assertion to handle different structures
+      if (updates.background._tempFile) {
+        const tempFile = updates.background._tempFile as any
+        newBackground._tempFile = {
+          name: tempFile.name || 'temp-file',
+          type: tempFile.type || 'image/jpeg',
+          size: tempFile.size || 0,
+          data: tempFile.data || ''
+        }
+      } else if (currentBackground._tempFile) {
+        newBackground._tempFile = currentBackground._tempFile
+      }
+      
       updates.background = newBackground
     }
 
@@ -168,7 +219,7 @@ export function ModuleWrapper({
       ...module.props,
       ...updates
     }
-    onUpdate?.(module.id, updatedProps)
+    onUpdate?.(module.id, updatedProps as Partial<HeroProps | Hero2Props>)
   }
 
   return (
@@ -188,10 +239,10 @@ export function ModuleWrapper({
                     }
                   }}
                   className={clsx(
-                    "w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 transition-all duration-200",
+                    "w-full h-12 rounded-xl transition-all duration-200 border-2 border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50 flex items-center justify-center",
                     isFirst 
                       ? "opacity-60 cursor-not-allowed" 
-                      : "hover:bg-gray-100 hover:scale-110"
+                      : "hover:scale-110"
                   )}
                   title={isFirst ? "Cannot move up" : "Move Up"}
                 >
@@ -216,7 +267,7 @@ export function ModuleWrapper({
                     setIsEditorOpen(true)
                     onEdit(module.id)
                   }}
-                  className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 hover:bg-gray-100 transition-all duration-200 hover:scale-110"
+                  className="w-full h-12 rounded-xl transition-all duration-200 border-2 border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50 flex items-center justify-center hover:scale-110"
                   title="Edit"
                 >
                   <Image
@@ -235,7 +286,7 @@ export function ModuleWrapper({
                     e.stopPropagation()
                     onDuplicate(module.id)
                   }}
-                  className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 hover:bg-gray-100 transition-all duration-200 hover:scale-110"
+                  className="w-full h-12 rounded-xl transition-all duration-200 border-2 border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50 flex items-center justify-center hover:scale-110"
                   title="Duplicate"
                 >
                   <Image
@@ -254,7 +305,7 @@ export function ModuleWrapper({
                     e.stopPropagation()
                     onDelete(module.id)
                   }}
-                  className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 hover:bg-red-100 text-red-600 transition-all duration-200 hover:scale-110"
+                  className="w-full h-12 rounded-xl transition-all duration-200 border-2 border-red-200 bg-red-50 hover:border-red-300 hover:bg-red-100 flex items-center justify-center hover:scale-110 text-red-600"
                   title="Delete"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -270,7 +321,7 @@ export function ModuleWrapper({
                     e.stopPropagation()
                     onAddRequest(module.id, 'below')
                   }}
-                  className="w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 hover:bg-gray-100 transition-all duration-200 hover:scale-110"
+                  className="w-full h-12 rounded-xl transition-all duration-200 bg-primary-500 hover:bg-primary-600 text-white flex items-center justify-center hover:scale-110 shadow-lg"
                   title="Add Module"
                 >
                   <Image
@@ -292,10 +343,10 @@ export function ModuleWrapper({
                     }
                   }}
                   className={clsx(
-                    "w-full rounded-full bg-white/90 backdrop-blur-sm shadow p-2 transition-all duration-200",
+                    "w-full h-12 rounded-xl transition-all duration-200 border-2 border-neutral-200 bg-white hover:border-neutral-300 hover:bg-neutral-50 flex items-center justify-center",
                     isLast 
                       ? "opacity-60 cursor-not-allowed" 
-                      : "hover:bg-gray-100 hover:scale-110"
+                      : "hover:scale-110"
                   )}
                   title={isLast ? "Cannot move down" : "Move Down"}
                 >
@@ -331,7 +382,7 @@ export function ModuleWrapper({
         id={module.id}
         ref={wrapperRef}
         className={clsx(
-          'relative w-full transition-all overflow-hidden',
+          'relative w-full transition-all overflow-x-hidden',
           selected ? 'ring-2 ring-blue-500 ring-offset-2' : ''
         )}
         onClick={handleModuleClick}

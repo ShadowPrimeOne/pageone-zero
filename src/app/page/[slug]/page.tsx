@@ -1,7 +1,7 @@
 // src/app/page/[slug]/page.tsx
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import EditorPage from '@/components/editor/EditorPage'
+import PageEditor from './PageEditor'
 import PublicModuleRenderer from '@/components/modules/PublicModuleRenderer'
 import { supabase } from '@/lib/supabase/server'
 import { decryptData, generateKey } from '@/lib/encryption'
@@ -96,7 +96,7 @@ export default async function Page({
     const isEditMode = edit === 'true'
     
     if (isEditMode) {
-      return <EditorPage modules={modules} />
+      return <PageEditor slug={slug} modulesFromServer={modules} pageKey={DEV_KEY} />
     } else {
       return (
         <main className="min-h-screen bg-white">

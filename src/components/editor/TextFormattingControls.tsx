@@ -360,12 +360,12 @@ export function TextFormattingControls({ value, onChange, className = '' }: Text
           <PaintBrushIcon className="w-5 h-5" style={{ color: textColor }} />
         </button>
         {showColorPicker && (
-          <div className="absolute top-full left-0 mt-1 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-10 grid grid-cols-3 gap-1">
+          <div className="absolute top-full left-0 mt-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-10 grid grid-cols-4 gap-2 min-w-[200px]">
             {COLORS.map((color) => (
               <button
                 key={color.value}
                 onClick={() => handleColorChange(color.value)}
-                className="w-6 h-6 rounded-full border border-gray-200 dark:border-gray-700"
+                className="w-8 h-8 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-gray-400 transition-all duration-200 hover:scale-110"
                 style={{ backgroundColor: color.value }}
                 title={color.name}
               />

@@ -1,0 +1,135 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Professional gradient definitions -->
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1" />
+      <stop offset="25%" style="stop-color:#1a1a1a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0d1117;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#161b22;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.4" />
+    </radialGradient>
+    
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#1d4ed8;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:0.4" />
+    </linearGradient>
+    
+    <linearGradient id="electricBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.7" />
+    </linearGradient>
+    
+    <!-- Professional glow effects -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Modern pattern -->
+    <pattern id="techPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="#3b82f6" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Base background -->
+  <rect width="1920" height="1080" fill="url(#bgGradient)"/>
+  
+  <!-- Vignette overlay -->
+  <rect width="1920" height="1080" fill="url(#vignette)"/>
+  
+  <!-- Tech pattern -->
+  <rect width="1920" height="1080" fill="url(#techPattern)"/>
+  
+  <!-- Dynamic geometric shapes -->
+  <g opacity="0.15">
+    <!-- Large accent shapes -->
+    <polygon points="0,800 400,600 800,800 600,1000 200,1000" fill="url(#accentGradient)" opacity="0.3"/>
+    <polygon points="1200,200 1600,0 1920,200 1800,400 1400,400" fill="url(#accentGradient)" opacity="0.2"/>
+    
+    <!-- Modern triangles -->
+    <polygon points="100,300 300,100 500,300 400,500 200,500" fill="url(#electricBlue)" opacity="0.4"/>
+    <polygon points="1400,700 1600,500 1800,700 1700,900 1500,900" fill="url(#electricBlue)" opacity="0.3"/>
+  </g>
+  
+  <!-- Professional circuit elements -->
+  <g opacity="0.25" filter="url(#glow)">
+    <!-- Main power grid -->
+    <path d="M 200 200 L 600 200 L 600 400 L 1000 400 L 1000 600 L 1400 600" stroke="url(#glowGradient)" stroke-width="3" fill="none"/>
+    <path d="M 400 300 L 800 300 L 800 500 L 1200 500 L 1200 700 L 1600 700" stroke="url(#glowGradient)" stroke-width="3" fill="none"/>
+    
+    <!-- Cross connections -->
+    <path d="M 600 200 L 600 300 L 800 300" stroke="url(#glowGradient)" stroke-width="2" fill="none"/>
+    <path d="M 1000 400 L 1000 500 L 1200 500" stroke="url(#glowGradient)" stroke-width="2" fill="none"/>
+    
+    <!-- Connection hubs -->
+    <circle cx="600" cy="200" r="8" fill="url(#electricBlue)"/>
+    <circle cx="600" cy="400" r="8" fill="url(#electricBlue)"/>
+    <circle cx="1000" cy="400" r="8" fill="url(#electricBlue)"/>
+    <circle cx="1000" cy="600" r="8" fill="url(#electricBlue)"/>
+    <circle cx="1400" cy="600" r="8" fill="url(#electricBlue)"/>
+    <circle cx="800" cy="300" r="8" fill="url(#electricBlue)"/>
+    <circle cx="800" cy="500" r="8" fill="url(#electricBlue)"/>
+    <circle cx="1200" cy="500" r="8" fill="url(#electricBlue)"/>
+    <circle cx="1200" cy="700" r="8" fill="url(#electricBlue)"/>
+    <circle cx="1600" cy="700" r="8" fill="url(#electricBlue)"/>
+  </g>
+  
+  <!-- Dynamic energy lines -->
+  <g opacity="0.2" filter="url(#softGlow)">
+    <path d="M 100 400 Q 300 300 500 400 T 900 400" stroke="#60a5fa" stroke-width="2" fill="none"/>
+    <path d="M 1000 800 Q 1200 700 1400 800 T 1800 800" stroke="#60a5fa" stroke-width="2" fill="none"/>
+    <path d="M 300 600 Q 500 500 700 600 T 1100 600" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+  </g>
+  
+  <!-- Professional accent elements -->
+  <g opacity="0.3">
+    <!-- Hexagon clusters -->
+    <polygon points="150,150 200,130 250,150 250,200 200,220 150,200" fill="url(#electricBlue)" transform="rotate(15 200 175)"/>
+    <polygon points="1650,850 1700,830 1750,850 1750,900 1700,920 1650,900" fill="url(#electricBlue)" transform="rotate(-15 1700 875)"/>
+    
+    <!-- Modern rectangles -->
+    <rect x="100" y="900" width="120" height="80" fill="url(#electricBlue)" transform="rotate(45 160 940)"/>
+    <rect x="1700" y="100" width="100" height="60" fill="url(#electricBlue)" transform="rotate(-30 1750 130)"/>
+  </g>
+  
+  <!-- Subtle particle system -->
+  <g opacity="0.4">
+    <circle cx="300" cy="250" r="2" fill="#60a5fa"/>
+    <circle cx="700" cy="450" r="2" fill="#60a5fa"/>
+    <circle cx="1100" cy="350" r="2" fill="#60a5fa"/>
+    <circle cx="1500" cy="550" r="2" fill="#60a5fa"/>
+    <circle cx="500" cy="750" r="2" fill="#60a5fa"/>
+    <circle cx="900" cy="150" r="2" fill="#60a5fa"/>
+    <circle cx="1300" cy="650" r="2" fill="#60a5fa"/>
+    <circle cx="1700" cy="450" r="2" fill="#60a5fa"/>
+    <circle cx="400" cy="600" r="1.5" fill="#3b82f6"/>
+    <circle cx="800" cy="800" r="1.5" fill="#3b82f6"/>
+    <circle cx="1200" cy="200" r="1.5" fill="#3b82f6"/>
+    <circle cx="1600" cy="400" r="1.5" fill="#3b82f6"/>
+  </g>
+  
+  <!-- Professional overlay for text readability -->
+  <rect width="1920" height="1080" fill="url(#bgGradient)" opacity="0.15"/>
+</svg> 

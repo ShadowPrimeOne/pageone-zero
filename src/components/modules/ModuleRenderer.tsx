@@ -1,20 +1,68 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import type { Module, HeroProps, FormProps, OurProcessProps, ContactFormProps, Hero2Props, ClassicOverlayHeroProps, TopImageCenterTextHeroProps, SplitLayoutHeroProps, ModuleBackground } from '@/lib/editor/types'
 import { ModuleWrapper } from './ModuleWrapper'
 import dynamic from 'next/dynamic'
 import { useEditorControls } from '@/lib/editor/useEditorControls'
 
 // Lazy load all module components
-const HeroModule = dynamic(() => import('./HeroModule').then(mod => ({ default: mod.HeroModule })))
-const Hero2Module = dynamic(() => import('./Hero2Module').then(mod => ({ default: mod.Hero2Module })))
-const ClassicOverlayHero = dynamic(() => import('./ClassicOverlayHero'))
-const TopImageCenterTextHero = dynamic(() => import('./TopImageCenterTextHero'))
-const SplitLayoutHero = dynamic(() => import('./SplitLayoutHero').then(mod => ({ default: mod.SplitLayoutHero })))
-const FormModule = dynamic(() => import('./FormModule'))
-const OurProcessModule = dynamic(() => import('./OurProcessModule'))
-const ContactFormModule = dynamic(() => import('./ContactFormModule').then(mod => ({ default: mod.ContactFormModule })))
+const HeroModule = dynamic(() => import('./HeroModule').then(mod => ({ default: mod.HeroModule })), {
+  loading: () => (
+    <div className="w-full h-32 flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+    </div>
+  )
+})
+const Hero2Module = dynamic(() => import('./Hero2Module').then(mod => ({ default: mod.Hero2Module })), {
+  loading: () => (
+    <div className="w-full h-32 flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+    </div>
+  )
+})
+const ClassicOverlayHero = dynamic(() => import('./ClassicOverlayHero'), {
+  loading: () => (
+    <div className="w-full h-32 flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+    </div>
+  )
+})
+const TopImageCenterTextHero = dynamic(() => import('./TopImageCenterTextHero'), {
+  loading: () => (
+    <div className="w-full h-32 flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+    </div>
+  )
+})
+const SplitLayoutHero = dynamic(() => import('./SplitLayoutHero').then(mod => ({ default: mod.SplitLayoutHero })), {
+  loading: () => (
+    <div className="w-full h-32 flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+    </div>
+  )
+})
+const FormModule = dynamic(() => import('./FormModule'), {
+  loading: () => (
+    <div className="w-full h-32 flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+    </div>
+  )
+})
+const OurProcessModule = dynamic(() => import('./OurProcessModule'), {
+  loading: () => (
+    <div className="w-full h-32 flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+    </div>
+  )
+})
+const ContactFormModule = dynamic(() => import('./ContactFormModule').then(mod => ({ default: mod.ContactFormModule })), {
+  loading: () => (
+    <div className="w-full h-32 flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+    </div>
+  )
+})
 
 interface ModuleRendererProps {
   modules: Module[]
@@ -55,6 +103,28 @@ export function ModuleRenderer({
   onUpdate
 }: ModuleRendererProps) {
   const { setIsAddModalOpen } = useEditorControls()
+
+  // Debug logging for ModuleRenderer
+  useEffect(() => {
+    console.log('🔍 ModuleRenderer Debug Info:')
+    console.log('Number of modules:', modules.length)
+    console.log('Selected module ID:', selectedModuleId)
+    
+    const rendererContainer = document.querySelector('[data-renderer]')
+    if (rendererContainer) {
+      const rect = rendererContainer.getBoundingClientRect()
+      const styles = window.getComputedStyle(rendererContainer)
+      console.log('ModuleRenderer container dimensions:', rect.width, 'x', rect.height)
+      console.log('ModuleRenderer container styles:', {
+        height: styles.height,
+        minHeight: styles.minHeight,
+        maxHeight: styles.maxHeight,
+        overflow: styles.overflow,
+        display: styles.display,
+        position: styles.position
+      })
+    }
+  }, [modules.length, selectedModuleId])
 
   const renderModule = (module: Module) => {
     const Component = MODULE_COMPONENTS[module.type as keyof typeof MODULE_COMPONENTS]
@@ -161,7 +231,7 @@ export function ModuleRenderer({
       <div className="flex items-center justify-center min-h-[60vh]">
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="text-white bg-black px-6 py-3 rounded-full text-lg hover:bg-gray-800 transition"
+          className="btn btn-primary px-8 py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
         >
           + Add Module
         </button>
@@ -170,7 +240,7 @@ export function ModuleRenderer({
   }
 
   return (
-    <div className="space-y-8">
+    <div data-renderer>
       {modules.map((module) => (
         <ModuleWrapper
           key={module.id}
