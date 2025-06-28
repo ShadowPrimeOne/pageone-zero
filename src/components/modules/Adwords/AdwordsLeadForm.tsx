@@ -52,17 +52,22 @@ export const AdwordsLeadForm: React.FC<Props> = ({
   }
 
   return (
-    <section id="lead-form" className="w-full px-6 py-16 bg-zinc-950 text-white">
-      <div className="max-w-xl mx-auto">
-        <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">{heading}</h2>
-        <p className="text-md text-center mb-8">{subheading}</p>
+    <section id="lead-form" className="w-full px-4 sm:px-6 py-16 md:py-24 bg-zinc-950 text-white min-h-[80vh] flex items-center">
+      <div className="max-w-screen-md mx-auto w-full">
+        <h2 className="text-2xl md:text-4xl font-semibold text-center mb-4 text-balance text-white animate-fadeInUp">
+          {heading}
+        </h2>
+        <p className="text-md md:text-lg text-center mb-12 text-zinc-400 leading-snug animate-fadeInUp animate-stagger-1">
+          {subheading}
+        </p>
 
         {submitted ? (
-          <div className="bg-green-600 text-white p-6 rounded-xl text-center">
-            ✅ Thanks! We&apos;ll be in touch shortly.
+          <div className="bg-green-600 text-white p-8 rounded-xl text-center animate-scaleIn">
+            <div className="text-4xl mb-4">✅</div>
+            <p className="text-lg font-semibold">Thanks! We&apos;ll be in touch shortly.</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6 animate-fadeInUp animate-stagger-2">
             {fields.includes('name') && (
               <input
                 type="text"
@@ -70,7 +75,7 @@ export const AdwordsLeadForm: React.FC<Props> = ({
                 placeholder="Your Name"
                 required
                 autoComplete="name"
-                className="px-4 py-3 rounded-md bg-zinc-800 text-white placeholder:text-zinc-400"
+                className="px-6 py-4 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 border border-zinc-700 focus:border-blue-500 focus:outline-none transition-colors duration-300"
               />
             )}
             {fields.includes('email') && (
@@ -80,7 +85,7 @@ export const AdwordsLeadForm: React.FC<Props> = ({
                 placeholder="Your Email"
                 required
                 autoComplete="email"
-                className="px-4 py-3 rounded-md bg-zinc-800 text-white placeholder:text-zinc-400"
+                className="px-6 py-4 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 border border-zinc-700 focus:border-blue-500 focus:outline-none transition-colors duration-300"
               />
             )}
             {fields.includes('phone') && (
@@ -89,7 +94,7 @@ export const AdwordsLeadForm: React.FC<Props> = ({
                 name="phone"
                 placeholder="Your Phone"
                 autoComplete="tel"
-                className="px-4 py-3 rounded-md bg-zinc-800 text-white placeholder:text-zinc-400"
+                className="px-6 py-4 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 border border-zinc-700 focus:border-blue-500 focus:outline-none transition-colors duration-300"
               />
             )}
             {fields.includes('businessType') && (
@@ -98,7 +103,7 @@ export const AdwordsLeadForm: React.FC<Props> = ({
                 defaultValue=""
                 required
                 autoComplete="organization"
-                className="px-4 py-3 rounded-md bg-zinc-800 text-white"
+                className="px-6 py-4 rounded-lg bg-zinc-800 text-white border border-zinc-700 focus:border-blue-500 focus:outline-none transition-colors duration-300"
               >
                 <option value="" disabled>
                   Select Your Business Type
@@ -113,7 +118,7 @@ export const AdwordsLeadForm: React.FC<Props> = ({
             <button
               type="submit"
               disabled={loading}
-              className="bg-cyan-400 text-black font-semibold py-3 rounded-full mt-4 hover:scale-105 transition-transform shadow-md"
+              className="bg-cyan-400 text-black font-semibold py-4 px-8 rounded-full mt-6 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Sending...' : ctaText}
             </button>

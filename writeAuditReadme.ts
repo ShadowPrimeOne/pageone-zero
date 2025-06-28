@@ -11,8 +11,14 @@ function shouldExclude(p: string) {
   return EXCLUDED_DIRS.some((dir) => p.includes(path.sep + dir + path.sep))
 }
 
-function collectFiles(dir: string): string[] {
-  let results: string[] = []
+interface FileInfo {
+  path: string
+  size: number
+  content: string
+}
+
+function collectFiles(dir: string): FileInfo[] {
+  let results: FileInfo[] = []
   const list = fs.readdirSync(dir)
 
   list.forEach((file) => {
@@ -24,49 +30,79 @@ function collectFiles(dir: string): string[] {
         results = results.concat(collectFiles(filePath))
       }
     } else {
-      results.push(filePath)
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8')
+        results.push({
+          path: filePath,
+          size: content.length,
+          content: content
+        })
+      } catch (err) {
+        console.warn(`Failed to read ${filePath}:`, err)
+      }
     }
   })
 
   return results
 }
 
-function formatFileContents(filePath: string): string {
-  const relPath = path.relative(ROOT_DIR, filePath)
-  const content = fs.readFileSync(filePath, 'utf-8')
-  return `\n\n---\n### 📄 ${relPath}\n\`\`\`\n${content}\n\`\`\`\n`
+function formatFileContents(fileInfo: FileInfo): string {
+  const relPath = path.relative(ROOT_DIR, fileInfo.path)
+  return `\n\n---\n### 📄 ${relPath}\n\`\`\`\n${fileInfo.content}\n\`\`\`\n`
 }
 
-function runAudit() {
-  const files = collectFiles(ROOT_DIR)
-  const header = `# 📦 Full Codebase Audit - ${TIMESTAMP}\n\n`
+function splitFilesBySize(files: FileInfo[]): { filesA: FileInfo[], filesB: FileInfo[] } {
+  // Sort files by size (largest first) to optimize distribution
+  files.sort((a, b) => b.size - a.size)
   
-  // Sort files alphabetically
-  files.sort()
+  const totalSize = files.reduce((sum, file) => sum + file.size, 0)
   
-  // Split files into two groups
-  const midPoint = Math.ceil(files.length / 2)
-  const filesA = files.slice(0, midPoint)
-  const filesB = files.slice(midPoint)
+  const filesA: FileInfo[] = []
+  const filesB: FileInfo[] = []
+  let currentSizeA = 0
+  let currentSizeB = 0
   
-  // Process first half (A)
-  const outputA = [header + '(Part A)\n']
-  for (const file of filesA) {
-    try {
-      outputA.push(formatFileContents(file))
-    } catch (err) {
-      console.warn(`Failed to read ${file}:`, err)
+  for (const file of files) {
+    // Add to whichever group is smaller
+    if (currentSizeA <= currentSizeB) {
+      filesA.push(file)
+      currentSizeA += file.size
+    } else {
+      filesB.push(file)
+      currentSizeB += file.size
     }
   }
   
+  console.log(`📊 Size Distribution:`)
+  console.log(`   Part A: ${(currentSizeA / 1024 / 1024).toFixed(2)} MB (${((currentSizeA / totalSize) * 100).toFixed(1)}%)`)
+  console.log(`   Part B: ${(currentSizeB / 1024 / 1024).toFixed(2)} MB (${((currentSizeB / totalSize) * 100).toFixed(1)}%)`)
+  console.log(`   Total: ${(totalSize / 1024 / 1024).toFixed(2)} MB`)
+  
+  return { filesA, filesB }
+}
+
+function runAudit() {
+  console.log('🔍 Collecting files...')
+  const files = collectFiles(ROOT_DIR)
+  console.log(`📁 Found ${files.length} files`)
+  
+  const header = `# 📦 Full Codebase Audit - ${TIMESTAMP}\n\n`
+  
+  // Split files by size for equal distribution
+  const { filesA, filesB } = splitFilesBySize(files)
+  
+  // Process first half (A)
+  console.log('📝 Writing Part A...')
+  const outputA = [header + '(Part A)\n']
+  for (const file of filesA) {
+    outputA.push(formatFileContents(file))
+  }
+  
   // Process second half (B)
+  console.log('📝 Writing Part B...')
   const outputB = [header + '(Part B)\n']
   for (const file of filesB) {
-    try {
-      outputB.push(formatFileContents(file))
-    } catch (err) {
-      console.warn(`Failed to read ${file}:`, err)
-    }
+    outputB.push(formatFileContents(file))
   }
 
   // Write both files

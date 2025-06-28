@@ -723,3 +723,412 @@ img {
     transform: none;
   }
 }
+
+/* Animation Keyframes for Landing Page Visual System */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+/* Animation Classes */
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fadeInLeft {
+  animation: fadeInLeft 0.6s ease-out forwards;
+}
+
+.animate-fadeInRight {
+  animation: fadeInRight 0.6s ease-out forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Stagger animations for lists */
+.animate-stagger-1 { animation-delay: 0.1s; }
+.animate-stagger-2 { animation-delay: 0.2s; }
+.animate-stagger-3 { animation-delay: 0.3s; }
+.animate-stagger-4 { animation-delay: 0.4s; }
+.animate-stagger-5 { animation-delay: 0.5s; }
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeInUp,
+  .animate-fadeInLeft,
+  .animate-fadeInRight,
+  .animate-scaleIn,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none;
+  }
+}
+
+/* Spark CTA Button Animations */
+@keyframes sparkPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 30px rgba(249, 168, 37, 0.4), 0 0 60px rgba(0, 229, 255, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 50px rgba(249, 168, 37, 0.6), 0 0 100px rgba(0, 229, 255, 0.4);
+  }
+}
+
+@keyframes sparkGlow {
+  0%, 100% {
+    background: linear-gradient(45deg, #F9A825, #FFB74D, #F9A825);
+    opacity: 1;
+  }
+  50% {
+    background: linear-gradient(45deg, #F9A825, #FFB74D, #F9A825);
+    opacity: 0.8;
+  }
+}
+
+@keyframes ringPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes electricSpark {
+  0% {
+    transform: scale(0) translateX(0);
+    opacity: 0;
+    width: 0;
+  }
+  10% {
+    transform: scale(1) translateX(5px);
+    opacity: 1;
+    width: 3px;
+  }
+  30% {
+    transform: scale(1.2) translateX(15px);
+    opacity: 0.8;
+    width: 4px;
+  }
+  50% {
+    transform: scale(1) translateX(25px);
+    opacity: 0.6;
+    width: 3px;
+  }
+  70% {
+    transform: scale(0.8) translateX(35px);
+    opacity: 0.3;
+    width: 2px;
+  }
+  100% {
+    transform: scale(0) translateX(45px);
+    opacity: 0;
+    width: 0;
+  }
+}
+
+@keyframes sparkAccent {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+@keyframes electricBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.spark-cta-container {
+  position: relative;
+  display: inline-block;
+}
+
+.spark-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(0, 229, 255, 0.3);
+  border-radius: 1rem;
+  transform: translate(-50%, -50%);
+  animation: ringPulse 3s ease-out infinite;
+}
+
+.spark-ring-1 {
+  animation-delay: 0s;
+}
+
+.spark-ring-2 {
+  animation-delay: 1s;
+}
+
+.spark-ring-3 {
+  animation-delay: 2s;
+}
+
+.spark-particle {
+  position: absolute;
+  height: 8px;
+  background: linear-gradient(to right, #00E5FF, rgba(0, 229, 255, 0.3));
+  border-radius: 0 50% 50% 0;
+  box-shadow: 0 0 8px #00E5FF;
+  transform-origin: left center;
+  width: 0;
+}
+
+.spark-particle-1 {
+  top: 20%;
+  left: 0;
+  animation: electricSpark 1.5s ease-out infinite;
+}
+
+.spark-particle-2 {
+  top: 40%;
+  left: 0;
+  animation: electricSpark 1.5s ease-out infinite 0.3s;
+}
+
+.spark-particle-3 {
+  top: 60%;
+  left: 0;
+  animation: electricSpark 1.5s ease-out infinite 0.6s;
+}
+
+.spark-particle-4 {
+  top: 80%;
+  left: 0;
+  animation: electricSpark 1.5s ease-out infinite 0.9s;
+}
+
+.electric-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.3), transparent);
+  background-size: 200% 100%;
+  animation: electricBorder 2s linear infinite;
+  border-radius: 1rem;
+  pointer-events: none;
+}
+
+/* Ticker Component */
+.ticker-wrapper {
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.6);
+  color: #F9A825;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  position: relative;
+  padding: 0.5rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.sticky-ticker {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999 !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-radius: 0 !important;
+}
+
+.ticker-wrapper.sticky {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 9999 !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-radius: 0 !important;
+}
+
+.ticker-content {
+  display: inline-block;
+  animation: tickerMove 32s linear infinite;
+  white-space: nowrap;
+  transform: translateX(0);
+}
+
+@keyframes tickerMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Custom Ping Animation - No White Background */
+@keyframes customPing {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Custom Bounce Animations for $ Signs */
+@keyframes bounce1 {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -15px, 0);
+  }
+  70% {
+    transform: translate3d(0, -7px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes bounce2 {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -20px, 0);
+  }
+  70% {
+    transform: translate3d(0, -10px, 0);
+  }
+  90% {
+    transform: translate3d(0, -3px, 0);
+  }
+}
+
+@keyframes bounce3 {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -25px, 0);
+  }
+  70% {
+    transform: translate3d(0, -12px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+/* Responsive CTA Button */
+.cta-button-responsive {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  min-width: 140px;
+  animation: buttonBounce 3s ease-in-out infinite;
+}
+
+@media (min-width: 768px) {
+  .cta-button-responsive {
+    font-size: 1rem;
+    padding: 1rem 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    min-width: 180px;
+  }
+}
+
+@keyframes buttonBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}

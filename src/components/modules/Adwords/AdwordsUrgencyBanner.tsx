@@ -7,12 +7,22 @@ interface Props {
   countdown: string
 }
 
-export const AdwordsUrgencyBanner: React.FC<Props> = ({ text, countdown }) => {
+export const AdwordsUrgencyBanner: React.FC<Props> = ({
+  text,
+  countdown,
+}) => {
   return (
-    <section className="w-full bg-yellow-300 text-black text-center py-4 px-4">
-      <p className="text-md md:text-lg font-semibold">
-        {text} <span className="font-bold">{countdown}</span>
-      </p>
+    <section className="w-full px-4 sm:px-6 py-16 md:py-20 bg-red-600 text-white min-h-[60vh] flex items-center">
+      <div className="max-w-screen-md mx-auto w-full text-center">
+        <div className="bg-red-700 rounded-xl p-8 md:p-12 animate-scaleIn">
+          <h2 className="text-xl md:text-2xl font-semibold mb-4 text-balance text-white animate-fadeInUp">
+            {text}
+          </h2>
+          <div className="text-2xl md:text-3xl font-bold text-yellow-300 animate-pulse">
+            {countdown}
+          </div>
+        </div>
+      </div>
     </section>
   )
 } 
