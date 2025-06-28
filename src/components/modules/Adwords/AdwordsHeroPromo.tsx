@@ -55,7 +55,7 @@ export const AdwordsHeroPromo: React.FC = () => {
               </span>
             </h1>
             <p className="text-lg sm:text-2xl font-inter text-gray-200 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] max-w-2xl mx-auto leading-relaxed">
-              Get 90 days of real PPC leads + a $500+ landing page — built by elite mobile-first marketers.
+              Get 90 days of real PPC leads + a landing page worth over $500 — built by elite mobile-first marketers.
             </p>
           </div>
 
