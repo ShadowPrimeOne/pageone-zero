@@ -47,7 +47,11 @@ export const MobilePhoneIcon: React.FC = () => {
             src="/IMAGES/Adwords Leads for electrical industry incoming call.png"
             alt="Adwords Leads for Electrical Industry"
             fill
-            className="object-contain drop-shadow-lg bg-transparent"
+            priority
+            className="object-contain bg-transparent"
+            style={{
+              filter: 'drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3))'
+            }}
             sizes="(max-width: 768px) 192px, 224px"
           />
         </div>
