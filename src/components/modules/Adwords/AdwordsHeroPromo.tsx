@@ -27,7 +27,7 @@ export const AdwordsHeroPromo: React.FC = () => {
       </div>
 
       <section
-        className="relative w-full h-[100vh] bg-no-repeat bg-cover bg-[60%_center] sm:bg-[center_80%] text-white flex flex-col justify-between pt-16"
+        className="relative w-full h-[100vh] bg-no-repeat bg-cover bg-[70%_center] sm:bg-[center_80%] text-white flex flex-col justify-between pt-16"
         style={{ backgroundImage: `url('/ElectricalLP/hero_powergrid_bg.webp')` }}
       >
         {/* Gradient Overlay */}
