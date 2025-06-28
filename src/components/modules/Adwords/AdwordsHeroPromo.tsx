@@ -35,12 +35,15 @@ export const AdwordsHeroPromo: React.FC = () => {
           background: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 2%, rgba(0,0,0,0.98) 4%, rgba(0,0,0,0.96) 6%, rgba(0,0,0,0.94) 8%, rgba(0,0,0,0.92) 10%, rgba(0,0,0,0.9) 12%, rgba(0,0,0,0.88) 14%, rgba(0,0,0,0.86) 15%, rgba(0,0,0,0.84) 16%, rgba(0,0,0,0.82) 17%, rgba(0,0,0,0.8) 18%, rgba(0,0,0,0.78) 19%, rgba(0,0,0,0.76) 20%, rgba(0,0,0,0.74) 21%, rgba(0,0,0,0.72) 22%, rgba(0,0,0,0.7) 23%, rgba(0,0,0,0.68) 24%, rgba(0,0,0,0.66) 25%, rgba(0,0,0,0.64) 26%, rgba(0,0,0,0.62) 27%, rgba(0,0,0,0.6) 28%, rgba(0,0,0,0.58) 29%, rgba(0,0,0,0.56) 30%, rgba(0,0,0,0.54) 31%, rgba(0,0,0,0.52) 32%, rgba(0,0,0,0.5) 33%, rgba(0,0,0,0.48) 34%, rgba(0,0,0,0.46) 35%, rgba(0,0,0,0.44) 36%, rgba(0,0,0,0.42) 37%, rgba(0,0,0,0.4) 38%, rgba(0,0,0,0.38) 39%, rgba(0,0,0,0.36) 40%, rgba(0,0,0,0.34) 41%, rgba(0,0,0,0.32) 42%, rgba(0,0,0,0.3) 43%, rgba(0,0,0,0.28) 44%, rgba(0,0,0,0.26) 45%, rgba(0,0,0,0.24) 46%, rgba(0,0,0,0.22) 47%, rgba(0,0,0,0.2) 48%, rgba(0,0,0,0.18) 49%, rgba(0,0,0,0.16) 50%, rgba(0,0,0,0.14) 51%, rgba(0,0,0,0.12) 52%, rgba(0,0,0,0.1) 53%, rgba(0,0,0,0.08) 54%, rgba(0,0,0,0.06) 55%, rgba(0,0,0,0.04) 56%, rgba(0,0,0,0.02) 57%, rgba(0,0,0,0) 58%)'
         }} />
 
+        {/* Bottom shadow fade for trust banner */}
+        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/20 to-transparent z-10"></div>
+
         {/* All hero content with unified fade-in */}
         <div className="relative z-50 w-full h-full flex flex-col justify-between animate-fadeInUp">
           {/* Top Content - Heading & Subheading */}
-          <div className="w-full max-w-[90%] sm:max-w-screen-sm mx-auto px-4 text-center pt-[8vh] sm:pt-[5vh]">
+          <div className="w-full max-w-[90%] sm:max-w-screen-sm mx-auto px-4 text-left pt-[8vh] sm:pt-[5vh]">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-poppins leading-tight mb-6 tracking-tight">
-              <span className="bg-gradient-to-r from-green-400 via-green-300 to-green-400 bg-clip-text text-transparent text-4xl sm:text-5xl lg:text-6xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.9)] animate-pulse hover:scale-105 transition-transform duration-300" style={{
+              <span className="bg-gradient-to-r from-green-400 via-green-300 to-green-400 bg-clip-text text-transparent text-5xl sm:text-5xl lg:text-6xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.9)] animate-pulse hover:scale-105 transition-transform duration-300" style={{
                 animation: 'pulse 3s ease-in-out infinite, glow 2s ease-in-out infinite alternate'
               }}>
                 SERIOUS GROWTH
@@ -54,7 +57,7 @@ export const AdwordsHeroPromo: React.FC = () => {
                 — People Powered, Results Driven
               </span>
             </h1>
-            <p className="text-lg sm:text-2xl font-inter text-gray-200 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-2xl font-inter text-gray-200 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] max-w-2xl leading-relaxed">
               Get 90 days of real PPC leads + a landing page worth over $500 — built by elite mobile-first marketers.
             </p>
           </div>

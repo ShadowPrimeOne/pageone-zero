@@ -4,6 +4,7 @@ import React from 'react'
 
 // Import custom Adwords modules (we'll build these next)
 import { AdwordsHeroPromo } from '@/components/modules/Adwords/AdwordsHeroPromo'
+import { TrustBanner } from '@/components/ui/TrustBanner'
 import { AdwordsBenefitsGrid } from '@/components/modules/Adwords/AdwordsBenefitsGrid'
 import { AdwordsHowItWorks } from '@/components/modules/Adwords/AdwordsHowItWorks'
 import { AdwordsTestimonialsDynamic } from '@/components/modules/Adwords/AdwordsTestimonialsDynamic'
@@ -32,17 +33,9 @@ export default function AdwordsBoostElectricianPage() {
         }
       `}</style>
       <main className="bg-black text-white overflow-x-hidden w-full max-w-full">
-        <AdwordsHeroPromo
-          heading="Book More Jobs — With Just One Ad Payment"
-          subheading="We'll run your Google Ads for 3 months — build your landing page free — and send every lead straight to your phone."
-          ctaText="Get 90 Days of Leads"
-          background={{
-            type: 'image',
-            url: 'https://xkpxwcrxjgjmbxgupkhq.supabase.co/storage/v1/object/public/public-images/modules/Landingpage/Electrician%20Adwords%20Leads.png',
-            overlay: { color: '#000000', opacity: 0.6 }
-          }}
-          trustStrip="✅ No Lock-In • Free Page • Instant Lead Alerts"
-        />
+        <AdwordsHeroPromo />
+
+        <TrustBanner />
 
         <AdwordsBenefitsGrid
           heading="What's Included"
