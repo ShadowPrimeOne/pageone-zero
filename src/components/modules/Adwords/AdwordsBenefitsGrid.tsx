@@ -66,13 +66,7 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
             rgba(255, 255, 255, 0.5) 22%,
             rgba(255, 255, 255, 0.3) 24%,
             rgba(255, 255, 255, 0) 25%,
-            rgba(255, 255, 255, 0) 85%,
-            rgba(255, 255, 255, 0.1) 87%,
-            rgba(255, 255, 255, 0.2) 89%,
-            rgba(255, 255, 255, 0.4) 91%,
-            rgba(255, 255, 255, 0.6) 93%,
-            rgba(255, 255, 255, 0.8) 95%,
-            rgba(255, 255, 255, 0.9) 97%,
+            rgba(255, 255, 255, 0) 97%,
             rgba(255, 255, 255, 1) 100%
           );
           z-index: 2;
@@ -104,8 +98,8 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           left: 10%;
           top: 50%;
           transform: translateY(-50%);
-          z-index: 15;
-          animation: float 3s ease-in-out infinite;
+          z-index: 25;
+          animation: benefitsBoxyFloat 3s ease-in-out infinite;
         }
 
         .benefits-boxy-image {
@@ -148,6 +142,15 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           }
         }
 
+        @keyframes benefitsBoxyFloat {
+          0%, 100% { 
+            transform: translateY(-50%) translateY(0px);
+          }
+          50% { 
+            transform: translateY(-50%) translateY(-20px);
+          }
+        }
+
         .benefits-grid {
           display: grid;
           grid-template-columns: 1fr;
@@ -161,15 +164,16 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           display: flex;
           align-items: center;
           gap: 1rem;
-          padding: 1.25rem;
+          padding: 1rem 1.25rem;
           background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(20px);
           border-radius: 1.5rem;
           box-shadow: 
             0 4px 20px rgba(0, 0, 0, 0.08),
             0 1px 3px rgba(0, 0, 0, 0.05),
+            0 0 0 1px rgba(59, 130, 246, 0.3),
             inset 0 1px 0 rgba(255, 255, 255, 0.8);
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          border: 1px solid rgba(59, 130, 246, 0.4);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           animation: fadeInUp 0.6s ease-out forwards;
           position: relative;
@@ -205,6 +209,7 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           box-shadow: 
             0 12px 40px rgba(0, 0, 0, 0.12),
             0 4px 12px rgba(34, 197, 94, 0.15),
+            0 0 0 1px rgba(59, 130, 246, 0.5),
             inset 0 1px 0 rgba(255, 255, 255, 0.9);
           background: rgba(255, 255, 255, 0.98);
         }
@@ -409,7 +414,7 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           }
 
           .benefit-item {
-            padding: 1.75rem;
+            padding: 1.25rem 1.75rem;
           }
 
           .benefit-icon-container {
@@ -447,7 +452,7 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           }
 
           .benefit-item {
-            padding: 2rem;
+            padding: 1.5rem 2rem;
           }
 
           .benefit-icon-container {
@@ -496,9 +501,15 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
         }
 
         @media (max-width: 767px) {
+          .benefits-container {
+            padding: 1rem;
+            justify-content: flex-start;
+            padding-top: 4rem;
+          }
+
           .benefits-boxy-container {
             left: 2%;
-            top: 50%;
+            top: 25%;
           }
           
           .benefits-boxy-container .benefits-boxy-image {
@@ -508,14 +519,21 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
 
           .heading-text {
             margin-left: 80px;
+            margin-top: -1rem;
           }
 
           .benefits-grid {
             gap: 0.875rem;
+            margin-top: 1.5rem;
           }
 
           .benefit-item {
-            padding: 1rem;
+            padding: 0.75rem 1rem;
+            min-height: auto;
+          }
+
+          .benefit-item:nth-child(1) {
+            padding: 0.75rem 1rem;
           }
 
           .benefit-icon-container {
@@ -561,10 +579,10 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
               alt="Boxy Blueprint"
               width={140}
               height={140}
-              className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 opacity-80"
+              className="benefits-boxy-image w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 opacity-80"
               style={{
                 filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))',
-                animation: 'float 3s ease-in-out infinite'
+                animation: 'benefitsBoxyFloat 3s ease-in-out infinite'
               }}
               quality={90}
               priority={false}

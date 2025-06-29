@@ -31,6 +31,28 @@ export const AdwordsHeroPromo: React.FC = () => {
         className="relative w-full h-[100vh] bg-no-repeat bg-cover bg-[70%_center] sm:bg-[center_80%] text-white flex flex-col justify-between pt-16"
         style={{ backgroundImage: `url('/ElectricalLP/hero_powergrid_bg.webp')` }}
       >
+        <style jsx>{`
+          @keyframes heroBoxyFloat {
+            0%, 100% { 
+              transform: translateY(-20px) translateX(-8px);
+            }
+            50% { 
+              transform: translateY(-40px) translateX(-8px);
+            }
+          }
+          
+          @media (min-width: 768px) {
+            @keyframes heroBoxyFloat {
+              0%, 100% { 
+                transform: translateY(-32px) translateX(-32px);
+              }
+              50% { 
+                transform: translateY(-52px) translateX(-32px);
+              }
+            }
+          }
+        `}</style>
+
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black via-black/50 to-transparent z-0" style={{
           background: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 2%, rgba(0,0,0,0.98) 4%, rgba(0,0,0,0.96) 6%, rgba(0,0,0,0.94) 8%, rgba(0,0,0,0.92) 10%, rgba(0,0,0,0.9) 12%, rgba(0,0,0,0.88) 14%, rgba(0,0,0,0.86) 15%, rgba(0,0,0,0.84) 16%, rgba(0,0,0,0.82) 17%, rgba(0,0,0,0.8) 18%, rgba(0,0,0,0.78) 19%, rgba(0,0,0,0.76) 20%, rgba(0,0,0,0.74) 21%, rgba(0,0,0,0.72) 22%, rgba(0,0,0,0.7) 23%, rgba(0,0,0,0.68) 24%, rgba(0,0,0,0.66) 25%, rgba(0,0,0,0.64) 26%, rgba(0,0,0,0.62) 27%, rgba(0,0,0,0.6) 28%, rgba(0,0,0,0.58) 29%, rgba(0,0,0,0.56) 30%, rgba(0,0,0,0.54) 31%, rgba(0,0,0,0.52) 32%, rgba(0,0,0,0.5) 33%, rgba(0,0,0,0.48) 34%, rgba(0,0,0,0.46) 35%, rgba(0,0,0,0.44) 36%, rgba(0,0,0,0.42) 37%, rgba(0,0,0,0.4) 38%, rgba(0,0,0,0.38) 39%, rgba(0,0,0,0.36) 40%, rgba(0,0,0,0.34) 41%, rgba(0,0,0,0.32) 42%, rgba(0,0,0,0.3) 43%, rgba(0,0,0,0.28) 44%, rgba(0,0,0,0.26) 45%, rgba(0,0,0,0.24) 46%, rgba(0,0,0,0.22) 47%, rgba(0,0,0,0.2) 48%, rgba(0,0,0,0.18) 49%, rgba(0,0,0,0.16) 50%, rgba(0,0,0,0.14) 51%, rgba(0,0,0,0.12) 52%, rgba(0,0,0,0.1) 53%, rgba(0,0,0,0.08) 54%, rgba(0,0,0,0.06) 55%, rgba(0,0,0,0.04) 56%, rgba(0,0,0,0.02) 57%, rgba(0,0,0,0) 58%)'
@@ -64,16 +86,16 @@ export const AdwordsHeroPromo: React.FC = () => {
           </div>
 
           {/* Boxy Flying Electric - positioned relative to hero section */}
-          <div className="absolute top-[25vh] right-0 md:top-[20vh] md:right-8 pointer-events-none z-40 transform -translate-y-20 -translate-x-8 md:-translate-y-32 md:-translate-x-32">
+          <div className="hero-boxy-container absolute top-[17.5vh] right-0 md:top-[20vh] md:right-8 pointer-events-none z-40 transform -translate-y-20 -translate-x-8 md:-translate-y-32 md:-translate-x-32">
             <Image
               src="/IMAGES/BOXY/Boxy Flying Electric-flipped.png"
               alt="Boxy Flying Electric"
               width={200}
               height={200}
-              className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 opacity-80"
+              className="hero-boxy-image w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 opacity-80"
               style={{
                 filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))',
-                animation: 'float 6s ease-in-out infinite'
+                animation: 'heroBoxyFloat 6s ease-in-out infinite'
               }}
               quality={90}
               priority={false}
