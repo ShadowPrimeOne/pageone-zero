@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { AnimatedPhoneUnit } from './AnimatedPhoneUnit'
 // Remove the broken import
 // import heroBG from '@/Electrical_LP/hero_powergrid_bg.webp'
@@ -39,7 +40,7 @@ export const AdwordsHeroPromo: React.FC = () => {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent z-10"></div>
 
         {/* All hero content with unified fade-in */}
-        <div className="relative z-50 w-full h-full flex flex-col justify-between animate-fadeInUp">
+        <div className="relative z-50 w-full h-full flex flex-col justify-between animate-fadeInUp max-w-7xl mx-auto">
           {/* Top Content - Heading & Subheading */}
           <div className="w-full max-w-[90%] sm:max-w-screen-sm mx-auto px-4 text-left pt-[8vh] sm:pt-[5vh]">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-poppins leading-tight mb-6 tracking-tight">
@@ -60,6 +61,24 @@ export const AdwordsHeroPromo: React.FC = () => {
             <p className="text-lg sm:text-2xl font-inter text-gray-200 drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] max-w-2xl leading-relaxed">
               Get 90 days of real PPC leads + a landing page worth over $500 — built by elite mobile-first marketers.
             </p>
+          </div>
+
+          {/* Boxy Flying Electric - positioned relative to hero section */}
+          <div className="absolute top-[20vh] right-2 md:top-[15vh] md:right-8 pointer-events-none z-40 transform -translate-y-20 -translate-x-16 md:-translate-y-32 md:-translate-x-32">
+            <Image
+              src="/IMAGES/BOXY/Boxy Flying Electric-flipped.png"
+              alt="Boxy Flying Electric"
+              width={200}
+              height={200}
+              className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 opacity-80"
+              style={{
+                filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))',
+                animation: 'float 6s ease-in-out infinite'
+              }}
+              quality={90}
+              priority={false}
+              sizes="(max-width: 768px) 96px, (max-width: 1024px) 128px, 160px"
+            />
           </div>
 
           {/* Bottom Content - CTA */}

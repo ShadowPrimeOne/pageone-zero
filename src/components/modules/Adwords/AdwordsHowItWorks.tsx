@@ -47,9 +47,11 @@ export const AdwordsHowItWorks: React.FC<Props> = ({
                 {/* Image Side */}
                 <div className={`relative ${index % 2 === 1 ? 'lg:col-start-2' : ''}`}>
                   <div className="relative group">
-                    <img
+                    <Image
                       src={step.icon}
                       alt={`Step ${index + 1} - ${step.title}`}
+                      width={400}
+                      height={400}
                       className={`w-full h-auto mx-auto object-contain ${
                         index === 0 
                           ? 'max-w-xs lg:max-w-sm' 
@@ -61,7 +63,9 @@ export const AdwordsHowItWorks: React.FC<Props> = ({
                         maxWidth: index === 0 ? '250px' : index === 2 ? '300px' : '400px',
                         filter: 'drop-shadow(0 16px 32px rgba(0, 0, 0, 0.7)) !important'
                       }}
-                      loading="lazy"
+                      quality={85}
+                      priority={index === 0}
+                      sizes="(max-width: 768px) 250px, (max-width: 1024px) 300px, 400px"
                     />
                     
                     {/* Subtle depth effect */}

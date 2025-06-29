@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 
 export const TrustBanner: React.FC = () => {
   const logos = [
@@ -32,12 +33,15 @@ export const TrustBanner: React.FC = () => {
         {/* Logo Banner */}
         <div className="flex w-max animate-scroll space-x-4 md:space-x-6 px-6">
           {[...logos, ...logos, ...logos].map((src, i) => (
-            <div key={`logo-${i}-${src}`} className="flex items-center justify-center">
-              <img
+            <div key={`logo-${i}-${src}`} className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 relative">
+              <Image
                 src={src}
                 alt={`Trust logo ${i + 1}`}
-                className="h-16 md:h-20 w-16 md:w-20 object-contain hover:opacity-80 transition-opacity duration-300"
+                fill
+                className="object-contain hover:opacity-80 transition-opacity duration-300"
                 loading="lazy"
+                quality={85}
+                sizes="(max-width: 768px) 64px, 80px"
                 onError={(e) => {
                   console.warn(`Failed to load logo: ${src}`);
                   e.currentTarget.style.display = 'none';

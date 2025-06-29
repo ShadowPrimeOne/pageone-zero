@@ -99,6 +99,9 @@ export default function AdwordsBoostElectricianPage() {
             filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))',
             animation: 'gentle-bounce 3s ease-in-out infinite'
           }}
+          quality={90}
+          priority={false}
+          sizes="(max-width: 768px) 80px, (max-width: 1024px) 112px, (max-width: 1280px) 144px, 160px"
         />
       </div>
     </>
