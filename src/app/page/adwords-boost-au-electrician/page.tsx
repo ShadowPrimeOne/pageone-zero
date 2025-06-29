@@ -36,6 +36,19 @@ export default function AdwordsBoostElectricianPage() {
           0%, 100% { transform: translateY(0px) scaleX(-1); }
           50% { transform: translateY(-10px) scaleX(-1); }
         }
+        @keyframes typing-dots {
+          0%, 20% { opacity: 0; }
+          40% { opacity: 1; }
+          60% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        .typing-dot {
+          animation: typing-dots 2s ease-in-out infinite;
+        }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.3s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.6s; }
       `}</style>
       <main className="bg-black text-white overflow-x-hidden w-full max-w-full relative">
         <AdwordsHeroPromo />
@@ -88,20 +101,34 @@ export default function AdwordsBoostElectricianPage() {
       </main>
 
       {/* Boxy pinned to bottom right */}
-      <div className="fixed bottom-4 right-4 z-[9999] pointer-events-none">
+      <div className="fixed bottom-4 right-4 z-[9999] pointer-events-auto">
+        {/* Background shadow for depth */}
+        <div className="absolute inset-0 w-20 h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 bg-black/20 rounded-full blur-xl transform scale-110"></div>
+        
+        {/* Typing dots */}
+        <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+          <div className="typing-dot w-2 h-2 bg-yellow-400 rounded-full"></div>
+          <div className="typing-dot w-2 h-2 bg-yellow-400 rounded-full"></div>
+          <div className="typing-dot w-2 h-2 bg-yellow-400 rounded-full"></div>
+        </div>
+        
         <Image 
           src="/IMAGES/How it works/Boxy the page one automation exoert..png" 
-          alt="Boxy" 
+          alt="Boxy Assistant" 
           width={160} 
           height={160} 
-          className="w-20 h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40" 
+          className="w-20 h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40 relative z-10 cursor-pointer hover:scale-105 transition-transform duration-200" 
           style={{
-            filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))',
-            animation: 'gentle-bounce 3s ease-in-out infinite'
+            filter: 'drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))',
+            transform: 'scaleX(-1)'
           }}
           quality={90}
           priority={false}
           sizes="(max-width: 768px) 80px, (max-width: 1024px) 112px, (max-width: 1280px) 144px, 160px"
+          onClick={() => {
+            // TODO: Add chatbot functionality
+            console.log('Boxy assistant clicked!')
+          }}
         />
       </div>
     </>

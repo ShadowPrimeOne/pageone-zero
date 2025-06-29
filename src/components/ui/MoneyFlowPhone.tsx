@@ -2,7 +2,21 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 
-export const AnimatedLogo: React.FC = () => {
+interface MoneyFlowPhoneProps {
+  className?: string
+  scale?: 'sm' | 'md' | 'lg' | 'xl'
+  showMoneyFlow?: boolean
+  phoneImage?: string
+  phoneAlt?: string
+}
+
+export const MoneyFlowPhone: React.FC<MoneyFlowPhoneProps> = ({
+  className = '',
+  scale = 'md',
+  showMoneyFlow = true,
+  phoneImage = '/IMAGES/How it works/phone.png',
+  phoneAlt = 'Mobile Phone'
+}) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [particles, setParticles] = useState<Array<{
     id: number
@@ -17,7 +31,16 @@ export const AnimatedLogo: React.FC = () => {
   const cycleStartTimeRef = useRef(0)
   const initialDelayRef = useRef(true)
 
+  const scaleClasses = {
+    sm: 'scale-75',
+    md: 'scale-100',
+    lg: 'scale-125',
+    xl: 'scale-150'
+  }
+
   useEffect(() => {
+    if (!showMoneyFlow) return
+    
     setIsLoaded(true)
     
     let animationId: number
@@ -108,7 +131,7 @@ export const AnimatedLogo: React.FC = () => {
         cancelAnimationFrame(animationId)
       }
     }
-  }, [isLoaded, particles.length])
+  }, [isLoaded, particles.length, showMoneyFlow])
 
   const getSizeClass = (size: 'small' | 'medium' | 'large') => {
     switch (size) {
@@ -119,30 +142,60 @@ export const AnimatedLogo: React.FC = () => {
   }
 
   return (
-    <div className="relative flex items-center justify-center w-full">
+    <div 
+      className={`flex flex-col items-center transition-transform duration-300 ${scaleClasses[scale]} ${className}`}
+      style={{
+        filter: 'drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3))'
+      }}
+    >
       {/* Money flow particles */}
-      {particles.map(particle => (
-        <div
-          key={particle.id}
-          className="absolute pointer-events-none"
-          style={{
-            left: `calc(50% + ${particle.x}px)`,
-            top: `${particle.y}px`,
-            transform: `scale(${particle.scale})`,
-            opacity: particle.opacity,
-            transition: 'none'
-          }}
-        >
-          <span 
-            className={`text-green-600 font-bold drop-shadow-lg ${getSizeClass(particle.size)}`}
-            style={{ 
-              textShadow: '0 2px 8px rgba(0,0,0,0.5)',
-            }}
-          >
-            $
-          </span>
+      {showMoneyFlow && (
+        <div className="relative flex items-center justify-center w-full">
+          {particles.map(particle => (
+            <div
+              key={particle.id}
+              className="absolute pointer-events-none"
+              style={{
+                left: `calc(50% + ${particle.x}px)`,
+                top: `${particle.y}px`,
+                transform: `scale(${particle.scale})`,
+                opacity: particle.opacity,
+                transition: 'none'
+              }}
+            >
+              <span 
+                className={`text-green-600 font-bold drop-shadow-lg ${getSizeClass(particle.size)}`}
+                style={{ 
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                }}
+              >
+                $
+              </span>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
+      
+      {/* Phone Image */}
+      <div className="relative">
+        <img
+          src={phoneImage}
+          alt={phoneAlt}
+          className="w-32 h-64 object-contain"
+          style={{
+            filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))'
+          }}
+        />
+        
+        {/* Pulsing rings around phone */}
+        {showMoneyFlow && (
+          <>
+            <div className="absolute inset-0 w-32 h-64 border-2 border-yellow-400/30 rounded-3xl animate-ping" style={{ animationDelay: '0s' }}></div>
+            <div className="absolute inset-0 w-32 h-64 border-2 border-yellow-400/20 rounded-3xl animate-ping" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute inset-0 w-32 h-64 border-2 border-yellow-400/10 rounded-3xl animate-ping" style={{ animationDelay: '2s' }}></div>
+          </>
+        )}
+      </div>
     </div>
   )
 } 

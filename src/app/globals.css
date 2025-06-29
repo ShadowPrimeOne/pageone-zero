@@ -1126,10 +1126,10 @@ img {
 
 @keyframes buttonBounce {
   0%, 100% {
-    transform: translateY(0);
+    transform: scale(1);
   }
   50% {
-    transform: translateY(-8px);
+    transform: scale(1.02);
   }
 }
 
