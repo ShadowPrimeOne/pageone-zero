@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 
 // Import custom Adwords modules (we'll build these next)
 import { AdwordsHeroPromo } from '@/components/modules/Adwords/AdwordsHeroPromo'
@@ -31,13 +32,17 @@ export default function AdwordsBoostElectricianPage() {
           -ms-overflow-style: none !important;
           scrollbar-width: none !important;
         }
+        @keyframes gentle-bounce {
+          0%, 100% { transform: translateY(0px) scaleX(-1); }
+          50% { transform: translateY(-10px) scaleX(-1); }
+        }
       `}</style>
-      <main className="bg-black text-white overflow-x-hidden w-full max-w-full">
+      <main className="bg-black text-white overflow-x-hidden w-full max-w-full relative">
         <AdwordsHeroPromo />
 
-        <TrustBanner />
-
         <AdwordsHowItWorks />
+
+        <TrustBanner />
 
         <AdwordsBenefitsGrid
           heading="What's Included"
@@ -81,6 +86,21 @@ export default function AdwordsBoostElectricianPage() {
           text="No spam. No contracts. Cancel anytime."
         />
       </main>
+
+      {/* Boxy pinned to bottom right */}
+      <div className="fixed bottom-4 right-4 z-[9999] pointer-events-none">
+        <Image 
+          src="/IMAGES/How it works/Boxy the page one automation exoert..png" 
+          alt="Boxy" 
+          width={160} 
+          height={160} 
+          className="w-20 h-20 md:w-28 md:h-28 lg:w-36 lg:h-36 xl:w-40 xl:h-40" 
+          style={{
+            filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))',
+            animation: 'gentle-bounce 3s ease-in-out infinite'
+          }}
+        />
+      </div>
     </>
   )
 } 

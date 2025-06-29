@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 
 interface Props {
   heading?: string
@@ -32,24 +33,14 @@ export const AdwordsHowItWorks: React.FC<Props> = ({
   ]
 }) => {
   return (
-    <section className="relative w-full bg-white py-8 md:py-12">
+    <section className="relative w-full bg-white py-4 md:py-8 pb-12 md:pb-16">
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
-        {/* Clean, Modern Header */}
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black font-poppins text-gray-900 mb-4 leading-tight !text-gray-900">
-            {heading}
-          </h2>
-          <p className="text-lg md:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed !text-gray-600">
-            super charge your lead funnel in 3 easy steps.
-          </p>
-        </div>
-
         {/* Modern Step Layout */}
-        <div className="space-y-8 md:space-y-12">
+        <div className="space-y-0 md:space-y-12">
           {steps.map((step, index) => (
-            <div key={index} className="relative">
+            <div key={index} className="relative min-h-screen md:min-h-0 flex items-center">
               {/* Step Container */}
-              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center ${
+              <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center w-full ${
                 index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''
               }`}>
                 
@@ -67,7 +58,8 @@ export const AdwordsHowItWorks: React.FC<Props> = ({
                           : 'max-w-md lg:max-w-lg'
                       }`}
                       style={{
-                        maxWidth: index === 0 ? '250px' : index === 2 ? '300px' : '400px'
+                        maxWidth: index === 0 ? '250px' : index === 2 ? '300px' : '400px',
+                        filter: 'drop-shadow(0 16px 32px rgba(0, 0, 0, 0.7)) !important'
                       }}
                       loading="lazy"
                     />

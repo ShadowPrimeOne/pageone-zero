@@ -35,8 +35,8 @@ export const AdwordsHeroPromo: React.FC = () => {
           background: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 2%, rgba(0,0,0,0.98) 4%, rgba(0,0,0,0.96) 6%, rgba(0,0,0,0.94) 8%, rgba(0,0,0,0.92) 10%, rgba(0,0,0,0.9) 12%, rgba(0,0,0,0.88) 14%, rgba(0,0,0,0.86) 15%, rgba(0,0,0,0.84) 16%, rgba(0,0,0,0.82) 17%, rgba(0,0,0,0.8) 18%, rgba(0,0,0,0.78) 19%, rgba(0,0,0,0.76) 20%, rgba(0,0,0,0.74) 21%, rgba(0,0,0,0.72) 22%, rgba(0,0,0,0.7) 23%, rgba(0,0,0,0.68) 24%, rgba(0,0,0,0.66) 25%, rgba(0,0,0,0.64) 26%, rgba(0,0,0,0.62) 27%, rgba(0,0,0,0.6) 28%, rgba(0,0,0,0.58) 29%, rgba(0,0,0,0.56) 30%, rgba(0,0,0,0.54) 31%, rgba(0,0,0,0.52) 32%, rgba(0,0,0,0.5) 33%, rgba(0,0,0,0.48) 34%, rgba(0,0,0,0.46) 35%, rgba(0,0,0,0.44) 36%, rgba(0,0,0,0.42) 37%, rgba(0,0,0,0.4) 38%, rgba(0,0,0,0.38) 39%, rgba(0,0,0,0.36) 40%, rgba(0,0,0,0.34) 41%, rgba(0,0,0,0.32) 42%, rgba(0,0,0,0.3) 43%, rgba(0,0,0,0.28) 44%, rgba(0,0,0,0.26) 45%, rgba(0,0,0,0.24) 46%, rgba(0,0,0,0.22) 47%, rgba(0,0,0,0.2) 48%, rgba(0,0,0,0.18) 49%, rgba(0,0,0,0.16) 50%, rgba(0,0,0,0.14) 51%, rgba(0,0,0,0.12) 52%, rgba(0,0,0,0.1) 53%, rgba(0,0,0,0.08) 54%, rgba(0,0,0,0.06) 55%, rgba(0,0,0,0.04) 56%, rgba(0,0,0,0.02) 57%, rgba(0,0,0,0) 58%)'
         }} />
 
-        {/* Bottom shadow fade for trust banner */}
-        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/20 to-transparent z-10"></div>
+        {/* Bottom transition overlay to white */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent z-10"></div>
 
         {/* All hero content with unified fade-in */}
         <div className="relative z-50 w-full h-full flex flex-col justify-between animate-fadeInUp">

@@ -22,7 +22,7 @@ export const TrustBanner: React.FC = () => {
       {/* Content */}
       <div className="relative z-50 max-w-7xl mx-auto px-4">
         {/* Title */}
-        <div className="text-center mb-1">
+        <div className="text-center mb-4">
           <h2 className="font-poppins font-semibold text-black !text-black tracking-wide" style={{ color: 'black', fontSize: '1.2rem' }}>
             Trusted by the best
           </h2>

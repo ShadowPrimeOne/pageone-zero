@@ -1169,10 +1169,16 @@ img {
 }
 
 @keyframes scroll {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
 }
 
 .animate-scroll {
-  animation: scroll 20s linear infinite;
+  animation: scroll 80s linear infinite;
+}
+
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
