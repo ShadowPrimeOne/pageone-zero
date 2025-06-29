@@ -245,7 +245,7 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           position: relative;
           overflow: hidden;
           transition: all 0.3s ease;
-          animation: iconPopIn 0.8s ease-out forwards;
+          animation: iconPopIn 0.8s ease-out;
         }
 
         .benefit-icon-container::before {
@@ -277,12 +277,13 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           height: 2rem;
           filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
           transition: all 0.3s ease;
-          animation: iconFloat 3s ease-in-out infinite;
+          animation: iconPulse 3s ease-in-out infinite;
+          transform-origin: center;
         }
 
         .benefit-item:hover .benefit-icon {
           filter: brightness(0) invert(1) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-          transform: scale(1.05);
+          animation-play-state: paused;
         }
 
         .benefit-text {
@@ -293,6 +294,21 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           line-height: 1.6;
           flex: 1;
           margin-left: 0.5rem;
+        }
+
+        .benefit-tick {
+          flex-shrink: 0;
+          width: 1.5rem !important;
+          height: 1.5rem !important;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+          transition: all 0.3s ease;
+          opacity: 0.8;
+        }
+
+        .benefit-item:hover .benefit-tick {
+          opacity: 1;
+          transform: scale(1.1);
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
         }
 
         .heading-text h2 {
@@ -350,12 +366,21 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           }
         }
 
-        @keyframes iconFloat {
+        @keyframes iconPulse {
           0%, 100% {
-            transform: translateY(0px);
+            transform: scale(1);
           }
           50% {
-            transform: translateY(-3px);
+            transform: scale(1.2);
+          }
+        }
+
+        @keyframes iconFloat {
+          0%, 100% {
+            transform: scale(1) translateY(0px);
+          }
+          50% {
+            transform: scale(1) translateY(-3px);
           }
         }
 
@@ -400,6 +425,11 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           .benefit-text {
             font-size: 1.125rem;
           }
+
+          .benefit-tick {
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+          }
         }
 
         @media (min-width: 1024px) {
@@ -432,6 +462,11 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
 
           .benefit-text {
             font-size: 1.25rem;
+          }
+
+          .benefit-tick {
+            width: 3rem !important;
+            height: 3rem !important;
           }
         }
 
@@ -496,6 +531,11 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           .benefit-text {
             font-size: 0.95rem;
           }
+
+          .benefit-tick {
+            width: 1.5rem !important;
+            height: 1.5rem !important;
+          }
         }
       `}</style>
       
@@ -535,7 +575,7 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
           <div className="heading-text">
             <h2 className="text-2xl md:text-4xl font-semibold text-left mb-4 md:mb-6 text-balance text-black animate-fadeInUp px-4 font-poppins">
               Blueprint For Success
-            </h2>
+        </h2>
             <div className="rainbow-divider"></div>
             <p className="text-lg md:text-xl text-gray-600 text-left max-w-3xl mx-auto px-4 font-poppins leading-relaxed">
               All inclusive package for a limited number of business&apos;s...
@@ -561,6 +601,11 @@ export const AdwordsBenefitsGrid: React.FC<Props> = ({
               <p className="benefit-text">
                 {benefit}
               </p>
+              <img
+                src="/IMAGES/Adwords Benefit Grid/tick adwords.png"
+                alt="Tick"
+                className="benefit-tick"
+              />
             </div>
           ))}
         </div>
