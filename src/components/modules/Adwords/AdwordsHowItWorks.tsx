@@ -33,8 +33,16 @@ export const AdwordsHowItWorks: React.FC<Props> = ({
   ]
 }) => {
   return (
-    <section className="relative w-full bg-white py-4 md:py-8 pb-12 md:pb-16">
-      <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
+    <section className="relative w-full bg-white py-4 md:py-8 pb-12 md:pb-16 overflow-hidden">
+      <div className="absolute inset-0 bg-white"></div>
+      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
+        {/* Section Heading */}
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black font-poppins text-gray-900 leading-tight">
+            {heading}
+          </h2>
+        </div>
+        
         {/* Modern Step Layout */}
         <div className="space-y-0 md:space-y-12">
           {steps.map((step, index) => (

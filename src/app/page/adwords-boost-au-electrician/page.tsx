@@ -24,6 +24,11 @@ export default function AdwordsBoostElectricianPage() {
           overflow-x: hidden !important;
           margin: 0 !important;
           padding: 0 !important;
+          background: black !important;
+          min-height: 100vh !important;
+        }
+        body {
+          background: black !important;
         }
         ::-webkit-scrollbar {
           display: none !important;
@@ -50,54 +55,56 @@ export default function AdwordsBoostElectricianPage() {
         .typing-dot:nth-child(2) { animation-delay: 0.3s; }
         .typing-dot:nth-child(3) { animation-delay: 0.6s; }
       `}</style>
-      <main className="bg-black text-white overflow-x-hidden w-full max-w-full relative">
-        <AdwordsHeroPromo />
+      <main className="bg-black text-white overflow-x-hidden w-full max-w-full relative min-h-screen">
+        <div className="relative w-full">
+          <AdwordsHeroPromo />
 
-        <AdwordsHowItWorks />
+          <AdwordsHowItWorks />
 
-        <TrustBanner />
+          <AdwordsBenefitsGrid
+            heading="What's Included"
+            benefits={[
+              "GoogleAds / PPC\nSetup & Management",
+              "Free Optimised\nLanding Page",
+              "Leads Sent To\nPhone & Email",
+              "90 Day Campaign\nPay only for 30*",
+              "Weekly Reporting\nDedicated Support"
+            ]}
+          />
 
-        <AdwordsBenefitsGrid
-          heading="What's Included"
-          benefits={[
-            "Google Ads setup + daily optimisation",
-            "FREE landing page, built for electricians",
-            "Leads sent straight to your phone or email",
-            "90 days of exposure — pay only for 1 month",
-            "Automated responses, proactive funneling"
-          ]}
-        />
+          <TrustBanner />
 
-        <AdwordsTestimonialsDynamic
-          testimonials={[
-            {
-              name: "Ben",
-              title: "Electrician, Sydney",
-              quote: "I booked 3 new jobs in 48 hours. Best campaign I've ever run."
-            },
-            {
-              name: "Lisa",
-              title: "Tutor, Singapore",
-              quote: "I got 14 student leads in 2 weeks. The landing page converts like crazy."
-            }
-          ]}
-        />
+          <AdwordsTestimonialsDynamic
+            testimonials={[
+              {
+                name: "Ben",
+                title: "Electrician, Sydney",
+                quote: "I booked 3 new jobs in 48 hours. Best campaign I've ever run."
+              },
+              {
+                name: "Lisa",
+                title: "Tutor, Singapore",
+                quote: "I got 14 student leads in 2 weeks. The landing page converts like crazy."
+              }
+            ]}
+          />
 
-        <AdwordsUrgencyBanner
-          text="⚡ Only 5 free landing pages left — offer ends in"
-          countdown="2 days 14 hours"
-        />
+          <AdwordsUrgencyBanner
+            text="⚡ Only 5 free landing pages left — offer ends in"
+            countdown="2 days 14 hours"
+          />
 
-        <AdwordsLeadForm
-          heading="Start Your 90-Day Campaign"
-          subheading="We'll assign a local expert to you within 24h."
-          fields={['name', 'email', 'phone', 'businessType']}
-          ctaText="Get My Free Setup"
-        />
+          <AdwordsLeadForm
+            heading="Start Your 90-Day Campaign"
+            subheading="We'll assign a local expert to you within 24h."
+            fields={['name', 'email', 'phone', 'businessType']}
+            ctaText="Get My Free Setup"
+          />
 
-        <AdwordsTrustFooter
-          text="No spam. No contracts. Cancel anytime."
-        />
+          <AdwordsTrustFooter
+            text="No spam. No contracts. Cancel anytime."
+          />
+        </div>
       </main>
 
       {/* Boxy pinned to bottom right */}

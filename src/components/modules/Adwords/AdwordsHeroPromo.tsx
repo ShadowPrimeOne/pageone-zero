@@ -64,7 +64,7 @@ export const AdwordsHeroPromo: React.FC = () => {
           </div>
 
           {/* Boxy Flying Electric - positioned relative to hero section */}
-          <div className="absolute top-[20vh] right-0 md:top-[15vh] md:right-8 pointer-events-none z-40 transform -translate-y-20 -translate-x-8 md:-translate-y-32 md:-translate-x-32">
+          <div className="absolute top-[25vh] right-0 md:top-[20vh] md:right-8 pointer-events-none z-40 transform -translate-y-20 -translate-x-8 md:-translate-y-32 md:-translate-x-32">
             <Image
               src="/IMAGES/BOXY/Boxy Flying Electric-flipped.png"
               alt="Boxy Flying Electric"

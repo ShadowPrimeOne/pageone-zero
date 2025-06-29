@@ -52,8 +52,9 @@ export const AdwordsLeadForm: React.FC<Props> = ({
   }
 
   return (
-    <section id="lead-form" className="w-full px-4 sm:px-6 py-16 md:py-24 bg-zinc-950 text-white min-h-[80vh] flex items-center">
-      <div className="max-w-screen-md mx-auto w-full">
+    <section id="lead-form" className="relative w-full px-4 sm:px-6 py-16 md:py-24 bg-zinc-950 text-white min-h-[80vh] flex items-center overflow-hidden">
+      <div className="absolute inset-0 bg-zinc-950"></div>
+      <div className="relative z-10 max-w-screen-md mx-auto w-full">
         <h2 className="text-2xl md:text-4xl font-semibold text-center mb-4 text-balance text-white animate-fadeInUp">
           {heading}
         </h2>

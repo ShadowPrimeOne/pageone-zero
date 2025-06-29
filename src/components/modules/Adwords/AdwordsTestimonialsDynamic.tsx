@@ -16,8 +16,9 @@ export const AdwordsTestimonialsDynamic: React.FC<Props> = ({
   testimonials,
 }) => {
   return (
-    <section className="w-full px-4 sm:px-6 py-16 md:py-24 bg-black text-white min-h-[80vh] flex items-center">
-      <div className="max-w-screen-md mx-auto w-full">
+    <section className="relative w-full px-4 sm:px-6 py-16 md:py-24 bg-black text-white min-h-[80vh] flex items-center overflow-hidden">
+      <div className="absolute inset-0 bg-black"></div>
+      <div className="relative z-10 max-w-screen-md mx-auto w-full">
         <h2 className="text-2xl md:text-4xl font-semibold text-center mb-12 text-balance text-white animate-fadeInUp">
           What Our Clients Say
         </h2>

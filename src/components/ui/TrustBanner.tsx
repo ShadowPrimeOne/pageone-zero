@@ -19,7 +19,8 @@ export const TrustBanner: React.FC = () => {
   ]
 
   return (
-    <section className="relative w-full bg-white py-3 md:py-4 border-t border-gray-200 -mt-2 z-40" style={{ boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)' }}>
+    <section className="relative w-full bg-white py-3 md:py-4 border-t border-gray-200 -mt-2 z-40 overflow-hidden">
+      <div className="absolute inset-0 bg-white"></div>
       {/* Content */}
       <div className="relative z-50 max-w-7xl mx-auto px-4">
         {/* Title */}
