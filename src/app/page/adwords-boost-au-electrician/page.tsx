@@ -37,6 +37,8 @@ export default function AdwordsBoostElectricianPage() {
 
         <TrustBanner />
 
+        <AdwordsHowItWorks />
+
         <AdwordsBenefitsGrid
           heading="What's Included"
           benefits={[
@@ -45,27 +47,6 @@ export default function AdwordsBoostElectricianPage() {
             "Leads sent straight to your phone or email",
             "90 days of exposure — pay only for 1 month",
             "Automated responses, proactive funneling"
-          ]}
-        />
-
-        <AdwordsHowItWorks
-          heading="How It Works"
-          steps={[
-            {
-              icon: 'plug',
-              title: "Setup Campaign",
-              description: "We build your Google Ads campaign and landing page in 24 hours"
-            },
-            {
-              icon: 'tools',
-              title: "Get Leads",
-              description: "Leads come straight to your phone via SMS and email alerts"
-            },
-            {
-              icon: 'roo',
-              title: "Book Jobs",
-              description: "Convert leads into paying customers with our proven system"
-            }
           ]}
         />
 
