@@ -34,12 +34,12 @@ export const AnimatedLogo: React.FC = () => {
       }
       initialDelayRef.current = false
       
-      // Smooth reset cycle every 18 seconds (15s active + 3s fade)
-      if (cycleElapsed >= 18000) {
+      // Smooth reset cycle every 36 seconds (30s active + 6s fade) - doubled from 18s
+      if (cycleElapsed >= 36000) {
         setParticles(prev => 
           prev.map(particle => ({
             ...particle,
-            opacity: Math.max(0, particle.opacity - 0.02) // Slower fade out over 3 seconds
+            opacity: Math.max(0, particle.opacity - 0.01) // Slower fade out over 6 seconds
           })).filter(particle => particle.opacity > 0)
         )
         
@@ -54,10 +54,10 @@ export const AnimatedLogo: React.FC = () => {
         return
       }
       
-      // Create new particles every 1200ms - only in first 12 seconds of cycle
+      // Create new particles every 2400ms - only in first 24 seconds of cycle (doubled from 12s)
       // Add extra delay for first particle to ensure clean start
       const firstParticleDelay = initialDelayRef.current === false && particles.length === 0 ? 500 : 0
-      if (cycleElapsed < 12000 && (cycleElapsed + firstParticleDelay) % 1200 < 16 && particles.length < 8) {
+      if (cycleElapsed < 24000 && (cycleElapsed + firstParticleDelay) % 2400 < 16 && particles.length < 4) {
         const newParticle = {
           id: particleIdRef.current++,
           x: Math.random() * 40 - 30, // Moved left by shifting range from -20 to -30
@@ -74,7 +74,7 @@ export const AnimatedLogo: React.FC = () => {
       setParticles(prev => 
         prev
           .map(particle => {
-            const age = cycleElapsed - (particle.id * 1200) // Age based on creation time
+            const age = cycleElapsed - (particle.id * 2400) // Age based on creation time
             const progress = (age % 4000) / 4000 // 4 second cycle
             
             if (progress >= 1) {
@@ -87,8 +87,8 @@ export const AnimatedLogo: React.FC = () => {
 
             return {
               ...particle,
-              y: 10 - (progress * 100), // Moved up starting point and reduced travel distance
-              opacity: fadeInOpacity * (1 - progress), // Combine fade-in with fade-out
+              y: 10 - (progress * 150), // Increased travel distance from 100 to 150px
+              opacity: Math.max(0, Math.min(1, fadeInOpacity * (1 - Math.pow(Math.max(0, progress), 0.7)))), // Smoother fade out with bounds checking
               scale: 1 + (progress * 0.2), // Reduced growth
               fadeIn: fadeInProgress
             }

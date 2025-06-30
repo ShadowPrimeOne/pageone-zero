@@ -1,12 +1,43 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { AnimatedPhoneUnit } from './AnimatedPhoneUnit'
 // Remove the broken import
 // import heroBG from '@/Electrical_LP/hero_powergrid_bg.webp'
 
 export const AdwordsHeroPromo: React.FC = () => {
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 4,
+    minutes: 21,
+    seconds: 15
+  })
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        let { hours, minutes, seconds } = prevTime
+        
+        if (seconds > 0) {
+          seconds--
+        } else if (minutes > 0) {
+          minutes--
+          seconds = 59
+        } else if (hours > 0) {
+          hours--
+          minutes = 59
+          seconds = 59
+        }
+        
+        return { hours, minutes, seconds }
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const formatTime = (time: number) => time.toString().padStart(2, '0')
+
   return (
     <>
       {/* Sticky Ticker - Always at top when scrolling */}
@@ -28,10 +59,22 @@ export const AdwordsHeroPromo: React.FC = () => {
       </div>
 
       <section
-        className="relative w-full h-[100vh] bg-no-repeat bg-cover bg-[70%_center] sm:bg-[center_80%] text-white flex flex-col justify-between pt-16"
-        style={{ backgroundImage: `url('/ElectricalLP/hero_powergrid_bg.webp')` }}
+        className="relative w-full h-[90vh] bg-no-repeat bg-cover text-white flex flex-col justify-between pt-16 hero-bg-section"
+        style={{ 
+          backgroundImage: `url('/ElectricalLP/hero_powergrid_bg.webp')`
+        }}
       >
         <style jsx>{`
+          .hero-bg-section {
+            background-position: 70% 10% !important;
+          }
+          
+          @media (min-width: 768px) {
+            .hero-bg-section {
+              background-position: center 80% !important;
+            }
+          }
+          
           @keyframes heroBoxyFloat {
             0%, 100% { 
               transform: translateY(-20px) translateX(-8px);
@@ -51,6 +94,94 @@ export const AdwordsHeroPromo: React.FC = () => {
               }
             }
           }
+          
+          /* BULLETPROOF BADGE SIZING - FINAL VERSION */
+          .hero-badge-bulletproof-2024 {
+            width: 80px !important;
+            height: 80px !important;
+            min-width: 80px !important;
+            min-height: 80px !important;
+            max-width: 80px !important;
+            max-height: 80px !important;
+            flex-shrink: 0 !important;
+            object-fit: contain !important;
+            display: block !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          
+          @media (min-width: 768px) {
+            .hero-badge-bulletproof-2024 {
+              width: 120px !important;
+              height: 120px !important;
+              min-width: 120px !important;
+              min-height: 120px !important;
+              max-width: 120px !important;
+              max-height: 120px !important;
+            }
+          }
+          
+          /* Override Next.js Image component styles */
+          .hero-badge-bulletproof-2024 img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            max-width: none !important;
+            min-width: none !important;
+            max-height: none !important;
+            min-height: none !important;
+          }
+          
+          /* Override any global image styles */
+          img.hero-badge-bulletproof-2024 {
+            width: 80px !important;
+            height: 80px !important;
+            min-width: 80px !important;
+            min-height: 80px !important;
+            max-width: 80px !important;
+            max-height: 80px !important;
+          }
+          
+          @media (min-width: 768px) {
+            img.hero-badge-bulletproof-2024 {
+              width: 120px !important;
+              height: 120px !important;
+              min-width: 120px !important;
+              min-height: 120px !important;
+              max-width: 120px !important;
+              max-height: 120px !important;
+            }
+          }
+          
+          /* Override Tailwind and any other framework */
+          .hero-badge-bulletproof-2024[style] {
+            width: 80px !important;
+            height: 80px !important;
+            min-width: 80px !important;
+            min-height: 80px !important;
+            max-width: 80px !important;
+            max-height: 80px !important;
+          }
+          
+          @media (min-width: 768px) {
+            .hero-badge-bulletproof-2024[style] {
+              width: 120px !important;
+              height: 120px !important;
+              min-width: 120px !important;
+              min-height: 120px !important;
+              max-width: 120px !important;
+              max-height: 120px !important;
+            }
+          }
+          
+          /* Mobile-specific positioning */
+          @media (max-width: 767px) {
+            .hero-cta-container {
+              margin-top: 0px !important;
+              transform: translateY(20px) !important;
+            }
+          }
         `}</style>
 
         {/* Gradient Overlay */}
@@ -64,7 +195,7 @@ export const AdwordsHeroPromo: React.FC = () => {
         {/* All hero content with unified fade-in */}
         <div className="relative z-50 w-full h-full flex flex-col justify-between animate-fadeInUp max-w-7xl mx-auto">
           {/* Top Content - Heading & Subheading */}
-          <div className="w-full max-w-[90%] sm:max-w-screen-sm mx-auto px-4 text-left pt-[8vh] sm:pt-[5vh]">
+          <div className="w-full max-w-[90%] sm:max-w-screen-sm mx-auto px-4 text-left pt-[4vh] sm:pt-[5vh]">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-poppins leading-tight mb-6 tracking-tight">
               <span className="bg-gradient-to-r from-green-400 via-green-300 to-green-400 bg-clip-text text-transparent text-5xl sm:text-5xl lg:text-6xl drop-shadow-[0_6px_12px_rgba(0,0,0,0.9)] animate-pulse hover:scale-105 transition-transform duration-300" style={{
                 animation: 'pulse 3s ease-in-out infinite, glow 2s ease-in-out infinite alternate'
@@ -86,34 +217,112 @@ export const AdwordsHeroPromo: React.FC = () => {
           </div>
 
           {/* Boxy Flying Electric - positioned relative to hero section */}
-          <div className="hero-boxy-container absolute top-[17.5vh] right-0 md:top-[20vh] md:right-8 pointer-events-none z-40 transform -translate-y-20 -translate-x-8 md:-translate-y-32 md:-translate-x-32">
+          <div className="hero-boxy-container absolute top-[12vh] right-2 md:top-[20vh] md:right-8 pointer-events-none z-40 transform -translate-y-16 -translate-x-4 md:-translate-y-32 md:-translate-x-32">
             <Image
               src="/IMAGES/BOXY/Boxy Flying Electric-flipped.png"
               alt="Boxy Flying Electric"
               width={200}
               height={200}
-              className="hero-boxy-image w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 opacity-80"
+              className="hero-boxy-image w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 opacity-80"
               style={{
                 filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3))',
                 animation: 'heroBoxyFloat 6s ease-in-out infinite'
               }}
               quality={90}
               priority={false}
-              sizes="(max-width: 768px) 96px, (max-width: 1024px) 128px, 160px"
+              sizes="(max-width: 768px) 128px, (max-width: 1024px) 160px, 192px"
             />
           </div>
 
           {/* Bottom Content - CTA */}
-          <div className="w-full flex justify-center pb-[12vh] px-4">
-            <div className="flex items-center space-x-0 md:space-x-6">
+          <div className="w-full flex justify-center pb-[8vh] px-4">
+            <div className="flex items-end space-x-0 md:space-x-6 -ml-12 md:ml-0">
               {/* Animated Phone Unit with responsive scaling */}
               <AnimatedPhoneUnit 
                 scale="md"
-                className="md:scale-125 lg:scale-150"
+                className="md:scale-125 lg:scale-150 -mb-6 md:-mb-1"
               />
               
-              {/* CTA Button */}
-              <div className="relative -ml-4 md:ml-0">
+              {/* CTA Button with Badges Above */}
+              <div 
+                className="relative -ml-4 md:ml-0 hero-cta-container"
+                style={{
+                  marginTop: '-10px',
+                  transform: 'translateY(-5px)'
+                }}
+              >
+                {/* Badges Section - Positioned above the button */}
+                <div className="flex items-center justify-center mb-3 -space-x-2 absolute bottom-full left-1/2 transform -translate-x-1/2">
+                  {/* Mobile First Badge */}
+                  <div className="relative z-30">
+                    <Image
+                      src="/IMAGES/Badges/Mobile First Badge.png"
+                      alt="Mobile First Badge"
+                      width={100}
+                      height={100}
+                      className="hero-badge-bulletproof-2024 drop-shadow-lg"
+                      quality={90}
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        minWidth: '80px',
+                        minHeight: '80px',
+                        maxWidth: '80px',
+                        maxHeight: '80px',
+                        objectFit: 'contain',
+                        display: 'block',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
+                  
+                  {/* People's Choice Badge */}
+                  <div className="relative z-20">
+                    <Image
+                      src="/IMAGES/Badges/Peoples choice Badge.png"
+                      alt="People's Choice Badge"
+                      width={100}
+                      height={100}
+                      className="hero-badge-bulletproof-2024 drop-shadow-lg"
+                      quality={90}
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        minWidth: '80px',
+                        minHeight: '80px',
+                        maxWidth: '80px',
+                        maxHeight: '80px',
+                        objectFit: 'contain',
+                        display: 'block',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Google Adwords Gold Badge */}
+                  <div className="relative z-10">
+                    <Image
+                      src="/IMAGES/Badges/Google Adwords Gold Partner.png"
+                      alt="Google Adwords Gold Partner Badge"
+                      width={100}
+                      height={100}
+                      className="hero-badge-bulletproof-2024 drop-shadow-lg"
+                      quality={90}
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        minWidth: '80px',
+                        minHeight: '80px',
+                        maxWidth: '80px',
+                        maxHeight: '80px',
+                        objectFit: 'contain',
+                        display: 'block',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
+                </div>
+                
                 <button
                   className="relative text-black font-poppins font-bold tracking-wide whitespace-nowrap cta-button-responsive"
                   style={{
@@ -131,13 +340,20 @@ export const AdwordsHeroPromo: React.FC = () => {
                 >
                   Start Growing Today
                 </button>
+                
+                {/* Scarcity Line - Mobile Responsive */}
+                <div className="mt-2 text-center">
+                  <p className="text-xs sm:text-sm font-semibold text-red-600 drop-shadow-sm">
+                    🟡 Only 3 left — expires <span className="animate-pulse">{formatTime(timeLeft.hours)}:{formatTime(timeLeft.minutes)}:{formatTime(timeLeft.seconds)}</span>!
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Spark SVG placeholder */}
-        <div id="spark-glow" className="absolute bottom-[64px] right-[24px] z-0 w-24 h-24 pointer-events-none"></div>
+          {/* Spark SVG placeholder */}
+          <div id="spark-glow" className="absolute bottom-[64px] right-[24px] z-0 w-24 h-24 pointer-events-none"></div>
+        </div>
       </section>
     </>
   )

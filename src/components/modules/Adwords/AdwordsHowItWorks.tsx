@@ -33,7 +33,7 @@ export const AdwordsHowItWorks: React.FC<Props> = ({
   ]
 }) => {
   return (
-    <section className="relative w-full bg-white py-4 md:py-8 pb-12 md:pb-16 overflow-hidden">
+    <section className="relative w-full bg-white py-4 md:py-2 pb-12 md:pb-16 overflow-hidden">
       <div className="absolute inset-0 bg-white"></div>
       <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
         {/* Section Heading */}
@@ -44,9 +44,9 @@ export const AdwordsHowItWorks: React.FC<Props> = ({
         </div>
         
         {/* Modern Step Layout */}
-        <div className="space-y-0 md:space-y-12">
+        <div className="space-y-0">
           {steps.map((step, index) => (
-            <div key={index} className="relative min-h-screen md:min-h-0 flex items-center">
+            <div key={index} className="relative min-h-screen flex items-center">
               {/* Step Container */}
               <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center w-full ${
                 index % 2 === 1 ? 'lg:grid-flow-col-dense' : ''
