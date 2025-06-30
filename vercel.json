@@ -4,11 +4,6 @@
       "source": "/",
       "destination": "/page/adwords-boost-au-electrician",
       "permanent": false
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/page/adwords-boost-au-electrician",
-      "permanent": false
     }
   ],
   "headers": [
