@@ -1,33 +1,24 @@
 import { useEffect } from 'react'
-import { ModuleRenderer } from '@/components/modules/ModuleRenderer'
-import { QRModal } from '@/components/modals/QRModal'
-import { useQRModal } from '@/lib/hooks/useQRModal'
 
 interface EditPageShellProps {
   slug: string
-  isEdit: boolean
   justPublished: boolean
-  modules: any[]
 }
 
-export default function EditPageShell({ slug, isEdit, justPublished, modules }: EditPageShellProps) {
-  const { showQRModal, setShowQRModal } = useQRModal()
-
+export default function EditPageShell({ slug, justPublished }: EditPageShellProps) {
   useEffect(() => {
     // Check if we just published
     if (justPublished) {
-      setShowQRModal(true)
+      // Handle published state
     }
   }, [justPublished])
 
   return (
     <div className="min-h-screen">
-      <ModuleRenderer modules={modules} isEditMode={isEdit} />
-      <QRModal
-        isOpen={showQRModal}
-        onClose={() => setShowQRModal(false)}
-        slug={slug}
-      />
+      <div className="p-4">
+        <h1 className="text-lg font-semibold">Editing: {slug}</h1>
+        <p className="text-gray-600">Page editor content would go here...</p>
+      </div>
     </div>
   )
 } 

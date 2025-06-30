@@ -222,6 +222,10 @@ export function ModuleWrapper({
     onUpdate?.(module.id, updatedProps as Partial<HeroProps | Hero2Props>)
   }
 
+  const handleBackgroundChange = (background: BackgroundConfig) => {
+    // ... existing code ...
+  }
+
   return (
     <div className="relative">
       {/* Editor panel and controls appear above the module */}

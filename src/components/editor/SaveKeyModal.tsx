@@ -45,8 +45,8 @@ export const SaveKeyModal: FC<SaveKeyModalProps> = ({
               className="w-full px-3 py-2 border rounded-md"
               required
             />
-            <p className="mt-2 text-sm text-gray-500">
-              Save this key securely. You'll need it to edit this page later.
+            <p className="text-sm text-gray-600 mb-4">
+              Save this key securely. You&apos;ll need it to edit your page later.
             </p>
           </div>
           <div className="flex justify-end gap-4">

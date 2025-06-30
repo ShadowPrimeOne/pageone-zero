@@ -7,6 +7,7 @@ import { ModuleRenderer } from '@/components/modules/ModuleRenderer'
 import type { Module } from '@/lib/editor/types'
 import { useEffect, useState } from 'react'
 import { getModuleTemplates } from '@/lib/editor/db'
+import { usePageData } from '@/lib/editor/usePageData'
 
 interface Props {
   slug: string
@@ -72,6 +73,14 @@ export default function SlugPageClient({ slug, modules, pageKey, isEdit, editKey
   const { isAuthorized, isReady } = useSessionKey(slug)
   const authorized = isAuthorized(pageKey)
 
+  const {
+    pageData,
+    isLoading,
+    error,
+    savePage,
+    publishPage,
+  } = usePageData(slug, editKey)
+
   if (!isReady) {
     return null
   }
@@ -94,6 +103,16 @@ export default function SlugPageClient({ slug, modules, pageKey, isEdit, editKey
         </div>
       </div>
     )
+  }
+
+  const handleSave = async () => {
+    if (!pageData) return
+    
+    try {
+      await savePage(pageData)
+    } catch (error) {
+      console.error('Failed to save page:', error)
+    }
   }
 
   return (

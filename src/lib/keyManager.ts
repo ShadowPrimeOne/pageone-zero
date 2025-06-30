@@ -1,3 +1,5 @@
+import { createClient } from '@supabase/supabase-js'
+
 const VAULT_KEY = 'pageone_vault'
 
 interface VaultEntry {
