@@ -12,6 +12,7 @@ import { AdwordsTestimonialsDynamic } from '@/components/modules/Adwords/Adwords
 import { AdwordsUrgencyBanner } from '@/components/modules/Adwords/AdwordsUrgencyBanner'
 import { AdwordsLeadForm } from '@/components/modules/Adwords/AdwordsLeadForm'
 import { AdwordsTrustFooter } from '@/components/modules/Adwords/AdwordsTrustFooter'
+import { TestimonialPopup } from '@/components/ui/TestimonialPopup'
 
 export default function AdwordsBoostElectricianPage() {
   // For now, hardcode props per module
@@ -62,7 +63,6 @@ export default function AdwordsBoostElectricianPage() {
           <AdwordsHowItWorks />
 
           <AdwordsBenefitsGrid
-            heading="What's Included"
             benefits={[
               "GoogleAds / PPC\nSetup & Management",
               "Free Optimised\nLanding Page",
@@ -106,6 +106,8 @@ export default function AdwordsBoostElectricianPage() {
           />
         </div>
       </main>
+
+      <TestimonialPopup />
 
       {/* Boxy pinned to bottom right */}
       <div className="fixed bottom-4 right-4 z-[9999] pointer-events-auto">

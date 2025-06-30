@@ -37,13 +37,6 @@ export const AdwordsTestimonialsDynamic: React.FC<Props> = ({
           margin-bottom: 3rem;
           width: 100%;
           position: relative;
-          display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
-        }
-
-        .heading-text {
-          flex: 1;
         }
 
         .section-subheading {
@@ -53,28 +46,6 @@ export const AdwordsTestimonialsDynamic: React.FC<Props> = ({
           max-width: 600px;
           line-height: 1.6;
           text-align: left;
-        }
-
-        .testimonials-boxy-container {
-          flex-shrink: 0;
-          margin-left: 2rem;
-          margin-top: -1rem;
-          animation: testimonialsBoxyFloat 3s ease-in-out infinite;
-        }
-
-        .testimonials-boxy-image {
-          width: 100px;
-          height: 100px;
-          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-        }
-
-        @keyframes testimonialsBoxyFloat {
-          0%, 100% { 
-            transform: translateY(0px);
-          }
-          50% { 
-            transform: translateY(-20px);
-          }
         }
 
         .section-heading {
@@ -280,11 +251,6 @@ export const AdwordsTestimonialsDynamic: React.FC<Props> = ({
             font-size: 1.25rem;
           }
 
-          .testimonials-boxy-image {
-            width: 100px;
-            height: 100px;
-          }
-
           .testimonials-grid {
             gap: 2rem;
             max-width: 900px;
@@ -312,11 +278,6 @@ export const AdwordsTestimonialsDynamic: React.FC<Props> = ({
         @media (min-width: 1024px) {
           .section-heading {
             font-size: 3rem;
-          }
-
-          .testimonials-boxy-image {
-            width: 120px;
-            height: 120px;
           }
 
           .testimonials-grid {
@@ -355,19 +316,7 @@ export const AdwordsTestimonialsDynamic: React.FC<Props> = ({
           }
 
           .heading-container {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-          }
-
-          .testimonials-boxy-container {
-            margin-left: 0;
-            align-self: flex-end;
-          }
-
-          .testimonials-boxy-image {
-            width: 60px;
-            height: 60px;
+            text-align: center;
           }
 
           .section-heading {
@@ -416,23 +365,13 @@ export const AdwordsTestimonialsDynamic: React.FC<Props> = ({
       
       <div className="testimonials-container">
         <div className="heading-container">
-          <div className="heading-text">
-            <h2 className="section-heading">
-              What Our Clients Say
-            </h2>
-            <div className="rainbow-divider"></div>
-            <p className="section-subheading">
-              Real results from real electrical businesses who trusted us with their growth
-            </p>
-          </div>
-          
-          <div className="testimonials-boxy-container">
-            <img
-              src="/IMAGES/BOXY/Boxy Thumbs Up Hover Cape Red.png"
-              alt="Boxy Thumbs Up"
-              className="testimonials-boxy-image"
-            />
-          </div>
+          <h2 className="section-heading">
+            What Our Clients Say
+          </h2>
+          <div className="rainbow-divider"></div>
+          <p className="section-subheading">
+            Real results from real electrical businesses who trusted us with their growth
+          </p>
         </div>
 
         <div className="testimonials-grid">

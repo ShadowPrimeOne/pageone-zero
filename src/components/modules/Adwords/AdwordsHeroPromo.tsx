@@ -104,7 +104,7 @@ export const AdwordsHeroPromo: React.FC = () => {
           </div>
 
           {/* Bottom Content - CTA */}
-          <div className="w-full flex justify-center pb-[8vh] px-4">
+          <div className="w-full flex justify-center pb-[12vh] px-4">
             <div className="flex items-center space-x-0 md:space-x-6">
               {/* Animated Phone Unit with responsive scaling */}
               <AnimatedPhoneUnit 
