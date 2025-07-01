@@ -81,6 +81,7 @@ export class PerformanceMonitor {
   private isInitialized = false
   private metricsCaptured = false
   private captureTimeout: NodeJS.Timeout | null = null
+  private reportGenerated = false
 
   init() {
     if (typeof window === 'undefined' || this.isInitialized) return
@@ -93,10 +94,10 @@ export class PerformanceMonitor {
     this.setupNavigationTiming()
     this.setupDeviceDetection()
 
-    // Set a timeout to finalize metrics capture
+    // Set a timeout to finalize metrics capture - only once
     this.captureTimeout = setTimeout(() => {
       this.finalizeMetrics()
-    }, 5000) // Wait 5 seconds for all metrics to be captured
+    }, 3000) // Wait 3 seconds for initial page load metrics
   }
 
   private finalizeMetrics() {
@@ -133,13 +134,18 @@ export class PerformanceMonitor {
   private setupCoreWebVitals() {
     if (!('PerformanceObserver' in window)) return
 
-    // LCP - Largest Contentful Paint
+    // LCP - Largest Contentful Paint (capture only the first one)
     try {
+      let lcpCaptured = false
       const lcpObserver = new PerformanceObserver((list) => {
+        if (lcpCaptured) return // Only capture the first LCP
+        
         const entries = list.getEntries()
         const lastEntry = entries[entries.length - 1]
         if (lastEntry) {
           this.metrics.lcp = lastEntry.startTime
+          lcpCaptured = true
+          lcpObserver.disconnect() // Stop observing after first capture
         }
       })
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] })
@@ -148,18 +154,23 @@ export class PerformanceMonitor {
       // Silent fail
     }
 
-    // FID - First Input Delay
+    // FID - First Input Delay (capture only the first real interaction)
     try {
+      let fidCaptured = false
       const fidObserver = new PerformanceObserver((list) => {
+        if (fidCaptured) return // Only capture the first FID
+        
         const entries = list.getEntries()
         entries.forEach((entry) => {
-          if (entry.entryType === 'first-input') {
+          if (entry.entryType === 'first-input' && !fidCaptured) {
             const fidEntry = entry as PerformanceEventTiming
             const fidValue = fidEntry.processingStart - fidEntry.startTime
             
             // Only accept realistic FID values
             if (fidValue >= 1 && fidValue <= 1000) {
               this.metrics.fid = fidValue
+              fidCaptured = true
+              fidObserver.disconnect() // Stop observing after first capture
             }
           }
         })
@@ -170,10 +181,13 @@ export class PerformanceMonitor {
       // Silent fail
     }
 
-    // CLS - Cumulative Layout Shift
+    // CLS - Cumulative Layout Shift (capture only during initial page load)
     try {
       let clsValue = 0
+      let clsCaptureComplete = false
       const clsObserver = new PerformanceObserver((list) => {
+        if (clsCaptureComplete) return // Stop capturing after initial load
+        
         for (const entry of list.getEntries()) {
           const layoutShiftEntry = entry as LayoutShift
           if (!layoutShiftEntry.hadRecentInput) {
@@ -184,6 +198,11 @@ export class PerformanceMonitor {
       })
       clsObserver.observe({ entryTypes: ['layout-shift'] })
       this.observers.push(clsObserver)
+      
+      // Stop CLS capture after 3 seconds (initial page load)
+      setTimeout(() => {
+        clsCaptureComplete = true
+      }, 3000)
     } catch {
       // Silent fail
     }
@@ -286,6 +305,12 @@ export class PerformanceMonitor {
   }
 
   generateReport(): OptimizationReport {
+    // Only generate report once to ensure consistency
+    if (this.reportGenerated && this.cachedReport) {
+      // Return cached report for consistency
+      return this.cachedReport
+    }
+    
     // Ensure metrics are finalized
     if (!this.metricsCaptured) {
       this.finalizeMetrics()
@@ -327,7 +352,7 @@ export class PerformanceMonitor {
     const estimatedImpact = this.estimateImpact(currentMetrics, googleAdsStandards)
     const summary = this.generateSummary(googleAdsStandards)
 
-    return {
+    const report = {
       currentMetrics,
       googleAdsStandards,
       recommendations,
@@ -335,7 +360,15 @@ export class PerformanceMonitor {
       estimatedImpact,
       summary
     }
+
+    // Cache the report and mark as generated
+    this.cachedReport = report
+    this.reportGenerated = true
+
+    return report
   }
+
+  private cachedReport: OptimizationReport | null = null
 
   private getStatus(
     current: number | null, 
@@ -528,11 +561,19 @@ export class PerformanceMonitor {
     this.observers = []
     this.isInitialized = false
     this.metricsCaptured = false
+    this.reportGenerated = false
+    this.cachedReport = null
     
     if (this.captureTimeout) {
       clearTimeout(this.captureTimeout)
       this.captureTimeout = null
     }
+  }
+
+  // Reset to get fresh metrics (useful for testing)
+  reset() {
+    this.destroy()
+    this.init()
   }
 }
 

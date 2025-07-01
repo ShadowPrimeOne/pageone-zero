@@ -95,6 +95,28 @@ export default function AdwordsBoostElectricianPage() {
     }
   }
 
+  const resetPerformance = () => {
+    // @ts-expect-error - Accessing global performance monitor
+    if (typeof window !== 'undefined' && window.performanceMonitor) {
+      // @ts-expect-error - Accessing global performance monitor
+      window.performanceMonitor.reset()
+      setPerformanceData(null)
+      setShowPerformance(false)
+      // Re-show after a moment to get fresh data
+      setTimeout(() => {
+        setShowPerformance(true)
+        setTimeout(() => {
+          // @ts-expect-error - Accessing global performance monitor
+          if (window.performanceMonitor) {
+            // @ts-expect-error - Accessing global performance monitor
+            const report = window.performanceMonitor.generateReport()
+            setPerformanceData(report)
+          }
+        }, 1000)
+      }, 100)
+    }
+  }
+
   return (
     <>
       <style jsx global>{`
@@ -201,12 +223,21 @@ export default function AdwordsBoostElectricianPage() {
         <div className="fixed top-4 right-4 z-50 bg-black/90 backdrop-blur-sm border border-gray-700 rounded-lg shadow-xl p-4 max-w-sm text-white">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold">Performance Score</h3>
-            <button
-              onClick={() => setShowPerformance(false)}
-              className="text-gray-400 hover:text-white"
-            >
-              ✕
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={resetPerformance}
+                className="text-blue-400 hover:text-blue-300 text-sm"
+                title="Reset and get fresh metrics"
+              >
+                🔄
+              </button>
+              <button
+                onClick={() => setShowPerformance(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
           </div>
           
           {performanceData ? (
