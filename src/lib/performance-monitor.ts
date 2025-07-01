@@ -82,22 +82,26 @@ export class PerformanceMonitor {
   private metricsCaptured = false
   private captureTimeout: NodeJS.Timeout | null = null
   private reportGenerated = false
+  private cachedReport: OptimizationReport | null = null
+  private pageLoadStartTime: number = 0
 
   init() {
     if (typeof window === 'undefined' || this.isInitialized) return
 
     this.isInitialized = true
+    this.pageLoadStartTime = performance.now()
 
-    // Set up observers immediately
-    this.setupCoreWebVitals()
-    this.setupResourceTiming()
-    this.setupNavigationTiming()
+    // Capture navigation timing immediately (most reliable)
+    this.captureNavigationTiming()
     this.setupDeviceDetection()
+
+    // Set up observers for core web vitals
+    this.setupCoreWebVitals()
 
     // Set a timeout to finalize metrics capture - only once
     this.captureTimeout = setTimeout(() => {
       this.finalizeMetrics()
-    }, 3000) // Wait 3 seconds for initial page load metrics
+    }, 2000) // Wait 2 seconds for initial page load metrics only
   }
 
   private finalizeMetrics() {
@@ -109,18 +113,20 @@ export class PerformanceMonitor {
     if (this.metrics.lcp === null) {
       const lcpEntries = performance.getEntriesByType('largest-contentful-paint')
       if (lcpEntries.length > 0) {
-        const lastLCP = lcpEntries[lcpEntries.length - 1]
-        this.metrics.lcp = lastLCP.startTime
+        // Use the first LCP entry, not the last one
+        const firstLCP = lcpEntries[0]
+        this.metrics.lcp = firstLCP.startTime
       }
     }
 
-    // Get final CLS if not captured yet
+    // Get final CLS if not captured yet - only from initial page load
     if (this.metrics.cls === null) {
       const clsEntries = performance.getEntriesByType('layout-shift')
       let clsValue = 0
       clsEntries.forEach((entry) => {
         const layoutShiftEntry = entry as LayoutShift
-        if (!layoutShiftEntry.hadRecentInput) {
+        // Only count layout shifts that happened during initial page load (first 2 seconds)
+        if (!layoutShiftEntry.hadRecentInput && entry.startTime < 2000) {
           clsValue += layoutShiftEntry.value
         }
       })
@@ -134,17 +140,23 @@ export class PerformanceMonitor {
   private setupCoreWebVitals() {
     if (!('PerformanceObserver' in window)) return
 
-    // LCP - Largest Contentful Paint (capture only the first one)
+    // LCP - Largest Contentful Paint (capture only the first one during initial load)
     try {
       let lcpCaptured = false
       const lcpObserver = new PerformanceObserver((list) => {
         if (lcpCaptured) return // Only capture the first LCP
         
         const entries = list.getEntries()
-        const lastEntry = entries[entries.length - 1]
-        if (lastEntry) {
-          this.metrics.lcp = lastEntry.startTime
-          lcpCaptured = true
+        for (const entry of entries) {
+          // Only capture LCP that happens during initial page load (first 2 seconds)
+          if (entry.startTime < 2000) {
+            this.metrics.lcp = entry.startTime
+            lcpCaptured = true
+            break
+          }
+        }
+        
+        if (lcpCaptured) {
           lcpObserver.disconnect() // Stop observing after first capture
         }
       })
@@ -161,7 +173,7 @@ export class PerformanceMonitor {
         if (fidCaptured) return // Only capture the first FID
         
         const entries = list.getEntries()
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (entry.entryType === 'first-input' && !fidCaptured) {
             const fidEntry = entry as PerformanceEventTiming
             const fidValue = fidEntry.processingStart - fidEntry.startTime
@@ -171,9 +183,10 @@ export class PerformanceMonitor {
               this.metrics.fid = fidValue
               fidCaptured = true
               fidObserver.disconnect() // Stop observing after first capture
+              break
             }
           }
-        })
+        }
       })
       fidObserver.observe({ entryTypes: ['first-input'] })
       this.observers.push(fidObserver)
@@ -184,25 +197,18 @@ export class PerformanceMonitor {
     // CLS - Cumulative Layout Shift (capture only during initial page load)
     try {
       let clsValue = 0
-      let clsCaptureComplete = false
       const clsObserver = new PerformanceObserver((list) => {
-        if (clsCaptureComplete) return // Stop capturing after initial load
-        
         for (const entry of list.getEntries()) {
           const layoutShiftEntry = entry as LayoutShift
-          if (!layoutShiftEntry.hadRecentInput) {
+          // Only count layout shifts that happened during initial page load (first 2 seconds)
+          if (!layoutShiftEntry.hadRecentInput && entry.startTime < 2000) {
             clsValue += layoutShiftEntry.value
+            this.metrics.cls = clsValue
           }
         }
-        this.metrics.cls = clsValue
       })
       clsObserver.observe({ entryTypes: ['layout-shift'] })
       this.observers.push(clsObserver)
-      
-      // Stop CLS capture after 3 seconds (initial page load)
-      setTimeout(() => {
-        clsCaptureComplete = true
-      }, 3000)
     } catch {
       // Silent fail
     }
@@ -258,7 +264,7 @@ export class PerformanceMonitor {
     this.metrics.cssCount = cssCount
   }
 
-  private setupNavigationTiming() {
+  private captureNavigationTiming() {
     if (!('performance' in window)) return
 
     try {
@@ -367,8 +373,6 @@ export class PerformanceMonitor {
 
     return report
   }
-
-  private cachedReport: OptimizationReport | null = null
 
   private getStatus(
     current: number | null, 
