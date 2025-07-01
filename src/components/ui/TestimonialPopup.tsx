@@ -93,6 +93,7 @@ export const TestimonialPopup = () => {
         'fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[999] flex flex-col items-center gap-0 transition-all duration-500 ease-in-out w-full max-w-none',
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
       )}
+      data-testimonial
     >
       {/* 5 Stars Above Speech Bubble */}
       <div className={clsx(

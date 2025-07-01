@@ -1,6 +1,47 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
+/* Performance Optimization Classes */
+.performance-minimal * {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
+.performance-reduced * {
+  animation-duration: 0.5s !important;
+  transition-duration: 0.2s !important;
+}
+
+.performance-minimal .animate-fadeInUp,
+.performance-minimal .animate-fadeInLeft,
+.performance-minimal .animate-fadeInRight,
+.performance-minimal .animate-scaleIn,
+.performance-minimal .animate-pulse,
+.performance-minimal .animate-bounce {
+  animation: none !important;
+}
+
+/* Optimized animations for slow devices */
+@media (max-width: 768px) {
+  .dollar-bounce,
+  .spark-particle,
+  .electric-border {
+    animation-duration: 0.5s !important;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Modern 2025 Design System - Scalable Foundation */
 
 :root {
@@ -300,18 +341,6 @@ img {
 ::selection {
   background: hsl(var(--primary) / 0.2);
   color: hsl(var(--foreground));
-}
-
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
 }
 
 /* High Contrast Mode */

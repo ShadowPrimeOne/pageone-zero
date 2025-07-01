@@ -1,41 +1,40 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+'use client'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { Inter } from 'next/font/google'
+import './globals.css'
+import { useEffect } from 'react'
+import { PerformanceMonitor } from '@/lib/performance-monitor'
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'] })
 
-export const metadata: Metadata = {
-  title: "Page.One Genesis",
-  description: "Create and publish encrypted pages",
-};
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
+// Global performance monitor instance
+let performanceMonitor: PerformanceMonitor | null = null
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
+  useEffect(() => {
+    // Initialize performance monitor only once
+    if (!performanceMonitor) {
+      performanceMonitor = new PerformanceMonitor()
+      performanceMonitor.init()
+      console.log('🚀 Performance Monitor initialized in layout')
+      
+      // Make it available for testing in browser console
+      if (typeof window !== 'undefined') {
+        // @ts-expect-error - Making performance monitor available globally for testing
+        window.performanceMonitor = performanceMonitor
+      }
+    }
+  }, [])
+
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
-      >
+      <body className={inter.className}>
         {children}
       </body>
     </html>
-  );
+  )
 }
