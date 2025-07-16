@@ -84,11 +84,11 @@ export const AdwordsLeadForm: React.FC<Props> = ({
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-black font-poppins mb-3 md:mb-4 text-balance text-white animate-fadeInUp">
-            {heading}
-          </h2>
+          {heading}
+        </h2>
           <p className="text-base md:text-lg lg:text-xl text-center text-zinc-300 leading-relaxed animate-fadeInUp animate-stagger-1 max-w-2xl mx-auto px-2">
-            {subheading}
-          </p>
+          {subheading}
+        </p>
         </div>
 
         {submitted ? (
@@ -152,59 +152,59 @@ export const AdwordsLeadForm: React.FC<Props> = ({
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
-                    {fields.includes('name') && (
-                      <input
-                        type="text"
-                        name="name"
-                        placeholder="Your Name"
-                        required
-                        autoComplete="name"
+            {fields.includes('name') && (
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                required
+                autoComplete="name"
                         className="w-full px-3 md:px-4 py-3 md:py-3 rounded-lg md:rounded-xl bg-zinc-800/50 text-white placeholder:text-zinc-400 border border-zinc-600 focus:border-green-500 focus:outline-none transition-colors duration-300 text-base"
-                      />
-                    )}
+              />
+            )}
                     
-                    {fields.includes('phone') && (
-                      <input
-                        type="tel"
-                        name="phone"
-                        placeholder="Your Phone"
+            {fields.includes('phone') && (
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Your Phone"
                         required
-                        autoComplete="tel"
+                autoComplete="tel"
                         className="w-full px-3 md:px-4 py-3 md:py-3 rounded-lg md:rounded-xl bg-zinc-800/50 text-white placeholder:text-zinc-400 border border-zinc-600 focus:border-green-500 focus:outline-none transition-colors duration-300 text-base"
-                      />
-                    )}
+              />
+            )}
                     
-                    {fields.includes('businessType') && (
-                      <select
-                        name="businessType"
-                        defaultValue=""
-                        required
+            {fields.includes('businessType') && (
+              <select
+                name="businessType"
+                defaultValue=""
+                required
                         className="w-full px-3 md:px-4 py-3 md:py-3 rounded-lg md:rounded-xl bg-zinc-800/50 text-white border border-zinc-600 focus:border-green-500 focus:outline-none transition-colors duration-300 text-base"
-                      >
-                        <option value="" disabled>
+              >
+                <option value="" disabled>
                           What type of business?
-                        </option>
-                        <option value="Electrician">Electrician</option>
+                </option>
+                <option value="Electrician">Electrician</option>
                         <option value="Plumber">Plumber</option>
                         <option value="HVAC">HVAC</option>
                         <option value="Roofing">Roofing</option>
                         <option value="Landscaping">Landscaping</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    )}
+                <option value="Other">Other</option>
+              </select>
+            )}
 
-                    <button
-                      type="submit"
-                      disabled={loading}
+            <button
+              type="submit"
+              disabled={loading}
                       className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold py-3 md:py-4 px-6 md:px-8 rounded-lg md:rounded-xl mt-4 md:mt-6 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed animate-pulse text-base md:text-lg"
                       style={{
                         background: 'linear-gradient(to right, #F9A825, #FF8C00)',
                         boxShadow: '0 10px 25px rgba(249, 168, 37, 0.3)'
                       }}
-                    >
+            >
                       {loading ? 'Securing Your Spot...' : ctaText}
-                    </button>
-                  </form>
+            </button>
+          </form>
                 </div>
               </div>
             )}

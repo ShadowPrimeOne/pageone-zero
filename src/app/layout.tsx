@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { useEffect } from 'react'
 import { PerformanceMonitor } from '@/lib/performance-monitor'
+import { UserProvider } from '../lib/UserContext';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +22,6 @@ export default function RootLayout({
       performanceMonitor = new PerformanceMonitor()
       performanceMonitor.init()
       console.log('🚀 Performance Monitor initialized in layout')
-      
       // Make it available for testing in browser console
       if (typeof window !== 'undefined') {
         // @ts-expect-error - Making performance monitor available globally for testing
@@ -32,8 +32,14 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className={inter.className}>
-        {children}
+        <UserProvider>
+          {children}
+        </UserProvider>
       </body>
     </html>
   )

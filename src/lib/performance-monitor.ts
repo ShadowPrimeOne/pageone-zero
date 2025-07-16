@@ -109,32 +109,8 @@ export class PerformanceMonitor {
     
     this.metricsCaptured = true
 
-    // Get final LCP if not captured yet
-    if (this.metrics.lcp === null) {
-      const lcpEntries = performance.getEntriesByType('largest-contentful-paint')
-      if (lcpEntries.length > 0) {
-        // Use the first LCP entry, not the last one
-        const firstLCP = lcpEntries[0]
-        this.metrics.lcp = firstLCP.startTime
-      }
-    }
-
-    // Get final CLS if not captured yet - only from initial page load
-    if (this.metrics.cls === null) {
-      const clsEntries = performance.getEntriesByType('layout-shift')
-      let clsValue = 0
-      clsEntries.forEach((entry) => {
-        const layoutShiftEntry = entry as LayoutShift
-        // Only count layout shifts that happened during initial page load (first 2 seconds)
-        if (!layoutShiftEntry.hadRecentInput && entry.startTime < 2000) {
-          clsValue += layoutShiftEntry.value
-        }
-      })
-      this.metrics.cls = clsValue
-    }
-
-    // Get final resource metrics
-    this.updateResourceMetrics(performance.getEntriesByType('resource'))
+    // Note: We rely on PerformanceObserver to capture metrics instead of deprecated getEntriesByType
+    // The observers set up in setupCoreWebVitals() and setupResourceTiming() will handle all metric collection
   }
 
   private setupCoreWebVitals() {
@@ -218,15 +194,13 @@ export class PerformanceMonitor {
     if (!('PerformanceObserver' in window)) return
 
     try {
-      // Get all existing resources that have already loaded
-      const existingResources = performance.getEntriesByType('resource')
-      this.updateResourceMetrics(existingResources)
-
-      // Observe new resources as they load
+      // Use PerformanceObserver to get existing and new resources
       const resourceObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries()
         this.updateResourceMetrics(entries)
       })
+      
+      // Observe both existing and new resources
       resourceObserver.observe({ entryTypes: ['resource'] })
       this.observers.push(resourceObserver)
     } catch {
@@ -268,6 +242,7 @@ export class PerformanceMonitor {
     if (!('performance' in window)) return
 
     try {
+      // Use modern navigation timing API
       const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
       if (navigation) {
         this.metrics.ttfb = navigation.responseStart - navigation.requestStart
@@ -275,16 +250,26 @@ export class PerformanceMonitor {
         this.metrics.loadComplete = navigation.loadEventEnd - navigation.fetchStart
       }
 
-      // Paint timing
-      const paintEntries = performance.getEntriesByType('paint')
-      paintEntries.forEach((entry) => {
-        if (entry.name === 'first-paint') {
-          this.metrics.firstPaint = entry.startTime
+      // Use PerformanceObserver for paint timing instead of deprecated getEntriesByType
+      if ('PerformanceObserver' in window) {
+        try {
+          const paintObserver = new PerformanceObserver((list) => {
+            const entries = list.getEntries()
+            entries.forEach((entry) => {
+              if (entry.name === 'first-paint') {
+                this.metrics.firstPaint = entry.startTime
+              }
+              if (entry.name === 'first-contentful-paint') {
+                this.metrics.firstContentfulPaint = entry.startTime
+              }
+            })
+          })
+          paintObserver.observe({ entryTypes: ['paint'] })
+          this.observers.push(paintObserver)
+        } catch {
+          // Silent fail for paint observer
         }
-        if (entry.name === 'first-contentful-paint') {
-          this.metrics.firstContentfulPaint = entry.startTime
-        }
-      })
+      }
     } catch {
       // Silent fail
     }

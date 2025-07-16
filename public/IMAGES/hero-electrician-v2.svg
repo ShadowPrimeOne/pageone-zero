@@ -132,4 +132,62 @@
   
   <!-- Professional overlay for text readability -->
   <rect width="1920" height="1080" fill="url(#bgGradient)" opacity="0.15"/>
-</svg> 
+</svg> Understood — I’ll treat this patch with **surgical precision**, anchoring the copy and CTA to align **directly with the spark** on mobile, while preserving flow on larger screens.
+
+---
+
+## ⚙️ Cursor Patch:
+
+### **“Hero Layout Fix: Mobile CTA + Copy Realignment v1a”**
+
+```cursor
+PATCH FILE: src/components/modules/Adwords/AdwordsHeroPromo.tsx
+
+REPLACE section JSX with:
+
+<section
+  className="relative w-full h-[100vh] bg-cover bg-center bg-no-repeat text-white"
+  style={{ backgroundImage: `url('/ElectricalLP/hero_powergrid_bg.webp')` }}
+>
+  {/* Gradient Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-tr from-[#263238cc] via-transparent to-transparent z-0" />
+
+  {/* Trust Badge (optional future element) */}
+  <div className="absolute top-4 left-6 text-xs font-semibold opacity-80 z-10">
+    <span className="bg-white text-[#263238] px-2 py-1 rounded-md shadow-sm">
+      Backed by Page.one
+    </span>
+  </div>
+
+  {/* Text & CTA Container */}
+  <div
+    className="absolute bottom-8 right-4 sm:right-8 max-w-[90%] sm:max-w-sm z-10 flex flex-col items-end text-right space-y-4"
+  >
+    <h1 className="text-[1.75rem] sm:text-3xl font-bold font-poppins leading-tight drop-shadow-md">
+      Serious Growth for Your Electrical Business — Powered by People
+    </h1>
+    <p className="text-sm sm:text-base font-inter drop-shadow-md">
+      90 days of proven PPC success, guided by a real Aussie Ambassador, backed by the best in automation.
+    </p>
+    <button className="bg-[#F9A825] text-black px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all">
+      Start Growing Today
+    </button>
+  </div>
+
+  {/* Spark SVG placeholder */}
+  <div id="spark-glow" className="absolute bottom-10 right-6 z-0 w-24 h-24"></div>
+</section>
+```
+
+---
+
+### 🧪 Notes:
+
+* **Text now anchored right-bottom** to align better with spark
+* **CTA has stronger visual weight**
+* **Responsive spacing** using `sm:` breakpoints for tablet/desktop
+* **Trust badge** top-left adds visual weight balance (optional to keep)
+
+---
+
+✅ Ready to test and visually validate? Let me know once patched and viewed on mobile — we’ll fine-tune margins and scale next.
