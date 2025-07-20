@@ -5,6 +5,7 @@ export default function HomePage() {
     <main style={{ maxWidth: 600, margin: '3rem auto', fontFamily: 'sans-serif' }}>
       <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem' }}>Test Index</h1>
       <ul style={{ lineHeight: 2, fontSize: '1.1rem' }}>
+        <li><Link href="/demo/professional"><b>Professional Accountant Demo (PerthPro)</b></Link></li>
         <li><Link href="/demo/trades">/demo/trades</Link></li>
         <li><Link href="/demo/trades2">/demo/trades2</Link></li>
         <li><Link href="/demo/health">/demo/health</Link></li>

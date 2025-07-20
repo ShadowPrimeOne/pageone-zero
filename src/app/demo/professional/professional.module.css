@@ -1,0 +1,75 @@
+/* Professional Template Scoped Styles */
+
+.professionalLanding {
+  /* Example: Override font for this template only */
+  font-family: 'Montserrat', 'Poppins', Arial, sans-serif;
+  background-color: #f8fafc;
+}
+
+/* Example: Custom button style for this template */
+.professionalLanding .proButton {
+  background: linear-gradient(90deg, #1a2a4d 0%, #e6b800 100%);
+  color: #fff;
+  border-radius: 1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 24px rgba(26,42,77,0.08);
+  transition: background 0.2s, transform 0.2s;
+}
+.professionalLanding .proButton:hover {
+  background: linear-gradient(90deg, #23376b 0%, #ffd700 100%);
+  transform: scale(1.04);
+}
+
+@keyframes urgencyBar {
+  0% { box-shadow: 0 0 0 0 #f87171; }
+  70% { box-shadow: 0 0 0 10px rgba(248,113,113,0); }
+  100% { box-shadow: 0 0 0 0 rgba(248,113,113,0); }
+}
+.animate-urgencyBar {
+  animation: urgencyBar 1.5s infinite;
+}
+
+.button2025 {
+  background: linear-gradient(90deg, #2563eb 0%, #e11d48 60%, #fbbf24 100%);
+  color: #fff;
+  box-shadow: 0 6px 36px 0 rgba(50,50,120,0.20), 0 1.5px 8px rgba(30,60,110,0.09);
+  border: none;
+  border-radius: 1.5em;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(.39,1.49,.34,1), box-shadow 0.25s, background 0.4s;
+}
+.button2025:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+.button2025:active {
+  transform: scale(0.97);
+}
+.shine2025 {
+  content: '';
+  position: absolute;
+  left: -80px; top: 0; height: 100%; width: 70px;
+  background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.35) 55%, transparent 70%);
+  transform: skewX(-15deg);
+  pointer-events: none;
+  animation: none;
+}
+.button2025:hover .shine2025, .button2025:focus .shine2025 {
+  animation: shine2025 0.85s forwards;
+}
+@keyframes shine2025 {
+  0% { left: -80px; }
+  100% { left: 130%; }
+}
+@keyframes inputPulse {
+  0% { box-shadow: 0 0 0 0 #2563eb44; }
+  70% { box-shadow: 0 0 0 8px rgba(37,99,235,0); }
+  100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); }
+}
+.focus\:animate-inputPulse:focus {
+  animation: inputPulse 1s;
+}
+
+/* Add more scoped styles as needed for the professional template */ 
