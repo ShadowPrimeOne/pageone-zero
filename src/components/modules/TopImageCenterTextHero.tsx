@@ -82,7 +82,7 @@ export default function TopImageCenterTextHero({ props }: { props: HeroProps }) 
   }, [])
 
   return (
-    <section className="relative w-full h-screen md:h-screen flex flex-col items-center" style={{ height: '100dvh' }}>
+    <section className="relative w-full h-screen md:h-screen flex flex-col items-center" style={{ minHeight: '100dvh' }}>
       <div className="w-full h-[50vh] relative">
         {!imageError && imageUrl && (
           <Image

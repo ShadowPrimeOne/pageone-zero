@@ -23,8 +23,8 @@ export default function AdwordsBoostElectricianPage() {
     <>
       <style jsx global>{`
         html, body {
-          width: 100vw !important;
-          max-width: 100vw !important;
+          width: 100% !important;
+          max-width: 100% !important;
           overflow-x: hidden !important;
           margin: 0 !important;
           padding: 0 !important;

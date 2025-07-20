@@ -93,19 +93,22 @@ export default function LeadsPage() {
     setLeads(leads.map(l => l.id === drawerLead.id ? updated : l));
   };
 
-  // Send Agreement stub
-  const handleSendAgreement = () => {
-    // No-op, handled in LeadDrawer stub modal
+  // For agreement modal: update both leads and drawerLead
+  const handleDrawerAgreementChange = (fields: Partial<Lead>) => {
+    if (!drawerLead) return;
+    const updated = { ...drawerLead, ...fields };
+    setDrawerLead(updated);
+    setLeads(leads.map(l => l.id === drawerLead.id ? updated : l));
   };
 
   // Convert to Client
   const handleConvertToClient = () => {
     if (!drawerLead) return;
+    setDrawerLead(null); // Close drawer first
     // Remove from leads
     setLeads(leads.filter(l => l.id !== drawerLead.id));
     // Add to clients
     setClients([{ id: randomId(), name: drawerLead.name, email: drawerLead.email, phone: drawerLead.phone, business: drawerLead.business, notes: drawerLead.notes, convertedFromLeadId: drawerLead.id }, ...clients]);
-    setDrawerLead(null);
   };
 
   return (
@@ -159,8 +162,8 @@ export default function LeadsPage() {
           lead={drawerLead}
           onClose={closeDrawer}
           onChange={handleDrawerChange}
-          onSendAgreement={handleSendAgreement}
           onConvertToClient={handleConvertToClient}
+          onAgreementChange={handleDrawerAgreementChange}
         />
         {/* Clients List (simple) */}
         <div className="mt-12">

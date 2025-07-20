@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import type { Lead, LeadStatus } from './types';
+import AgreementModal from './AgreementModal';
 
 interface LeadDrawerProps {
   lead: Lead | null;
   onClose: () => void;
   onChange: (field: keyof Lead, value: Lead[keyof Lead]) => void;
-  onSendAgreement: () => void;
   onConvertToClient: () => void;
+  onAgreementChange: (fields: Partial<Lead>) => void;
 }
 
 const statusOptions: LeadStatus[] = ['Uncontacted', 'Welcome Email', 'Appointment Set', 'Converted'];
@@ -16,14 +17,23 @@ const appointmentTypes = [
   { value: 'in-person', label: 'In Person' },
 ];
 
-export const LeadDrawer: React.FC<LeadDrawerProps> = ({ lead, onClose, onChange, onSendAgreement, onConvertToClient }) => {
-  const [showAgreementModal, setShowAgreementModal] = useState(false);
+export const LeadDrawer: React.FC<LeadDrawerProps> = ({ lead, onClose, onChange, onConvertToClient, onAgreementChange }) => {
+  const [agreementModalOpen, setAgreementModalOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   if (!lead) return null;
 
-  const handleSendAgreement = () => {
-    setShowAgreementModal(true);
-    onChange('trialAgreed', true);
-    onSendAgreement();
+  // Agreement status
+  const agreementStatus = lead.signatureName ? 'Signed' : 'Awaiting Signature';
+
+  const handleSignAgreement = (signature: string) => {
+    onAgreementChange({
+      signatureName: signature,
+      agreementDate: new Date().toISOString(),
+      trialAgreed: true,
+    });
+    setAgreementModalOpen(false);
+    setShowSuccess(true);
+    // TODO: Store signature SVG/image, email link, Supabase, PDF export
   };
 
   return (
@@ -38,7 +48,13 @@ export const LeadDrawer: React.FC<LeadDrawerProps> = ({ lead, onClose, onChange,
           <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ml-2 ${lead.status === 'Uncontacted' ? 'bg-blue-100 text-blue-800' : lead.status === 'Welcome Email' ? 'bg-yellow-100 text-yellow-800' : lead.status === 'Appointment Set' ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-700'}`}>{lead.status}</span>
         </h2>
         {/* DEBUG: Show current status and trialAgreed */}
-        <div className="mb-2 text-xs text-gray-500">DEBUG: status = &#39;{lead.status}&#39;, trialAgreed = {String(lead.trialAgreed)}</div>
+        <div className="mb-2 text-xs text-gray-500">DEBUG: status = &#39;{lead.status}&#39;, agreementStatus = {agreementStatus}</div>
+        <div className="mb-2 text-xs">
+          Agreement Status: <span className={agreementStatus === 'Signed' ? 'text-green-700 font-semibold' : 'text-yellow-700 font-semibold'}>{agreementStatus}</span>
+          {lead.signatureName && lead.agreementDate && (
+            <span className="ml-2 text-xs text-gray-400">({new Date(lead.agreementDate).toLocaleDateString()})</span>
+          )}
+        </div>
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-gray-500 mb-1">Email</label>
@@ -77,10 +93,17 @@ export const LeadDrawer: React.FC<LeadDrawerProps> = ({ lead, onClose, onChange,
             <span className="text-gray-900 font-medium">Trial Agreed</span>
           </label>
           {/* Agreement/Convert Workflow */}
-          {!lead.trialAgreed && (
-            <button type="button" className="w-full py-2 rounded-lg bg-blue-100 text-blue-800 font-semibold hover:bg-blue-200" onClick={handleSendAgreement}>Send Agreement</button>
+          {!lead.signatureName && (
+            <span
+              className="block w-full text-center mt-4 text-blue-700 underline font-semibold cursor-pointer hover:text-blue-900 transition-colors"
+              onClick={() => setAgreementModalOpen(true)}
+              role="button"
+              tabIndex={0}
+            >
+              Sign Agreement
+            </span>
           )}
-          {lead.trialAgreed && lead.status === 'Converted' && (
+          {lead.signatureName && lead.status === 'Converted' && (
             <span
               className="block w-full text-center mt-4 text-blue-700 underline font-semibold cursor-pointer hover:text-blue-900 transition-colors"
               onClick={onConvertToClient}
@@ -96,16 +119,20 @@ export const LeadDrawer: React.FC<LeadDrawerProps> = ({ lead, onClose, onChange,
             <span className={`px-2 py-1 rounded text-xs font-semibold ${lead.gmbVerified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-500'}`}>GMB Verified</span>
           </div>
         </div>
-        {/* Agreement Modal Stub */}
-        {showAgreementModal && (
+        <AgreementModal
+          isOpen={agreementModalOpen}
+          onClose={() => setAgreementModalOpen(false)}
+          onSign={handleSignAgreement}
+        />
+        {showSuccess && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 p-8 relative">
-              <button type="button" className="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onClick={() => setShowAgreementModal(false)}>
+              <button type="button" className="absolute top-4 right-4 text-gray-400 hover:text-gray-600" onClick={() => setShowSuccess(false)}>
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
-              <h2 className="text-2xl font-bold mb-6 text-center">Agreement Sent</h2>
-              <p className="text-gray-700 mb-8 text-center">A trial agreement has been sent to <b>{lead.name}</b>.</p>
-              <button className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold" onClick={() => setShowAgreementModal(false)}>Close</button>
+              <h2 className="text-2xl font-bold mb-6 text-center text-green-700">Agreement Signed</h2>
+              <p className="text-gray-700 mb-8 text-center">Agreement signed. Onboarding can begin.</p>
+              <button className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold" onClick={() => setShowSuccess(false)}>Close</button>
             </div>
           </div>
         )}

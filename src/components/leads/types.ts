@@ -1,5 +1,7 @@
 export type LeadStatus = 'Uncontacted' | 'Welcome Email' | 'Appointment Set' | 'Converted';
 
+export type AgreementStatus = 'Awaiting Signature' | 'Signed';
+
 export interface Lead {
   id: string;
   name: string;
@@ -13,6 +15,8 @@ export interface Lead {
   appointmentDate?: string;
   appointmentType?: 'call' | 'zoom' | 'in-person';
   trialAgreed?: boolean;
+  signatureName?: string;
+  agreementDate?: string;
   lpReady?: boolean;
   adwordsDeployed?: boolean;
   gmbVerified?: boolean;

@@ -134,12 +134,7 @@ function ScrollExperience({ slides }: { slides: Slide[] }) {
       {slides.map((slide: Slide, index: number) => (
         <div
           key={index}
-          className="h-screen relative flex items-center justify-center overflow-hidden"
-          style={{ 
-            width: '100vw', 
-            marginLeft: 'calc(-50vw + 50%)',
-            marginRight: 'calc(-50vw + 50%)'
-          }}
+          className="h-screen w-full relative flex items-center justify-center overflow-hidden"
         >
           {/* Full-screen image with better object-fit handling */}
           <div className="absolute inset-0 z-0">

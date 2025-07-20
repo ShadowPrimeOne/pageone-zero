@@ -119,7 +119,7 @@ export default function ClassicOverlayHero({ props }: { props: ClassicOverlayHer
   const hoverAnimationClass = hoverAnimations[props.hoverAnimation || 'none']
 
   return (
-    <div className="relative w-full h-screen overflow-hidden" style={{ height: '100dvh', minHeight: '100dvh', maxHeight: '100dvh' }}>
+    <div className="relative w-full h-screen overflow-hidden" style={{ minHeight: '100dvh', maxHeight: '100dvh' }}>
       {/* Background */}
       {background && (
         <div className="absolute inset-0">

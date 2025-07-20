@@ -55,7 +55,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, onSave, f
             <span className={`px-2 py-1 rounded text-xs font-semibold ${form.gmbVerified ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-500'}`}>GMB Verified</span>
           </div>
         </div>
-        <button type="submit" className="mt-8 w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg">{isEdit ? 'Save Changes' : 'Add Lead'}</button>
+        <button type="submit" className="mt-8 w-full py-3 rounded-lg !bg-blue-600 !text-white !border !border-blue-600 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 hover:!bg-blue-700 text-lg">{isEdit ? 'Save Changes' : 'Add Lead'}</button>
       </form>
     </div>
   );
