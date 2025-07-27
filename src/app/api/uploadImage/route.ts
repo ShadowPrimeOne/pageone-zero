@@ -1,3 +1,5 @@
+/*
+TEMPORARILY DISABLED: This API route is commented out to prevent Supabase env var build errors. Restore when Supabase is configured.
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import sharp from 'sharp'
