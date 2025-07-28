@@ -9,9 +9,9 @@ import GoogleReviewBar from './GoogleReviewBar';
 import QuoteFormSection from './QuoteFormSection';
 
 const trustBadges = [
-  { src: "/IMAGES/horse-transport/Magic Millions Logo.jpg", alt: "Magic Millions Logo" },
-  { src: "/IMAGES/horse-transport/Inglis Logo.png", alt: "Inglis Logo" },
-  { src: "/IMAGES/horse-transport/IRT Logo.png", alt: "IRT Logo" },
+  { src: "/IMAGES/horse-transport/optimized/MagicMillionsLogo-320w.webp", alt: "Magic Millions Logo", width: 128, height: 40 },
+  { src: "/IMAGES/horse-transport/optimized/InglisLogo-128w.webp", alt: "Inglis Logo", width: 128, height: 40 },
+  { src: "/IMAGES/horse-transport/optimized/IRTLogo-128w.webp", alt: "IRT Logo", width: 128, height: 40 },
 ];
 
 const services = [
@@ -52,15 +52,30 @@ export default function HorseTransportLanding() {
 
       {/* Hero Section */}
       <section className={styles.hero}>
-        <Image src="/IMAGES/horse-transport/Hero 2 real.webp" alt="Premium horse transport truck" fill priority className={styles.heroImg} sizes="(max-width: 900px) 100vw, 900px" style={{objectFit: 'cover', objectPosition: 'center'}} unoptimized />
+        <Image
+          src="/IMAGES/horse-transport/Hero 2 real.webp"
+          alt="Premium horse transport truck"
+          fill
+          priority
+          className={styles.heroImg}
+          style={{objectFit: 'cover', objectPosition: 'center'}}
+          unoptimized={true}
+        />
         <div className={styles.heroContent} style={{ position: 'absolute', top: 0, left: 0, right: 0, margin: '0 auto', zIndex: 2, width: '100%', maxWidth: 600, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
-          <Image src="/IMAGES/horse-transport/Truck Logo.png" alt="Truck Logo" width={220} height={125} unoptimized className={styles.truckLogo} />
-<div className={styles.heroHeadlineWrap}>
+          <Image
+            src="/IMAGES/horse-transport/optimized/TruckLogo-220w.webp"
+            alt="Truck Logo"
+            width={220}
+            height={125}
+            className={styles.truckLogo}
+            style={{ width: 'auto', height: 'auto' }}
+            priority
+          />
+          <div className={styles.heroHeadlineWrap}>
             <img src="/IMAGES/horse-transport/headline-brushstroke.svg" alt="" className={styles.heroBrushstroke} aria-hidden="true" />
             <h1 className={styles.heroTitle}>Australia's Premier Horse Transport</h1>
           </div>
           <p className={styles.heroSubtitle}>Trusted by trainers & owners for 25+ years</p>
-
         </div>
         <div className={styles.heroGradient} />
         {/* New bottom bar for CTAs and trust badges */}
@@ -71,7 +86,15 @@ export default function HorseTransportLanding() {
           </div>
           <div className={styles.heroBadges}>
             {trustBadges.map(badge => (
-              <Image key={badge.alt} src={badge.src} alt={badge.alt} width={64} height={32} className={styles.badgeImg} />
+              <Image
+                key={badge.alt}
+                src={badge.src}
+                alt={badge.alt}
+                width={badge.width}
+                height={badge.height}
+                className={styles.badgeImg}
+                unoptimized={true}
+              />
             ))}
           </div>
         </div>
@@ -79,10 +102,16 @@ export default function HorseTransportLanding() {
 
       {/* Why Australia’s Top Owners & Trainers Choose Us */}
       <section className={styles.whyChooseUsSection}>
+        <h2 className={styles.sectionTitle}>Why Australia’s Top Owners & Trainers Choose Us</h2>
         <div className={styles.whyChooseUsCards}>
           {/* Trusted by Champions */}
           <div className={styles.whyChooseUsCard}>
-            <Image src="/IMAGES/horse-transport/Trusted by Champions.jpg" alt="Trusted by Champions" width={400} height={185} unoptimized />
+            <Image
+  src="/IMAGES/horse-transport/optimized/TrustedbyChampions-640w.webp"
+  alt="Trusted by Champions"
+  width={400}
+  height={185}
+/>
             <div className={styles.whyChooseUsCardContent}>
               <h3 className={styles.whyChooseUsTitle}>Trusted by Champions</h3>
               <p className={styles.whyChooseUsText}>Preferred by leading trainers like Chris Waller. Proud to have transported legends like Winx.</p>
@@ -90,7 +119,12 @@ export default function HorseTransportLanding() {
           </div>
           {/* Sales & International Expertise */}
           <div className={styles.whyChooseUsCard}>
-            <Image src="/IMAGES/horse-transport/International.jpg" alt="Sales and International" width={400} height={185} unoptimized />
+            <Image
+  src="/IMAGES/horse-transport/optimized/International-640w.webp"
+  alt="Sales and International"
+  width={400}
+  height={185}
+/>
             <div className={styles.whyChooseUsCardContent}>
               <h3 className={styles.whyChooseUsTitle}>Sales & International Experts</h3>
               <p className={styles.whyChooseUsText}>Official carriers for Magic Millions, Inglis & IRT. Seamless domestic & global transport.</p>
@@ -98,7 +132,14 @@ export default function HorseTransportLanding() {
           </div>
           {/* Modern Fleet & Safety */}
           <div className={styles.whyChooseUsCard}>
-            <Image src="/IMAGES/horse-transport/Hero truck horse transport.jpg" alt="Modern Fleet" width={400} height={185} unoptimized style={{ width: 'auto', height: 'auto' }} />
+            <Image
+  src="/IMAGES/horse-transport/optimized/Herotruckhorsetransport-640w.webp"
+  alt="Modern Fleet"
+  width={400}
+  height={185}
+  style={{ width: 'auto', height: 'auto' }}
+  unoptimized={true}
+/>
             <div className={styles.whyChooseUsCardContent}>
               <h3 className={styles.whyChooseUsTitle}>Australia’s Most Modern Fleet</h3>
               <p className={styles.whyChooseUsText}>Custom-built trucks for ultimate comfort, safety, and hygiene. Low ramps, climate control, and meticulous care.</p>
@@ -106,7 +147,14 @@ export default function HorseTransportLanding() {
           </div>
           {/* Nationwide Coverage */}
           <div className={styles.whyChooseUsCard}>
-            <Image src="/IMAGES/horse-transport/Australia wide.jpg" alt="Nation wide" width={400} height={185} unoptimized style={{ width: 'auto', height: 'auto' }} />
+            <Image
+  src="/IMAGES/horse-transport/optimized/Australiawide-640w.webp"
+  alt="Nation wide"
+  width={400}
+  height={185}
+  style={{ width: 'auto', height: 'auto' }}
+  unoptimized={true}
+/>
             <div className={styles.whyChooseUsCardContent}>
               <h3 className={styles.whyChooseUsTitle}>Nationwide Coverage</h3>
               <p className={styles.whyChooseUsText}>Weekly direct routes connecting all major cities. Flexible pickups—Australia wide.</p>
@@ -124,7 +172,13 @@ export default function HorseTransportLanding() {
       <section className={styles.section + ' text-center'}>
         <h2 className={styles.sectionTitle}>About Us</h2>
         <div className={styles.sectionCard}>
-          <Image src="/IMAGES/horse-transport/About Us Image.jpg" alt="Horse transport team" width={320} height={180} style={{ width: '100%', height: 'auto' }} />
+          <Image
+  src="/IMAGES/horse-transport/optimized/AboutUsImage-640w.webp"
+  alt="Horse transport team"
+  width={320}
+  height={180}
+  style={{ width: '100%', height: 'auto' }}
+/>
           <p className={styles.sectionCardDesc}>Family owned, serving Sydney & NSW for 20+ years. We treat your horse like our own.</p>
         </div>
       </section>

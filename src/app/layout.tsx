@@ -33,6 +33,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <title>Sydney Horse Transport – Premium Horse Transport Australia-wide</title>
+        <meta name="description" content="Premium horse transport services Australia-wide. Safe, reliable, and professional horse transport for owners, trainers, and breeders. Get an instant quote today!" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>

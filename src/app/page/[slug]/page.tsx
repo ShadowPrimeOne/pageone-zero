@@ -1,76 +1,36 @@
 // src/app/page/[slug]/page.tsx
 import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import PageEditor from './PageEditor'
-import PublicModuleRenderer from '@/components/modules/PublicModuleRenderer'
-import { supabase } from '@/lib/supabase/server'
-import { decryptData, generateKey } from '@/lib/encryption'
 
-const DEV_KEY = process.env.NEXT_PUBLIC_DEV_KEY || 'dev-key-1234'
+// All backend logic disabled for local dev
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params
-  
-  try {
-    // Fetch the page from the database
-    const { data: page, error } = await supabase
-      .from('pages')
-      .select('*')
-      .eq('slug', slug)
-      .maybeSingle()
-
-    if (error || !page) {
-      return {
-        title: 'Page Not Found',
-        description: 'The requested page could not be found.'
-      }
-    }
-    
-    return {
-      title: page.title || 'Page',
-      description: page.description || 'A page created with PageOne.',
-      openGraph: {
-        title: page.title || 'Page',
-        description: page.description || 'A page created with PageOne.',
-        type: 'website',
-      },
-    }
-  } catch {
-    return {
-      title: 'Page',
-      description: 'A page created with PageOne.'
-    }
-  }
+  const { slug } = await params;
+  return {
+    title: `Stub Page: ${slug}`,
+    description: 'This is a static stub for local development.'
+  };
 }
 
-export default async function Page({ 
-  params, 
-  searchParams 
-}: { 
-  params: Promise<{ slug: string }>, 
-  searchParams: Promise<{ edit?: string }> 
-}) {
-  const { slug } = await params
-  const { edit } = await searchParams
-  
-  try {
-    // Fetch the page from the database
-    const { data: page, error } = await supabase
-      .from('pages')
-      .select('*')
-      .eq('slug', slug)
-      .maybeSingle()
 
-    if (error) {
-      console.error('Database error:', error)
-      notFound()
-    }
-
-    if (!page) {
-      notFound()
-    }
-
-    // Handle encrypted modules
+export default async function Page({ params, searchParams }: { params: Promise<{ slug: string }>, searchParams: Promise<{ edit?: string }> }) {
+  const { slug } = await params;
+  const { edit } = await searchParams;
+  // Static stub: always show a placeholder page for local dev
+  const isEditMode = edit === 'true';
+  const modules = [];
+  if (isEditMode) {
+    return <div>Edit mode is disabled in local dev stub.</div>;
+  } else {
+    return (
+      <main className="min-h-screen bg-white">
+        <div className="max-w-2xl mx-auto py-16 px-4 text-center">
+          <h1 className="text-3xl font-bold mb-4">Stub Page: {slug}</h1>
+          <p className="text-gray-600">This is a static stub for local development. No backend data is loaded.</p>
+        </div>
+      </main>
+    );
+  }
+}
     let modules = page.modules
     if (typeof modules === 'string') {
       try {

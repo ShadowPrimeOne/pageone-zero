@@ -17,7 +17,7 @@ const reviews = [
 function GoogleIcon() {
   // Google "G" SVG (official colors)
   return (
-    <svg className={styles.googleIcon} viewBox="0 0 24 24" aria-label="Google logo">
+    <svg className={styles.googleIcon} viewBox="0 0 24 24" aria-hidden="true">
       <g>
         <path fill="#4285F4" d="M12 11.8v3.4h4.8c-.2 1.3-1.5 3.7-4.8 3.7-2.9 0-5.3-2.4-5.3-5.3s2.4-5.3 5.3-5.3c1.6 0 2.7.7 3.3 1.3l2.3-2.2C16.1 6.4 14.2 5.3 12 5.3 7.6 5.3 4 8.9 4 13.2s3.6 7.9 8 7.9c4.6 0 7.6-3.2 7.6-7.8 0-.5-.1-.9-.2-1.3H12z"/>
         <path fill="#34A853" d="M12 21.1c2.4 0 4.4-.8 5.9-2.2l-2.8-2.2c-.8.5-1.7.9-3.1.9-2.4 0-4.4-1.6-5.1-3.7H4.1v2.3C5.6 19.2 8.6 21.1 12 21.1z"/>
