@@ -55,15 +55,17 @@ export default async function Page({ params, searchParams }: { params: Promise<{
     // Check if we're in edit mode
     const isEditMode = edit === 'true'
     
+    let content;
     if (isEditMode) {
-      return <PageEditor slug={slug} modulesFromServer={modules} pageKey={DEV_KEY} />
+      content = <PageEditor slug={slug} modulesFromServer={modules} pageKey={DEV_KEY} />;
     } else {
-      return (
+      content = (
         <main className="min-h-screen bg-white">
           <PublicModuleRenderer modules={modules} />
         </main>
-      )
+      );
     }
+    return content;
   } catch (error) {
     console.error('Error fetching page:', error)
     notFound()
