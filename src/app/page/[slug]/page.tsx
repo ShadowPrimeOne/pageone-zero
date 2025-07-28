@@ -31,43 +31,4 @@ export default async function Page({ params, searchParams }: { params: Promise<{
     );
   }
 }
-    let modules = page.modules
-    if (typeof modules === 'string') {
-      try {
-        // Try to decrypt with dev key first
-        const cryptoKey = await generateKey(DEV_KEY)
-        if (!cryptoKey) {
-          throw new Error('Failed to generate encryption key')
-        }
-        modules = await decryptData(modules, cryptoKey)
-      } catch (error) {
-        console.error('Error decrypting modules:', error)
-        notFound()
-      }
-    }
 
-    // Validate modules data
-    if (!modules || !Array.isArray(modules)) {
-      console.error('Invalid modules data:', modules)
-      notFound()
-    }
-    
-    // Check if we're in edit mode
-    const isEditMode = edit === 'true'
-    
-    let content;
-    if (isEditMode) {
-      content = <PageEditor slug={slug} modulesFromServer={modules} pageKey={DEV_KEY} />;
-    } else {
-      content = (
-        <main className="min-h-screen bg-white">
-          <PublicModuleRenderer modules={modules} />
-        </main>
-      );
-    }
-    return content;
-  } catch (error) {
-    console.error('Error fetching page:', error)
-    notFound()
-  }
-}
