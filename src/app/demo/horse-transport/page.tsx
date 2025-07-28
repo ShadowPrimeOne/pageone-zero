@@ -111,6 +111,7 @@ export default function HorseTransportLanding() {
   alt="Trusted by Champions"
   width={400}
   height={185}
+  style={{ width: 'auto', height: 'auto' }}
 />
             <div className={styles.whyChooseUsCardContent}>
               <h3 className={styles.whyChooseUsTitle}>Trusted by Champions</h3>
@@ -124,6 +125,7 @@ export default function HorseTransportLanding() {
   alt="Sales and International"
   width={400}
   height={185}
+  style={{ width: 'auto', height: 'auto' }}
 />
             <div className={styles.whyChooseUsCardContent}>
               <h3 className={styles.whyChooseUsTitle}>Sales & International Experts</h3>
@@ -153,7 +155,6 @@ export default function HorseTransportLanding() {
   width={400}
   height={185}
   style={{ width: 'auto', height: 'auto' }}
-  unoptimized={true}
 />
             <div className={styles.whyChooseUsCardContent}>
               <h3 className={styles.whyChooseUsTitle}>Nationwide Coverage</h3>
