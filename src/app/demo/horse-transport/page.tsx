@@ -68,7 +68,6 @@ export default function HorseTransportLanding() {
             width={220}
             height={125}
             className={styles.truckLogo}
-            style={{ width: 'auto', height: 'auto' }}
             priority
           />
           <div className={styles.heroHeadlineWrap}>

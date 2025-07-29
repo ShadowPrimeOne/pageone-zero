@@ -5,11 +5,13 @@ import LeadTable from '@/components/leads/LeadTable';
 import { LeadModal } from '@/components/leads/LeadModal';
 import { LeadDrawer } from '@/components/leads/LeadDrawer';
 import { dummyLeads, dummyClients } from '@/components/leads/dummyLeads';
+import { getAmbassadors } from '@/lib/supabase';
+import type { Ambassador } from '@/components/leads/types';
 import type { Lead, Client } from '@/components/leads/types';
 import { useUser } from '@/lib/UserContext';
 import MenuButton from '@/components/leads/MenuButton';
 
-const emptyLead: Omit<Lead, 'id'> = {
+const emptyLead: Omit<Lead, 'id'> & { ambassador_id?: string } = {
   name: '',
   email: '',
   phone: '',
@@ -31,6 +33,10 @@ function randomId() {
 }
 
 export default function LeadsPage() {
+  const [ambassadors, setAmbassadors] = React.useState<Ambassador[]>([]);
+  React.useEffect(() => {
+    getAmbassadors().then(setAmbassadors).catch(console.error);
+  }, []);
   const user = useUser();
   const [leads, setLeads] = useState<Lead[]>(dummyLeads);
   const [clients, setClients] = useState<Client[]>(dummyClients);
@@ -140,6 +146,7 @@ export default function LeadsPage() {
           form={form}
           setForm={setForm}
           isEdit={isEdit}
+          ambassadors={ambassadors}
         />
         {/* Delete Confirm Modal */}
         {deleteLead && (
@@ -164,6 +171,7 @@ export default function LeadsPage() {
           onChange={handleDrawerChange}
           onConvertToClient={handleConvertToClient}
           onAgreementChange={handleDrawerAgreementChange}
+          ambassadors={ambassadors}
         />
         {/* Clients List (simple) */}
         <div className="mt-12">

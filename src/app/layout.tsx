@@ -74,9 +74,7 @@ export default function RootLayout({
           `}</style>
         )}
         {/* Defer non-critical CSS for rest of app */}
-        <link rel="stylesheet" href="/src/app/demo/horse-transport/page.module.css" media="print" onLoad={(e) => { (e.currentTarget as HTMLLinkElement).media = 'all'; }} />
-        <link rel="stylesheet" href="/src/app/demo/horse-transport/ReadyBanner.module.css" media="print" onLoad={(e) => { (e.currentTarget as HTMLLinkElement).media = 'all'; }} />
-        <link rel="stylesheet" href="/src/app/demo/horse-transport/GoogleReviewBar.module.css" media="print" onLoad={(e) => { (e.currentTarget as HTMLLinkElement).media = 'all'; }} />
+
       </head>
       <body className={inter.className}>
         <UserProvider>

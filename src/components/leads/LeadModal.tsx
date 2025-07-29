@@ -1,7 +1,8 @@
 import React from 'react';
-import type { Lead, LeadStatus } from './types';
+import type { Lead, LeadStatus, Ambassador } from './types';
 
 interface LeadModalProps {
+  ambassadors: Ambassador[];
   isOpen: boolean;
   onClose: () => void;
   onSave: (lead: Omit<Lead, 'id'>) => void;
@@ -17,7 +18,7 @@ const appointmentTypes = [
   { value: 'in-person', label: 'In Person' },
 ];
 
-export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, onSave, form, setForm, isEdit }) => {
+export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, onSave, form, setForm, isEdit, ambassadors }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
@@ -30,6 +31,16 @@ export const LeadModal: React.FC<LeadModalProps> = ({ isOpen, onClose, onSave, f
         </button>
         <h2 className="text-2xl font-bold mb-6 text-center">{isEdit ? 'Edit Lead' : 'Add Lead'}</h2>
         <div className="space-y-4">
+          <select
+            className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 text-gray-900"
+            value={form.ambassador_id || ''}
+            onChange={e => setForm({ ...form, ambassador_id: e.target.value })}
+          >
+            <option value="">Assign Ambassador</option>
+            {ambassadors.map(a => (
+              <option key={a.id} value={a.id}>{a.name} ({a.email})</option>
+            ))}
+          </select>
           <input className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 text-gray-900" placeholder="Name" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
           <input className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 text-gray-900" placeholder="Email" type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
           <input className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-400 text-gray-900" placeholder="Phone" required value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />

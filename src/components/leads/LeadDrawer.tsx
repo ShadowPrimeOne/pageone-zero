@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import type { Lead, LeadStatus } from './types';
+import type { Lead, LeadStatus, Ambassador } from './types';
 import AgreementModal from './AgreementModal';
 
 interface LeadDrawerProps {
+  ambassadors: Ambassador[];
   lead: Lead | null;
   onClose: () => void;
   onChange: (field: keyof Lead, value: Lead[keyof Lead]) => void;
@@ -17,7 +18,7 @@ const appointmentTypes = [
   { value: 'in-person', label: 'In Person' },
 ];
 
-export const LeadDrawer: React.FC<LeadDrawerProps> = ({ lead, onClose, onChange, onConvertToClient, onAgreementChange }) => {
+export const LeadDrawer: React.FC<LeadDrawerProps> = ({ lead, onClose, onChange, onConvertToClient, onAgreementChange, ambassadors }) => {
   const [agreementModalOpen, setAgreementModalOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   if (!lead) return null;
@@ -56,6 +57,16 @@ export const LeadDrawer: React.FC<LeadDrawerProps> = ({ lead, onClose, onChange,
           )}
         </div>
         <div className="space-y-4">
+            <select
+              className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900"
+              value={lead.ambassador_id || ''}
+              onChange={e => onChange('ambassador_id', e.target.value)}
+            >
+              <option value="">Assign Ambassador</option>
+              {ambassadors.map(a => (
+                <option key={a.id} value={a.id}>{a.name} ({a.email})</option>
+              ))}
+            </select>
           <div>
             <label className="block text-xs font-semibold text-gray-500 mb-1">Email</label>
             <input className="w-full px-4 py-2 rounded-lg border border-gray-200 text-gray-900" value={lead.email} onChange={e => onChange('email', e.target.value)} />

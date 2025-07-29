@@ -20,6 +20,14 @@ export interface Lead {
   lpReady?: boolean;
   adwordsDeployed?: boolean;
   gmbVerified?: boolean;
+  ambassador_id?: string;
+}
+
+export interface Ambassador {
+  id: string;
+  name: string;
+  email: string;
+  created_at: string;
 }
 
 export interface Client {
